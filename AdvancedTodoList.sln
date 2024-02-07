@@ -5,9 +5,13 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvancedTodoList", "AdvancedTodoList\AdvancedTodoList.csproj", "{5A6E74CD-0DD8-4EDB-B01E-13F7B0A29013}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedTodoList.Core", "AdvancedTodoList.Core\AdvancedTodoList.Core.csproj", "{316DE5AB-84EC-46B3-82EE-A3F159750971}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvancedTodoList.Core", "AdvancedTodoList.Core\AdvancedTodoList.Core.csproj", "{316DE5AB-84EC-46B3-82EE-A3F159750971}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedTodoList.Infrastructure", "AdvancedTodoList.Infrastructure\AdvancedTodoList.Infrastructure.csproj", "{7C291BA7-C2FB-4236-9A36-868A5EF0C7B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvancedTodoList.Infrastructure", "AdvancedTodoList.Infrastructure\AdvancedTodoList.Infrastructure.csproj", "{7C291BA7-C2FB-4236-9A36-868A5EF0C7B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedTodoList.UnitTests", "AdvancedTodoList.UnitTests\AdvancedTodoList.UnitTests.csproj", "{84FC33EA-4AD9-45E6-B2B9-742475AA4961}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedTodoList.IntegrationTests", "AdvancedTodoList.IntegrationTests\AdvancedTodoList.IntegrationTests.csproj", "{443E81D2-5B70-4CDD-86E9-8184CA004684}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{7C291BA7-C2FB-4236-9A36-868A5EF0C7B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C291BA7-C2FB-4236-9A36-868A5EF0C7B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C291BA7-C2FB-4236-9A36-868A5EF0C7B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84FC33EA-4AD9-45E6-B2B9-742475AA4961}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84FC33EA-4AD9-45E6-B2B9-742475AA4961}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84FC33EA-4AD9-45E6-B2B9-742475AA4961}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84FC33EA-4AD9-45E6-B2B9-742475AA4961}.Release|Any CPU.Build.0 = Release|Any CPU
+		{443E81D2-5B70-4CDD-86E9-8184CA004684}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{443E81D2-5B70-4CDD-86E9-8184CA004684}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{443E81D2-5B70-4CDD-86E9-8184CA004684}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{443E81D2-5B70-4CDD-86E9-8184CA004684}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
