@@ -1,5 +1,7 @@
 using AdvancedTodoList.Core.Models;
+using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Infrastructure.Data;
+using AdvancedTodoList.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +34,9 @@ builder.Services.AddIdentityCore<ApplicationUser>()
 	.AddEntityFrameworkStores<ApplicationDbContext>()
 	.AddApiEndpoints();
 
+// Register application services
+builder.Services.AddScoped<ITodoListsService, TodoListsService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -48,3 +53,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }
