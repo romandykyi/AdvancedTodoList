@@ -4,15 +4,21 @@ using AdvancedTodoList.Infrastructure.Data;
 using AdvancedTodoList.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+	.AddJsonOptions(options =>
+	{
+		options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+	});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAntiforgery(options => options.HeaderName = "X-XSRF-Token");
+// Configure antiforgery
+builder.Services.AddAntiforgery(o => o.HeaderName = "X-XSRF-Token");
 
 // Configure auth
 builder.Services.AddAuthentication()
