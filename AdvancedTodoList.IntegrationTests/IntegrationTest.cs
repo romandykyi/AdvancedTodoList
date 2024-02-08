@@ -8,14 +8,14 @@ namespace AdvancedTodoList.IntegrationTests;
 /// <summary>
 /// Base class for integration tests.
 /// </summary>
-public class IntegrationTest
+public abstract class IntegrationTest
 {
 	private static bool s_migrated = false;
 	private static MsSqlContainer s_testDbContainer;
 	protected static TestingWebApplicationFactory WebApplicationFactory { get; private set; }
-	protected static IServiceScopeFactory ScopeFactory { get; private set; }
-	protected static IServiceScope ServiceScope { get; private set; }
-	protected static ApplicationDbContext DbContext { get; private set; }
+	protected IServiceScopeFactory ScopeFactory { get; private set; }
+	protected IServiceScope ServiceScope { get; private set; }
+	protected ApplicationDbContext DbContext { get; private set; }
 
 	[SetUp]
 	public async Task SetUpServices()
