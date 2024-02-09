@@ -1,7 +1,11 @@
 ﻿namespace AdvancedTodoList.Core.Dtos;
 
-public record TodoListItemView(int Id);
+/// <summary>
+/// DTO for creating/editing a to-do list.
+/// </summary>
+public record TodoListCreateDto(string Name, string Description);
 
-public record TodoListCreateDto(string Name);
-
-public record TodoListGetByIdDto(string Id, string Name, TodoListItemView[] TodoItems);
+/// <summary>
+/// DTO for a full view of a to-do list.
+/// </summary>
+public record TodoListGetByIdDto(string Id, string Names, string Description);
