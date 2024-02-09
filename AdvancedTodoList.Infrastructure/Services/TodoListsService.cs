@@ -49,4 +49,13 @@ public class TodoListsService(ApplicationDbContext dbContext) : ITodoListsServic
 		return list;
 	}
 
+	public Task<bool> EditAsync(string id, TodoListCreateDto dto)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task<bool> DeleteAsync(string id)
+	{
+		throw new NotImplementedException();
+	}
 }

@@ -14,11 +14,11 @@ public class TodoListsEndpointsTests : RouteTest
 	{
 		// Arrange
 		string testId = "TestId";
-		TodoListGetByIdDto testDto = new(testId, "Test todo list", []);
+		TodoListGetByIdDto testDto = new(testId, "Test todo list", "");
 		WebApplicationFactory.TodoListsService
 			.GetByIdAsync(testId)
 			.Returns(testDto);
-		TodoListCreateDto dto = new("Test");
+		TodoListCreateDto dto = new("Test", string.Empty);
 		using HttpClient client = WebApplicationFactory.CreateClient();
 
 		// Act: send the request
@@ -29,11 +29,7 @@ public class TodoListsEndpointsTests : RouteTest
 		// Assert that valid object was returned
 		var returnedDto = await result.Content.ReadFromJsonAsync<TodoListGetByIdDto>();
 		Assert.That(returnedDto, Is.Not.Null);
-		Assert.Multiple(() =>
-		{
-			Assert.That(returnedDto.Id, Is.EqualTo(testDto.Id));
-			Assert.That(returnedDto.Name, Is.EqualTo(testDto.Name));
-		});
+		Assert.That(returnedDto, Is.EqualTo(testDto));
 	}
 
 	[Test]
@@ -60,7 +56,7 @@ public class TodoListsEndpointsTests : RouteTest
 		WebApplicationFactory.TodoListsService
 			.CreateAsync(Arg.Any<TodoListCreateDto>())
 			.Returns(new TodoList() { Id = "TestID" });
-		TodoListCreateDto dto = new("Test");
+		TodoListCreateDto dto = new("Test", string.Empty);
 		using HttpClient client = WebApplicationFactory.CreateClient();
 
 		// Act: send the request

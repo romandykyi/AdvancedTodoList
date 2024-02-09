@@ -24,7 +24,8 @@ public class TodoListServiceTests : IntegrationTest
 		// Arrange: add test list to the DB
 		TodoList testList = new()
 		{
-			Name = "Test list"
+			Name = "Test list",
+			Description = ""
 		};
 		DbContext.TodoLists.Add(testList);
 		await DbContext.SaveChangesAsync();
@@ -55,7 +56,7 @@ public class TodoListServiceTests : IntegrationTest
 	public async Task CreateAsync_AddsEntityToDb()
 	{
 		// Arrange: initialize a DTO
-		TodoListCreateDto dto = new("Test entity");
+		TodoListCreateDto dto = new("Test entity", "...");
 
 		// Act: call the method
 		var result = await _service.CreateAsync(dto);

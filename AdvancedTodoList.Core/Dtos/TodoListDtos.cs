@@ -8,4 +8,4 @@ public record TodoListCreateDto(string Name, string Description);
 /// <summary>
 /// DTO for a full view of a to-do list.
 /// </summary>
-public record TodoListGetByIdDto(string Id, string Names, string Description);
+public record TodoListGetByIdDto(string Id, string Name, string Description);
