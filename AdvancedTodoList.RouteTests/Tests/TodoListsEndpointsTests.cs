@@ -1,8 +1,8 @@
 ﻿using AdvancedTodoList.Core.Dtos;
-using System.Net.Http.Json;
-using AdvancedTodoList.Core.Models;
+using AdvancedTodoList.Core.Models.TodoLists;
 using NSubstitute.ReturnsExtensions;
 using System.Net;
+using System.Net.Http.Json;
 
 namespace AdvancedTodoList.RouteTests.Tests;
 

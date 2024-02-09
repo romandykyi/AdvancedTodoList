@@ -1,5 +1,5 @@
 ﻿using AdvancedTodoList.Core.Dtos;
-using AdvancedTodoList.Core.Models;
+using AdvancedTodoList.Core.Models.TodoLists;
 
 namespace AdvancedTodoList.Core.Services;
 
