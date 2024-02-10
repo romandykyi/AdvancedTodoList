@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace AdvancedTodoList.IntegrationTests.Services;
 
 [TestFixture]
-public class TodoListServiceTests : IntegrationTest
+public class TodoListsServiceTests : IntegrationTest
 {
 	private ITodoListsService _service;
 
