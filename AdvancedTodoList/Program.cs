@@ -42,6 +42,7 @@ builder.Services.AddIdentityCore<ApplicationUser>()
 
 // Register application services
 builder.Services.AddScoped<ITodoListsService, TodoListsService>();
+builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
 
 var app = builder.Build();
 
