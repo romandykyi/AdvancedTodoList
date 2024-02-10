@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AdvancedTodoList.Infrastructure.Services;
 
+/// <summary>
+/// A service that manages to-do lists.
+/// </summary>
 public class TodoListsService(ApplicationDbContext dbContext) : ITodoListsService
 {
 	private readonly ApplicationDbContext _dbContext = dbContext;
@@ -23,7 +26,6 @@ public class TodoListsService(ApplicationDbContext dbContext) : ITodoListsServic
 	public async Task<TodoListGetByIdDto?> GetByIdAsync(string id)
 	{
 		var list = await _dbContext.TodoLists
-			.Include(x => x.TodoItems)
 			.AsNoTracking()
 			.Where(x => x.Id == id)
 			.FirstOrDefaultAsync();
