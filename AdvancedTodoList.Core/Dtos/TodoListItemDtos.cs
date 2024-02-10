@@ -10,7 +10,7 @@ public record TodoItemCreateDto(string Name, string Description, DateTime? Deadl
 /// <summary>
 /// DTO for changing the state of a to-do list item.
 /// </summary>
-public record TodoItemChangeStateDto(TodoItemState State);
+public record TodoItemUpdateStateDto(TodoItemState State);
 
 /// <summary>
 /// DTO for a full view of a to-do list.

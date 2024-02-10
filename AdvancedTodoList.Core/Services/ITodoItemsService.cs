@@ -43,6 +43,18 @@ public interface ITodoItemsService
 	public Task<bool> EditAsync(string id, TodoItemCreateDto dto);
 
 	/// <summary>
+	/// Updates the state of a to-do list item asynchronously.
+	/// </summary>
+	/// <param name="id">The ID of the to-do list item to update the state.</param>
+	/// <param name="dto">The DTO containing information for updating the state of the to-do list item.</param>
+	/// <returns>
+	/// A task representing the asynchronous operation. 
+	/// The task result contains <see langword="true"/> on success;
+	/// otherwise <see langword="false"/> if the entity was not found.
+	/// </returns>
+	public Task<bool> UpdateStateAsync(string id, TodoItemUpdateStateDto dto);
+
+	/// <summary>
 	/// Deletes a to-do list item asynchronously.
 	/// </summary>
 	/// <param name="id">The ID of the to-do list item to delete.</param>
