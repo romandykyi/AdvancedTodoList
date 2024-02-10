@@ -11,7 +11,7 @@ namespace AdvancedTodoList.IntegrationTests;
 public abstract class IntegrationTest
 {
 	private static bool s_migrated = false;
-	private static MsSqlContainer s_testDbContainer;
+
 	protected static TestingWebApplicationFactory WebApplicationFactory { get; private set; }
 	protected IServiceScopeFactory ScopeFactory { get; private set; }
 	protected IServiceScope ServiceScope { get; private set; }
@@ -20,6 +20,10 @@ public abstract class IntegrationTest
 	[SetUp]
 	public async Task SetUpServices()
 	{
+		// Configure web application factory
+		WebApplicationFactory = new TestingWebApplicationFactory(IntegrationTestsSetup.TestDbContainer);
+		WebApplicationFactory.Server.PreserveExecutionContext = true;
+
 		// Get services needed for integration testing
 		ScopeFactory = WebApplicationFactory.Services.GetService<IServiceScopeFactory>()!;
 		ServiceScope = ScopeFactory.CreateScope();
@@ -38,25 +42,6 @@ public abstract class IntegrationTest
 		// Dispose resources
 		await DbContext.DisposeAsync();
 		ServiceScope.Dispose();
-	}
-
-	[OneTimeSetUp]
-	public static async Task SetUpIntegrationTestAsync()
-	{
-		// Initialize and start a container with test DB
-		s_testDbContainer = new MsSqlBuilder().Build();
-		await s_testDbContainer.StartAsync();
-
-		// Configure web application factory
-		WebApplicationFactory = new TestingWebApplicationFactory(s_testDbContainer);
-		WebApplicationFactory.Server.PreserveExecutionContext = true;
-	}
-
-	[OneTimeTearDown]
-	public static async Task TearDownIntegrationTestAsync()
-	{
-		// Stop the DB container
-		await s_testDbContainer.StopAsync();
 
 		await WebApplicationFactory.DisposeAsync();
 	}
