@@ -40,7 +40,7 @@ public interface ITodoItemsService
 	/// The task result contains <see langword="true"/> on success;
 	/// otherwise <see langword="false"/> if the entity was not found.
 	/// </returns>
-	public Task<bool> EditAsync(string id, TodoItemCreateDto dto);
+	public Task<bool> EditAsync(int id, TodoItemCreateDto dto);
 
 	/// <summary>
 	/// Updates the state of a to-do list item asynchronously.
@@ -52,7 +52,7 @@ public interface ITodoItemsService
 	/// The task result contains <see langword="true"/> on success;
 	/// otherwise <see langword="false"/> if the entity was not found.
 	/// </returns>
-	public Task<bool> UpdateStateAsync(string id, TodoItemUpdateStateDto dto);
+	public Task<bool> UpdateStateAsync(int id, TodoItemUpdateStateDto dto);
 
 	/// <summary>
 	/// Deletes a to-do list item asynchronously.
@@ -63,5 +63,5 @@ public interface ITodoItemsService
 	/// The task result contains <see langword="true"/> on success;
 	/// otherwise <see langword="false"/> if the entity was not found.
 	/// </returns>
-	public Task<bool> DeleteAsync(string id);
+	public Task<bool> DeleteAsync(int id);
 }
