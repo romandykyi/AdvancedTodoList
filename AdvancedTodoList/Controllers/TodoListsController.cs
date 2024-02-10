@@ -39,4 +39,33 @@ public class TodoListsController(ITodoListsService todoListsService) : Controlle
 		var body = list.Adapt<TodoListGetByIdDto>();
 		return CreatedAtRoute(nameof(GetTodoListByIdAsync), routeValues, body);
 	}
+
+	/// <summary>
+	/// Updates a to-do list.
+	/// </summary>
+	/// <response code="204">Success.</response>
+	/// <response code="204">To-do list was not found.</response>
+	[HttpPut("{listId}")]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> PostTodoListAsync(
+		[FromRoute] string listId, [FromBody] TodoListCreateDto dto)
+	{
+		bool result = await _todoListsService.EditAsync(listId, dto);
+		return result ? NoContent() : NotFound();
+	}
+
+	/// <summary>
+	/// Deletes a to-do list.
+	/// </summary>
+	/// <response code="204">Success.</response>
+	/// <response code="204">To-do list was not found.</response>
+	[HttpDelete("{listId}")]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> DeleteTodoListAsync([FromRoute] string listId)
+	{
+		bool result = await _todoListsService.DeleteAsync(listId);
+		return result ? NoContent() : NotFound();
+	}
 }
