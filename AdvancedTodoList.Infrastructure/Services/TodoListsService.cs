@@ -25,14 +25,11 @@ public class TodoListsService(ApplicationDbContext dbContext) : ITodoListsServic
 	/// </returns>
 	public async Task<TodoListGetByIdDto?> GetByIdAsync(string id)
 	{
-		var list = await _dbContext.TodoLists
+		return await _dbContext.TodoLists
 			.AsNoTracking()
 			.Where(x => x.Id == id)
+			.ProjectToType<TodoListGetByIdDto>()
 			.FirstOrDefaultAsync();
-		// To-do list does not exist - return null
-		if (list == null) return null;
-
-		return list.Adapt<TodoListGetByIdDto>();
 	}
 
 	/// <summary>
