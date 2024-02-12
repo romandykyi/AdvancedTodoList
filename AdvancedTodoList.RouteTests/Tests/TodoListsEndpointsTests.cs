@@ -127,7 +127,7 @@ public class TodoListsEndpointsTests : RouteTest
 
 		// Assert that response indicates success
 		result.EnsureSuccessStatusCode();
-		// Assert that edit was called
+		// Assert that delete was called
 		await WebApplicationFactory.TodoListsService
 			.Received()
 			.DeleteAsync(testId);
