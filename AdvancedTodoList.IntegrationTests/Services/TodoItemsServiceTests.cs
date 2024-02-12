@@ -6,6 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 
+/// <summary>
+/// Tests for endpoints 'api/todo'
+/// </summary>
 public class TodoItemsServiceTests : IntegrationTest
 {
 	private ITodoItemsService _service;
