@@ -10,7 +10,7 @@ namespace AdvancedTodoList.Infrastructure.Services;
 /// </summary>
 public class EntityExistenceChecker(ApplicationDbContext dbContext) : IEntityExistenceChecker
 {
-	private ApplicationDbContext _dbContext = dbContext;
+	private readonly ApplicationDbContext _dbContext = dbContext;
 
 	/// <summary>
 	/// Asynchronously checks whether an entity of type <typeparamref name="TEntity"/> with an ID
