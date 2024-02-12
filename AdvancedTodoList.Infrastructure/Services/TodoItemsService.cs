@@ -15,6 +15,24 @@ public class TodoItemsService(ApplicationDbContext dbContext) : ITodoItemsServic
 	private readonly ApplicationDbContext _dbContext = dbContext;
 
 	/// <summary>
+	/// Retrieves a to-do list ID of the to-do list item.
+	/// </summary>
+	/// <param name="id">ID of the to-do list item.</param>
+	/// <returns>
+	/// A task representing the asynchronous operation. The task result contains
+	/// an ID of the to-do list which owns a to-do list item with the specified ID if it's found;
+	/// otherwise, returns <see langword="null"/>.
+	/// </returns>
+	public async Task<string?> GetTodoListByIdAsync(int id)
+	{
+		return await _dbContext.TodoItems
+			.AsNoTracking()
+			.Where(x => x.Id == id)
+			.Select(x => x.TodoListId)
+			.FirstOrDefaultAsync();
+	}
+
+	/// <summary>
 	/// Retrieves a to-do list item by its ID asynchronously.
 	/// </summary>
 	/// <param name="id">The ID of the to-do list item to retrieve.</param>
@@ -25,14 +43,11 @@ public class TodoItemsService(ApplicationDbContext dbContext) : ITodoItemsServic
 	/// </returns>
 	public async Task<TodoItemGetByIdDto?> GetByIdAsync(int id)
 	{
-		var item = await _dbContext.TodoItems
+		return await _dbContext.TodoItems
 			.AsNoTracking()
 			.Where(x => x.Id == id)
+			.ProjectToType<TodoItemGetByIdDto>()
 			.FirstOrDefaultAsync();
-		// To-do item does not exist - return null
-		if (item == null) return null;
-
-		return item.Adapt<TodoItemGetByIdDto>();
 	}
 
 	/// <summary>

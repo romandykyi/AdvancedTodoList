@@ -53,6 +53,29 @@ public class TodoItemsServiceTests : IntegrationTest
 	}
 
 	[Test]
+	public async Task GetTodoListByIdAsync_EntityExists_ReturnsCorrectEntity()
+	{
+		// Arrange: add test item to the DB
+		var testItem = await CreateTestItemAsync();
+
+		// Act: try to obtain a test item's DTO by its ID
+		string? result = await _service.GetTodoListByIdAsync(testItem.Id);
+
+		// Assert that returned ID matches
+		Assert.That(result, Is.EqualTo(testItem.TodoListId));
+	}
+
+	[Test]
+	public async Task GetTodoListByIdAsync_EntityDoesNotExist_ReturnsNull()
+	{
+		// Act: try to obtain a test item with non-existent ID
+		var result = await _service.GetTodoListByIdAsync(-1);
+
+		// Assert that null is returned
+		Assert.That(result, Is.Null);
+	}
+
+	[Test]
 	public async Task GetByIdAsync_EntityExists_ReturnsCorrectEntity()
 	{
 		// Arrange: add test item to the DB

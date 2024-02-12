@@ -9,6 +9,17 @@ namespace AdvancedTodoList.Core.Services;
 public interface ITodoItemsService
 {
 	/// <summary>
+	/// Retrieves a to-do list ID of the to-do list item.
+	/// </summary>
+	/// <param name="id">ID of the to-do list item.</param>
+	/// <returns>
+	/// A task representing the asynchronous operation. The task result contains
+	/// an ID of the to-do list which owns a to-do list item with the specified ID if it's found;
+	/// otherwise, returns <see langword="null"/>.
+	/// </returns>
+	public Task<string?> GetTodoListByIdAsync(int id);
+
+	/// <summary>
 	/// Retrieves a to-do list item by its ID asynchronously.
 	/// </summary>
 	/// <param name="id">The ID of the to-do list item to retrieve.</param>
