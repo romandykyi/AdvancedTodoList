@@ -9,19 +9,6 @@ namespace AdvancedTodoList.Core.Services;
 public interface ITodoListsService
 {
 	/// <summary>
-	/// Retrieves to-do list items of the list with the specified ID.
-	/// </summary>
-	/// <remarks>
-	/// Does not throw exceptions if ID is invalid.
-	/// </remarks>
-	/// <param name="id">The ID of the to-do list which items will be retrieved.</param>
-	/// <returns>
-	/// A task representing the asynchronous operation. 
-	/// The task result contains a collection of <see cref="TodoItemPreviewDto"/> objects.
-	/// </returns>
-	public Task<IEnumerable<TodoItemPreviewDto>> GetItemsOfListAsync(string id);
-
-	/// <summary>
 	/// Retrieves a to-do list by its ID asynchronously.
 	/// </summary>
 	/// <param name="id">The ID of the to-do list to retrieve.</param>

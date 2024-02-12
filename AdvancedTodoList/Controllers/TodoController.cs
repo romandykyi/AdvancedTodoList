@@ -98,7 +98,7 @@ public class TodoController(
 		if (!await _existenceChecker.ExistsAsync<TodoList, string>(listId)) 
 			return NotFound();
 
-		return Ok(await _todoListsService.GetItemsOfListAsync(listId));
+		return Ok(await _todoItemsService.GetItemsOfListAsync(listId));
 	}
 
 	/// <summary>

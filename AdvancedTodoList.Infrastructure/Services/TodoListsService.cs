@@ -15,25 +15,6 @@ public class TodoListsService(ApplicationDbContext dbContext) : ITodoListsServic
 	private readonly ApplicationDbContext _dbContext = dbContext;
 
 	/// <summary>
-	/// Retrieves to-do list items of the list with the specified ID.
-	/// </summary>
-	/// <remarks>
-	/// Does not throw exceptions if ID is invalid.
-	/// </remarks>
-	/// <param name="id">The ID of the to-do list which items will be retrieved.</param>
-	/// <returns>
-	/// A task representing the asynchronous operation. 
-	/// The task result contains a collection of <see cref="TodoItemPreviewDto"/> objects.
-	/// </returns>
-	public async Task<IEnumerable<TodoItemPreviewDto>> GetItemsOfListAsync(string id)
-	{
-		return await _dbContext.TodoItems
-			.Where(x => x.TodoListId == id)
-			.ProjectToType<TodoItemPreviewDto>()
-			.ToListAsync();
-	}
-
-	/// <summary>
 	/// Retrieves a to-do list by its ID asynchronously.
 	/// </summary>
 	/// <param name="id">The ID of the to-do list to retrieve.</param>

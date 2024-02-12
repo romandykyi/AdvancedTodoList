@@ -26,7 +26,7 @@ public class TodoItemsEndpointsTests : RouteTest
 		WebApplicationFactory.EntityExistenceChecker
 			.ExistsAsync<TodoList, string>(testListId)
 			.Returns(true);
-		WebApplicationFactory.TodoListsService
+		WebApplicationFactory.TodoItemsService
 			.GetItemsOfListAsync(testListId)
 			.Returns(collection);
 		using HttpClient client = WebApplicationFactory.CreateClient();

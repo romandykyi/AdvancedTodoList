@@ -56,6 +56,40 @@ public class TodoItemsServiceTests : IntegrationTest
 	}
 
 	[Test]
+	public async Task GetItemsOfListAsync_ListExists_ReturnsEmptyCollection()
+	{
+		// Arrange
+		var list = await CreateTestListAsync();
+		var fakeList = await CreateTestListAsync();
+		TodoItem[] items =
+		[
+			new TodoItem() { Name = "A", Description = "1", DeadlineDate = null, State = TodoItemState.Active, TodoListId = list.Id },
+			new TodoItem() { Name = "B", Description = "2", DeadlineDate = DateTime.UtcNow, State = TodoItemState.Skipped, TodoListId = list.Id },
+			new TodoItem() { Name = "C", Description = "3", DeadlineDate = null, State = TodoItemState.Completed, TodoListId = list.Id },
+		];
+		DbContext.TodoItems.AddRange(items);
+		// Add one "fake" item
+		TodoItem fakeItem = new() { Name = "Fake", Description = "", DeadlineDate = null, State = TodoItemState.Active, TodoListId = fakeList.Id };
+		await DbContext.SaveChangesAsync();
+
+		// Act
+		var result = await _service.GetItemsOfListAsync(list.Id);
+
+		// Assert
+		Assert.That(result.Select(x => x.Id), Is.EquivalentTo(items.Select(x => x.Id)));
+	}
+
+	[Test]
+	public async Task GetItemsOfListAsync_WrongId_ReturnsEmptyCollection()
+	{
+		// Act
+		var result = await _service.GetItemsOfListAsync("_");
+
+		// Assert
+		Assert.That(result, Is.Empty);
+	}
+
+	[Test]
 	public async Task GetTodoListByIdAsync_EntityExists_ReturnsCorrectEntity()
 	{
 		// Arrange: add test item to the DB
