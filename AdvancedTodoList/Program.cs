@@ -43,6 +43,7 @@ builder.Services.AddIdentityCore<ApplicationUser>()
 // Register application services
 builder.Services.AddScoped<ITodoListsService, TodoListsService>();
 builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
+builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
 
 var app = builder.Build();
 

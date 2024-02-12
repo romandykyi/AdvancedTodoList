@@ -6,7 +6,7 @@ namespace AdvancedTodoList.Core.Models.TodoLists;
 /// <summary>
 /// Represents a to-do list entity.
 /// </summary>
-public class TodoList
+public class TodoList : IEntity<string>
 {
     /// <summary>
     /// An unique identifier for the to-do list.
