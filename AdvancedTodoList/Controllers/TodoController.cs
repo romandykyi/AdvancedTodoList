@@ -114,10 +114,11 @@ public class TodoController(
 	public async Task<IActionResult> GetTodoItemByIdAsync(
 		[FromRoute] string listId, [FromRoute] int itemId)
 	{
-		if (!await CheckListIdAsync(listId, itemId)) return NotFound();
-
 		var item = await _todoItemsService.GetByIdAsync(itemId);
-		return item != null ? Ok(item) : NotFound();
+		// Check if item exists and has valid to-do list ID
+		if (item == null || item.TodoListId != listId) return NotFound();
+
+		return Ok(item);
 	}
 
 	/// <summary>
@@ -158,6 +159,24 @@ public class TodoController(
 		if (!await CheckListIdAsync(listId, itemId)) return NotFound();
 
 		bool result = await _todoItemsService.EditAsync(itemId, dto);
+		return result ? NoContent() : NotFound();
+	}
+
+	/// <summary>
+	/// Updates a to-do list item's state.
+	/// </summary>
+	/// <response code="204">Success.</response>
+	/// <response code="404">To-do list item was not found.</response>
+	[HttpPut("{listId}/items/{itemId}/state")]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> PutTodoItemStateAsync(
+		[FromRoute] string listId, [FromRoute] int itemId,
+		[FromBody] TodoItemUpdateStateDto dto)
+	{
+		if (!await CheckListIdAsync(listId, itemId)) return NotFound();
+
+		bool result = await _todoItemsService.UpdateStateAsync(itemId, dto);
 		return result ? NoContent() : NotFound();
 	}
 

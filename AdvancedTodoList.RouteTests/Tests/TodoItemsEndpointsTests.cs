@@ -69,9 +69,6 @@ public class TodoItemsEndpointsTests : RouteTest
 		TodoItemGetByIdDto testDto = new(testItemId, testListId, "Test todo item", "...", null, TodoItemState.Active);
 
 		WebApplicationFactory.TodoItemsService
-			.GetTodoListByIdAsync(testItemId)
-			.Returns(testListId);
-		WebApplicationFactory.TodoItemsService
 			.GetByIdAsync(testItemId)
 			.Returns(testDto);
 		using HttpClient client = WebApplicationFactory.CreateClient();
@@ -202,10 +199,9 @@ public class TodoItemsEndpointsTests : RouteTest
 		int testItemId = 891349;
 		TodoItemCreateDto dto = new("Do nothing for entire day", "...", DateTime.UtcNow);
 
-		TodoItemGetByIdDto testDto = new(testItemId, "WrongListId", "Test todo item", "...", null, TodoItemState.Active);
 		WebApplicationFactory.TodoItemsService
-			.GetByIdAsync(testItemId)
-			.Returns(testDto);
+			.GetTodoListByIdAsync(testItemId)
+			.Returns("WrongId");
 		using HttpClient client = WebApplicationFactory.CreateClient();
 
 		// Act: send the request
@@ -224,12 +220,85 @@ public class TodoItemsEndpointsTests : RouteTest
 		TodoItemCreateDto dto = new("New name", "New description", null);
 
 		WebApplicationFactory.TodoItemsService
+			.GetTodoListByIdAsync(testItemId)
+			.Returns(testListId);
+		WebApplicationFactory.TodoItemsService
 			.EditAsync(testItemId, dto)
 			.Returns(false);
 		using HttpClient client = WebApplicationFactory.CreateClient();
 
 		// Act: send the request
 		var result = await client.PutAsJsonAsync($"api/todo/{testListId}/items/{testItemId}", dto);
+
+		// Assert that response code is 404
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+	}
+
+	[Test]
+	public async Task PutTodoItemState_ElementExists_Succeeds()
+	{
+		// Arrange
+		string testListId = "TestId";
+		int testItemId = 891349;
+		TodoItemUpdateStateDto dto = new(TodoItemState.Completed);
+
+		WebApplicationFactory.TodoItemsService
+			.GetTodoListByIdAsync(testItemId)
+			.Returns(testListId);
+		WebApplicationFactory.TodoItemsService
+			.UpdateStateAsync(testItemId, dto)
+			.Returns(true);
+		using HttpClient client = WebApplicationFactory.CreateClient();
+
+		// Act: send the request
+		var result = await client.PutAsJsonAsync($"api/todo/{testListId}/items/{testItemId}/state", dto);
+
+		// Assert that response indicates success
+		result.EnsureSuccessStatusCode();
+		// Assert that edit was called
+		await WebApplicationFactory.TodoItemsService
+			.Received()
+			.UpdateStateAsync(testItemId, dto);
+	}
+
+	[Test]
+	public async Task PutTodoItemState_WrongTodoListId_Returns404()
+	{
+		// Arrange
+		string testListId = "TestId";
+		int testItemId = 891349;
+		TodoItemUpdateStateDto dto = new(TodoItemState.Skipped);
+
+		WebApplicationFactory.TodoItemsService
+			.GetTodoListByIdAsync(testItemId)
+			.Returns("WrongId");
+		using HttpClient client = WebApplicationFactory.CreateClient();
+
+		// Act: send the request
+		var result = await client.PutAsJsonAsync($"api/todo/{testListId}/items/{testItemId}/state", dto);
+
+		// Assert that response code is 404
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+	}
+
+	[Test]
+	public async Task PutTodoItemState_ElementDoesNotExist_Returns404()
+	{
+		// Arrange
+		string testListId = "TestId";
+		int testItemId = 12412;
+		TodoItemUpdateStateDto dto = new(TodoItemState.Skipped);
+
+		WebApplicationFactory.TodoItemsService
+			.GetTodoListByIdAsync(testItemId)
+			.Returns(testListId);
+		WebApplicationFactory.TodoItemsService
+			.UpdateStateAsync(testItemId, dto)
+			.Returns(false);
+		using HttpClient client = WebApplicationFactory.CreateClient();
+
+		// Act: send the request
+		var result = await client.PutAsJsonAsync($"api/todo/{testListId}/items/{testItemId}/state", dto);
 
 		// Assert that response code is 404
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
@@ -269,6 +338,9 @@ public class TodoItemsEndpointsTests : RouteTest
 		int testItemId = 504030;
 
 		WebApplicationFactory.TodoItemsService
+			.GetTodoListByIdAsync(testItemId)
+			.Returns(testListId);
+		WebApplicationFactory.TodoItemsService
 			.DeleteAsync(testItemId)
 			.Returns(false);
 		using HttpClient client = WebApplicationFactory.CreateClient();
@@ -287,10 +359,9 @@ public class TodoItemsEndpointsTests : RouteTest
 		string testListId = "TestId";
 		int testItemId = 504030;
 
-		TodoItemGetByIdDto testDto = new(testItemId, "WrongListId", "Test todo item", "...", null, TodoItemState.Active);
 		WebApplicationFactory.TodoItemsService
-			.GetByIdAsync(testItemId)
-			.Returns(testDto);
+			.GetTodoListByIdAsync(testItemId)
+			.Returns("WrongId");
 		using HttpClient client = WebApplicationFactory.CreateClient();
 
 		// Act: send the request
