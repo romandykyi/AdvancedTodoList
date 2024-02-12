@@ -104,6 +104,25 @@ public class TodoItemsServiceTests : IntegrationTest
 	}
 
 	[Test]
+	public async Task CreateAsync_AddsEntityToDb()
+	{
+		// Arrange
+		var list = await CreateTestListAsync();
+		TodoItemCreateDto dto = new("Test entity", "...", null);
+
+		// Act: call the method
+		var result = await _service.CreateAsync(list.Id, dto);
+
+		// Assert that entity was added to the DB
+		var foundEntity = await DbContext.TodoItems
+			.AsNoTracking()
+			.Where(x => x.Id == result.Id)
+			.SingleOrDefaultAsync();
+		Assert.That(foundEntity, Is.Not.Null);
+		Assert.That(foundEntity.TodoListId, Is.EqualTo(list.Id));
+	}
+
+	[Test]
 	public async Task EditAsync_EntityExists_Succeeds()
 	{
 		// Arrange: add test item to the DB

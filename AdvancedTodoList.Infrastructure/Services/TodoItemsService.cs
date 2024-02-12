@@ -62,6 +62,7 @@ public class TodoItemsService(ApplicationDbContext dbContext) : ITodoItemsServic
 	public async Task<TodoItem> CreateAsync(string todoListId, TodoItemCreateDto dto)
 	{
 		var item = dto.Adapt<TodoItem>();
+		item.TodoListId = todoListId;
 		_dbContext.TodoItems.Add(item);
 		await _dbContext.SaveChangesAsync();
 		return item;
