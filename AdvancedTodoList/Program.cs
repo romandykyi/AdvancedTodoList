@@ -1,7 +1,10 @@
+using AdvancedTodoList.Core.Mapping;
 using AdvancedTodoList.Core.Models;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Core.Validation;
 using AdvancedTodoList.Infrastructure.Data;
 using AdvancedTodoList.Infrastructure.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -44,6 +47,11 @@ builder.Services.AddIdentityCore<ApplicationUser>()
 builder.Services.AddScoped<ITodoListsService, TodoListsService>();
 builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
 builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
+
+// Add fluent validation
+builder.Services.AddValidatorsFromAssemblyContaining<TodoItemCreateDtoValidator>();
+// Apply mapping settings
+MappingGlobalSettings.Apply();
 
 var app = builder.Build();
 
