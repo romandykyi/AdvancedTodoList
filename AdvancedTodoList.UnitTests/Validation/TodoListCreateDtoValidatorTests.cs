@@ -1,22 +1,20 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Validation;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace AdvancedTodoList.UnitTests.Validation;
 
 [TestFixture]
-public class TodoItemCreateDtoValidatorTests
+public class TodoListCreateDtoValidatorTests
 {
 	private const string ValidName = "Valid";
 	private const string ValidDescription = "Valid description";
-	private static DateTime? ValidDeadline => DateTime.UtcNow + TimeSpan.FromDays(14);
 
 	[Test]
 	public void Dto_ValidData_Succeeds()
 	{
 		// Arrange
-		TodoItemCreateDtoValidator validator = new();
-		TodoItemCreateDto dto = new(ValidName, ValidDescription, ValidDeadline);
+		TodoListCreateDtoValidator validator = new();
+		TodoListCreateDto dto = new(ValidName, ValidDescription);
 
 		// Act
 		var result = validator.TestValidate(dto);
@@ -33,8 +31,8 @@ public class TodoItemCreateDtoValidatorTests
 	public void Name_Empty_ReturnsPropertyRequiredError(string testCase)
 	{
 		// Arrange
-		TodoItemCreateDtoValidator validator = new();
-		TodoItemCreateDto dto = new(testCase, ValidDescription, ValidDeadline);
+		TodoListCreateDtoValidator validator = new();
+		TodoListCreateDto dto = new(testCase, ValidDescription);
 
 		// Act
 		var result = validator.TestValidate(dto);
@@ -48,8 +46,8 @@ public class TodoItemCreateDtoValidatorTests
 	public void Description_Null_ReturnsPropertyRequiredError()
 	{
 		// Arrange
-		TodoItemCreateDtoValidator validator = new();
-		TodoItemCreateDto dto = new(ValidName, null!, ValidDeadline);
+		TodoListCreateDtoValidator validator = new();
+		TodoListCreateDto dto = new(ValidName, null!);
 
 		// Act
 		var result = validator.TestValidate(dto);
@@ -66,28 +64,13 @@ public class TodoItemCreateDtoValidatorTests
 	public void Description_EmptyAndNotNull_IsAllowed(string testCase)
 	{
 		// Arrange
-		TodoItemCreateDtoValidator validator = new();
-		TodoItemCreateDto dto = new(ValidName, testCase, ValidDeadline);
+		TodoListCreateDtoValidator validator = new();
+		TodoListCreateDto dto = new(ValidName, testCase);
 
 		// Act
 		var result = validator.TestValidate(dto);
 
 		// Assert
 		result.ShouldNotHaveValidationErrorFor(x => x.Description);
-	}
-
-	[Test]
-	public void DeadlineDate_BeforeCurrentDate_ReturnsPropertyOutOfRangeError()
-	{
-		// Arrange
-		TodoItemCreateDtoValidator validator = new();
-		TodoItemCreateDto dto = new(ValidName, ValidDescription, DateTime.UtcNow - TimeSpan.FromDays(1));
-
-		// Act
-		var result = validator.TestValidate(dto);
-
-		// Assert
-		result.ShouldHaveValidationErrorFor(x => x.DeadlineDate)
-			.WithErrorCode(ValidationErrorCodes.PropertyOutOfRange);
 	}
 }
