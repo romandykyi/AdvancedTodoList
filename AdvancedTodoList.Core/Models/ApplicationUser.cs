@@ -2,6 +2,6 @@
 
 namespace AdvancedTodoList.Core.Models;
 
-public class ApplicationUser : IdentityUser
+public class ApplicationUser : IdentityUser, IEntity<string>
 {
 }

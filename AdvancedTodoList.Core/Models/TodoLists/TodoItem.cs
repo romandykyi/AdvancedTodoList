@@ -6,27 +6,27 @@ namespace AdvancedTodoList.Core.Models.TodoLists;
 /// <summary>
 /// Represents a to-do list item entity.
 /// </summary>
-public class TodoItem
+public class TodoItem : IEntity<int>
 {
-    /// <summary>
-    /// An unique identifier for the to-do list item.
-    /// </summary>
-    [Key]
-    public int Id { get; set; }
-    /// <summary>
-    /// Name (title) of the to-do item.
-    /// </summary>
-    [MaxLength(NameMaxLength)]
-    public string Name { get; set; } = null!;
-    /// <summary>
-    /// Description of the to-do item.
-    /// </summary>
-    [MaxLength(DescriptionMaxLength)]
-    public string Description { get; set; } = null!;
-    /// <summary>
-    /// Current state of the to-do item.
-    /// </summary>
-    public TodoItemState State { get; set; }
+	/// <summary>
+	/// An unique identifier for the to-do list item.
+	/// </summary>
+	[Key]
+	public int Id { get; set; }
+	/// <summary>
+	/// Name (title) of the to-do item.
+	/// </summary>
+	[MaxLength(NameMaxLength)]
+	public string Name { get; set; } = null!;
+	/// <summary>
+	/// Description of the to-do item.
+	/// </summary>
+	[MaxLength(DescriptionMaxLength)]
+	public string Description { get; set; } = null!;
+	/// <summary>
+	/// Current state of the to-do item.
+	/// </summary>
+	public TodoItemState State { get; set; }
 	/// <summary>
 	/// Deadline date for the todo item. Can be null.
 	/// </summary>
@@ -42,15 +42,15 @@ public class TodoItem
 	/// Maximum allowed length of <see cref="Name"/>.
 	/// </summary>
 	public const int NameMaxLength = 100;
-    /// <summary>
-    /// Maximum allowed length of <see cref="Description"/>.
-    /// </summary>
-    public const int DescriptionMaxLength = 10_000;
+	/// <summary>
+	/// Maximum allowed length of <see cref="Description"/>.
+	/// </summary>
+	public const int DescriptionMaxLength = 10_000;
 
-    /// <summary>
-    /// To-do list associated with this to-do item.
-    /// </summary>
-    public TodoList TodoList { get; set; } = null!;
+	/// <summary>
+	/// To-do list associated with this to-do item.
+	/// </summary>
+	public TodoList TodoList { get; set; } = null!;
 }
 
 /// <summary>

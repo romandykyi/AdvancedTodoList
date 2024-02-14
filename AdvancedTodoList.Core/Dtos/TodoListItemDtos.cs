@@ -1,0 +1,30 @@
+﻿using AdvancedTodoList.Core.Models.TodoLists;
+
+namespace AdvancedTodoList.Core.Dtos;
+
+/// <summary>
+/// DTO for creating/editing a to-do list item.
+/// </summary>
+public record TodoItemCreateDto(string Name, string Description, DateTime? DeadlineDate);
+
+/// <summary>
+/// DTO for changing the state of a to-do list item.
+/// </summary>
+public record TodoItemUpdateStateDto(TodoItemState State);
+
+/// <summary>
+/// DTO for a full view of a to-do list item.
+/// </summary>
+public record TodoItemGetByIdDto(
+	int Id, string TodoListId, string Name,
+	string Description, DateTime? DeadlineDate,
+	TodoItemState State
+	);
+
+/// <summary>
+/// DTO for a partial view of a to-do list item.
+/// </summary>
+public record TodoItemPreviewDto(
+	int Id, string TodoListId, string Name,
+	DateTime? DeadlineDate, TodoItemState State
+	);

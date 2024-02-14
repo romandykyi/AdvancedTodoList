@@ -6,20 +6,20 @@ namespace AdvancedTodoList.Core.Models.TodoLists;
 /// <summary>
 /// Represents a to-do list entity.
 /// </summary>
-public class TodoList
+public class TodoList : IEntity<string>
 {
-    /// <summary>
-    /// An unique identifier for the to-do list.
-    /// </summary>
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public string Id { get; set; } = null!;
+	/// <summary>
+	/// An unique identifier for the to-do list.
+	/// </summary>
+	[Key]
+	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+	public string Id { get; set; } = null!;
 
-    /// <summary>
-    /// Name (title) of the to-do list.
-    /// </summary>
-    [MaxLength(NameMaxLength)]
-    public string Name { get; set; } = null!;
+	/// <summary>
+	/// Name (title) of the to-do list.
+	/// </summary>
+	[MaxLength(NameMaxLength)]
+	public string Name { get; set; } = null!;
 	/// <summary>
 	/// Description of the to-do list.
 	/// </summary>
