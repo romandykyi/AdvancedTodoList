@@ -70,6 +70,20 @@ public class TodoListsEndpointsTests : RouteTest
 	}
 
 	[Test]
+	public async Task PostTodoList_InvalidDto_Returns400()
+	{
+		// Arrange
+		TodoListCreateDto invalidDto = new(string.Empty, string.Empty);
+		using HttpClient client = WebApplicationFactory.CreateClient();
+
+		// Act: send the request
+		var result = await client.PostAsJsonAsync("api/todo", invalidDto);
+
+		// Assert that response code is 400
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+	}
+
+	[Test]
 	public async Task PutTodoList_ElementExists_Succeeds()
 	{
 		// Arrange
@@ -90,6 +104,21 @@ public class TodoListsEndpointsTests : RouteTest
 		await WebApplicationFactory.TodoListsService
 			.Received()
 			.EditAsync(testId, dto);
+	}
+
+	[Test]
+	public async Task PutTodoList_InvalidDto_Returns400()
+	{
+		// Arrange
+		string testId = "TestId";
+		TodoListCreateDto invalidDto = new(string.Empty, string.Empty);
+		using HttpClient client = WebApplicationFactory.CreateClient();
+
+		// Act: send the request
+		var result = await client.PutAsJsonAsync($"api/todo/{testId}", invalidDto);
+
+		// Assert that response code is 400
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
 	}
 
 	[Test]

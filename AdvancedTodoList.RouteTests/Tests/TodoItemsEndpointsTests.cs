@@ -132,7 +132,7 @@ public class TodoItemsEndpointsTests : RouteTest
 		WebApplicationFactory.TodoItemsService
 			.CreateAsync(Arg.Any<string>(), Arg.Any<TodoItemCreateDto>())
 			.Returns(new TodoItem() { Id = 13480 });
-		TodoItemCreateDto dto = new("Item", "...", DateTime.UtcNow);
+		TodoItemCreateDto dto = new("Item", "...", DateTime.MaxValue);
 		using HttpClient client = WebApplicationFactory.CreateClient();
 
 		// Act: send the request
@@ -147,6 +147,21 @@ public class TodoItemsEndpointsTests : RouteTest
 	}
 
 	[Test]
+	public async Task PostTodoItem_InvalidDto_Returns400()
+	{
+		// Arrange
+		string listId = "ListId";
+		TodoItemCreateDto invalidDto = new(string.Empty, string.Empty, DateTime.MinValue);
+		using HttpClient client = WebApplicationFactory.CreateClient();
+
+		// Act: send the request
+		var result = await client.PostAsJsonAsync($"api/todo/{listId}/items", invalidDto);
+
+		// Assert that response code is 400
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+	}
+
+	[Test]
 	public async Task PostTodoItem_TodoListDoesNotExist_Returns404()
 	{
 		// Arrange
@@ -154,7 +169,7 @@ public class TodoItemsEndpointsTests : RouteTest
 		WebApplicationFactory.EntityExistenceChecker
 			.ExistsAsync<TodoList, string>(listId)
 			.Returns(false);
-		TodoItemCreateDto dto = new("Item", "...", DateTime.UtcNow);
+		TodoItemCreateDto dto = new("Item", "...", DateTime.MaxValue);
 		using HttpClient client = WebApplicationFactory.CreateClient();
 
 		// Act: send the request
@@ -170,7 +185,7 @@ public class TodoItemsEndpointsTests : RouteTest
 		// Arrange
 		string testListId = "TestId";
 		int testItemId = 891349;
-		TodoItemCreateDto dto = new("Do nothing for entire day", "...", DateTime.UtcNow);
+		TodoItemCreateDto dto = new("Do nothing for entire day", "...", DateTime.MaxValue);
 
 		WebApplicationFactory.TodoItemsService
 			.GetTodoListByIdAsync(testItemId)
@@ -192,12 +207,28 @@ public class TodoItemsEndpointsTests : RouteTest
 	}
 
 	[Test]
+	public async Task PutTodoItem_InvalidDto_Returns400()
+	{
+		// Arrange
+		string testListId = "TestId";
+		int testItemId = 891349;
+		TodoItemCreateDto invalidDto = new(string.Empty, string.Empty, DateTime.MinValue);
+		using HttpClient client = WebApplicationFactory.CreateClient();
+
+		// Act: send the request
+		var result = await client.PutAsJsonAsync($"api/todo/{testListId}/items/{testItemId}", invalidDto);
+
+		// Assert that response code is 400
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+	}
+
+	[Test]
 	public async Task PutTodoItem_WrongTodoListId_Returns404()
 	{
 		// Arrange
 		string testListId = "TestId";
 		int testItemId = 891349;
-		TodoItemCreateDto dto = new("Do nothing for entire day", "...", DateTime.UtcNow);
+		TodoItemCreateDto dto = new("Do nothing for entire day", "...", DateTime.MaxValue);
 
 		WebApplicationFactory.TodoItemsService
 			.GetTodoListByIdAsync(testItemId)
@@ -259,6 +290,23 @@ public class TodoItemsEndpointsTests : RouteTest
 		await WebApplicationFactory.TodoItemsService
 			.Received()
 			.UpdateStateAsync(testItemId, dto);
+	}
+
+	[Test]
+	public async Task PutTodoItemState_InvalidDto_Returns400()
+	{
+		// Arrange
+		string testListId = "TestId";
+		int testItemId = 891349;
+		TodoItemUpdateStateDto dto = new((TodoItemState)213);
+
+		using HttpClient client = WebApplicationFactory.CreateClient();
+
+		// Act: send the request
+		var result = await client.PutAsJsonAsync($"api/todo/{testListId}/items/{testItemId}/state", dto);
+
+		// Assert that response code is 400
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
 	}
 
 	[Test]
