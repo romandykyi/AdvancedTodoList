@@ -1,7 +1,6 @@
 ﻿using AdvancedTodoList.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Testcontainers.MsSql;
 
 namespace AdvancedTodoList.IntegrationTests;
 

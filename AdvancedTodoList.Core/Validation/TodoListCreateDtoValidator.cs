@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using AdvancedTodoList.Core.Dtos;
+﻿using AdvancedTodoList.Core.Dtos;
+using FluentValidation;
 
 namespace AdvancedTodoList.Core.Validation;
 

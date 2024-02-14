@@ -1,6 +1,5 @@
 ﻿using AdvancedTodoList.Core.Mapping;
 using Mapster;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace AdvancedTodoList.UnitTests.Mapping;
 

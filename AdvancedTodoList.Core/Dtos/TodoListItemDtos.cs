@@ -16,7 +16,7 @@ public record TodoItemUpdateStateDto(TodoItemState State);
 /// DTO for a full view of a to-do list item.
 /// </summary>
 public record TodoItemGetByIdDto(
-	int Id, string TodoListId, string Name, 
+	int Id, string TodoListId, string Name,
 	string Description, DateTime? DeadlineDate,
 	TodoItemState State
 	);

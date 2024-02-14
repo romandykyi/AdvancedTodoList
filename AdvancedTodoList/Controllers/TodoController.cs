@@ -95,7 +95,7 @@ public class TodoController(
 	public async Task<IActionResult> GetListItemsAsync([FromRoute] string listId)
 	{
 		// Check if list exists
-		if (!await _existenceChecker.ExistsAsync<TodoList, string>(listId)) 
+		if (!await _existenceChecker.ExistsAsync<TodoList, string>(listId))
 			return NotFound();
 
 		return Ok(await _todoItemsService.GetItemsOfListAsync(listId));
