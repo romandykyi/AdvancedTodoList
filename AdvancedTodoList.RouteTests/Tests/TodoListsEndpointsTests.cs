@@ -54,7 +54,7 @@ public class TodoListsEndpointsTests : RouteTest
 		// Arrange
 		WebApplicationFactory.TodoListsService
 			.CreateAsync(Arg.Any<TodoListCreateDto>())
-			.Returns(new TodoList() { Id = "TestID" });
+			.Returns(new TodoList() { Id = "TestID", Name = "Test", Description = "Ok" });
 		TodoListCreateDto dto = new("Test", string.Empty);
 		using HttpClient client = WebApplicationFactory.CreateClient();
 

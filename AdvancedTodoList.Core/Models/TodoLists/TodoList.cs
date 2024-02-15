@@ -19,12 +19,12 @@ public class TodoList : IEntity<string>
 	/// Name (title) of the to-do list.
 	/// </summary>
 	[MaxLength(NameMaxLength)]
-	public string Name { get; set; } = null!;
+	public required string Name { get; set; } = null!;
 	/// <summary>
 	/// Description of the to-do list.
 	/// </summary>
 	[MaxLength(DescriptionMaxLength)]
-	public string Description { get; set; } = null!;
+	public required string Description { get; set; } = null!;
 
 	/// <summary>
 	/// Maximum allowed length of <see cref="Name"/>.

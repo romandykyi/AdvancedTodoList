@@ -131,7 +131,7 @@ public class TodoItemsEndpointsTests : RouteTest
 			.Returns(true);
 		WebApplicationFactory.TodoItemsService
 			.CreateAsync(Arg.Any<string>(), Arg.Any<TodoItemCreateDto>())
-			.Returns(new TodoItem() { Id = 13480 });
+			.Returns(new TodoItem() { Id = 13480, Name = "A", Description = "", DeadlineDate = DateTime.UtcNow });
 		TodoItemCreateDto dto = new("Item", "...", DateTime.MaxValue);
 		using HttpClient client = WebApplicationFactory.CreateClient();
 

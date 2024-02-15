@@ -17,12 +17,12 @@ public class TodoItem : IEntity<int>
 	/// Name (title) of the to-do item.
 	/// </summary>
 	[MaxLength(NameMaxLength)]
-	public string Name { get; set; } = null!;
+	public required string Name { get; set; } = null!;
 	/// <summary>
 	/// Description of the to-do item.
 	/// </summary>
 	[MaxLength(DescriptionMaxLength)]
-	public string Description { get; set; } = null!;
+	public required string Description { get; set; } = null!;
 	/// <summary>
 	/// Current state of the to-do item.
 	/// </summary>
@@ -30,7 +30,7 @@ public class TodoItem : IEntity<int>
 	/// <summary>
 	/// Deadline date for the todo item. Can be null.
 	/// </summary>
-	public DateTime? DeadlineDate { get; set; }
+	public required DateTime? DeadlineDate { get; set; }
 
 	/// <summary>
 	/// Foreign key referencing the associated to-do list.
