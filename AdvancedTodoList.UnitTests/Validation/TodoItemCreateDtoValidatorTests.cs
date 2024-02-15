@@ -1,4 +1,5 @@
 ﻿using AdvancedTodoList.Core.Dtos;
+using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Validation;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
@@ -45,6 +46,22 @@ public class TodoItemCreateDtoValidatorTests
 	}
 
 	[Test]
+	public void Name_TooLong_ReturnsPropertyTooLongError()
+	{
+		// Arrange
+		TodoItemCreateDtoValidator validator = new();
+		string longName = new('X', TodoItem.NameMaxLength + 1);
+		TodoItemCreateDto dto = new(longName, ValidDescription, ValidDeadline);
+
+		// Act
+		var result = validator.TestValidate(dto);
+
+		// Assert
+		result.ShouldHaveValidationErrorFor(x => x.Name)
+			.WithErrorCode(ValidationErrorCodes.PropertyTooLong);
+	}
+
+	[Test]
 	public void Description_Null_ReturnsPropertyRequiredError()
 	{
 		// Arrange
@@ -74,6 +91,22 @@ public class TodoItemCreateDtoValidatorTests
 
 		// Assert
 		result.ShouldNotHaveValidationErrorFor(x => x.Description);
+	}
+
+	[Test]
+	public void Description_TooLong_ReturnsPropertyTooLongError()
+	{
+		// Arrange
+		TodoItemCreateDtoValidator validator = new();
+		string longDescription = new('X', TodoItem.DescriptionMaxLength + 1);
+		TodoItemCreateDto dto = new(ValidName, longDescription, ValidDeadline);
+
+		// Act
+		var result = validator.TestValidate(dto);
+
+		// Assert
+		result.ShouldHaveValidationErrorFor(x => x.Description)
+			.WithErrorCode(ValidationErrorCodes.PropertyTooLong);
 	}
 
 	[Test]

@@ -1,4 +1,5 @@
 ﻿using AdvancedTodoList.Core.Dtos;
+using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Validation;
 
 namespace AdvancedTodoList.UnitTests.Validation;
@@ -43,6 +44,22 @@ public class TodoListCreateDtoValidatorTests
 	}
 
 	[Test]
+	public void Name_TooLong_ReturnsPropertyTooLongError()
+	{
+		// Arrange
+		TodoListCreateDtoValidator validator = new();
+		string longName = new('X', TodoList.NameMaxLength + 1);
+		TodoListCreateDto dto = new(longName, ValidDescription);
+
+		// Act
+		var result = validator.TestValidate(dto);
+
+		// Assert
+		result.ShouldHaveValidationErrorFor(x => x.Name)
+			.WithErrorCode(ValidationErrorCodes.PropertyTooLong);
+	}
+
+	[Test]
 	public void Description_Null_ReturnsPropertyRequiredError()
 	{
 		// Arrange
@@ -72,5 +89,21 @@ public class TodoListCreateDtoValidatorTests
 
 		// Assert
 		result.ShouldNotHaveValidationErrorFor(x => x.Description);
+	}
+
+	[Test]
+	public void Description_TooLong_ReturnsPropertyTooLongError()
+	{
+		// Arrange
+		TodoListCreateDtoValidator validator = new();
+		string longDescription = new('X', TodoList.DescriptionMaxLength + 1);
+		TodoListCreateDto dto = new(ValidName, longDescription);
+
+		// Act
+		var result = validator.TestValidate(dto);
+
+		// Assert
+		result.ShouldHaveValidationErrorFor(x => x.Description)
+			.WithErrorCode(ValidationErrorCodes.PropertyTooLong);
 	}
 }
