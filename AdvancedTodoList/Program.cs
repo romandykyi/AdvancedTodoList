@@ -1,9 +1,11 @@
 using AdvancedTodoList.Core.Mapping;
 using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Core.Services.Auth;
 using AdvancedTodoList.Core.Validation;
 using AdvancedTodoList.Infrastructure.Data;
 using AdvancedTodoList.Infrastructure.Services;
+using AdvancedTodoList.Infrastructure.Services.Auth;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -79,6 +81,7 @@ builder.Services.AddIdentityCore<ApplicationUser>()
 	.AddApiEndpoints();
 
 // Register application services
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITodoListsService, TodoListsService>();
 builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
 builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();

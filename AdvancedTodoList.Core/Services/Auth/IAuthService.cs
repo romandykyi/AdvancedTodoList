@@ -29,22 +29,21 @@ public interface IAuthService
 	/// <summary>
 	/// Refreshes the authentication token asynchronously.
 	/// </summary>
-	/// <param name="userId">ID of the caller.</param>
 	/// <param name="refreshDto">Data required for token refresh.</param>
 	/// <returns>
 	/// Returns a task representing the asynchronous operation,
 	/// containing a response with access and refresh tokens or null if authorization fails.
 	/// </returns>
-	Task<LogInResponse?> RefreshAsync(string userId, RefreshDto refreshDto);
+	Task<LogInResponse?> RefreshAsync(RefreshDto refreshDto);
 
 	/// <summary>
 	/// Logs a user out asynchronously by revoking a refresh token.
 	/// </summary>
 	/// <param name="userId">ID of the caller.</param>
-	/// <param name="revokeDto">Data required for logging out.</param>
+	/// <param name="logOutDto">Data required for logging out.</param>
 	/// <returns>
 	/// Returns a task representing the asynchronous operation,
 	/// indicating the success or failure of the operation.
 	/// </returns>
-	Task<bool> LogOutAsync(string userId, LogOutDto revokeDto);
+	Task<bool> LogOutAsync(string userId, LogOutDto logOutDto);
 }
