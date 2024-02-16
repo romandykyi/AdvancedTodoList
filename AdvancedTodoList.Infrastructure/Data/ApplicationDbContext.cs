@@ -1,4 +1,4 @@
-﻿using AdvancedTodoList.Core.Models;
+﻿using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -10,4 +10,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
 	public DbSet<TodoList> TodoLists { get; set; }
 	public DbSet<TodoItem> TodoItems { get; set; }
+	public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
 }

@@ -1,11 +1,10 @@
 using AdvancedTodoList.Core.Mapping;
-using AdvancedTodoList.Core.Models;
+using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Validation;
 using AdvancedTodoList.Infrastructure.Data;
 using AdvancedTodoList.Infrastructure.Services;
 using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -49,7 +48,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddAntiforgery(options => options.HeaderName = "X-XSRF-Token");
 
 // Configure auth
-string? jwtSecret = builder.Configuration["Auth:SecretKey"] ?? 
+string? jwtSecret = builder.Configuration["Auth:SecretKey"] ??
 	throw new InvalidOperationException("JWT secret is not configured");
 builder.Services.AddAuthentication()
 	.AddJwtBearer(options =>

@@ -16,7 +16,7 @@ public record LogInResponse(string AccessToken, int ExpirationSeconds, string Re
 public record RegisterDto(string Email, string UserName, string FirstName, string LastName, string Password);
 
 /// <summary>
-/// DTO for refreshing access token.
+/// DTO for refreshing an access token.
 /// </summary>
 public record RefreshDto(string AccessToken, string RefreshToken);
 
