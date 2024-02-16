@@ -10,11 +10,15 @@ public class RegisterResult
 	/// </summary>
 	public bool IsSuccess { get; private init; }
 	/// <summary>
-	/// Error message.
+	/// Error messages.
 	/// </summary>
-	public string? Error { get; private init; }
+	public IEnumerable<string> Errors { get; private init; }
 
-	private RegisterResult() { }
+	private RegisterResult(bool isSuccess, IEnumerable<string> errors) 
+	{
+		IsSuccess = isSuccess;
+		Errors = errors;
+	}
 
 	/// <summary>
 	/// Returns a result that reports success.
@@ -22,14 +26,14 @@ public class RegisterResult
 	/// <returns>
 	/// A result that reports success.
 	/// </returns>
-	public static RegisterResult Success() => new() { IsSuccess = true };
+	public static RegisterResult Success() => new(true, Array.Empty<string>());
 
 	/// <summary>
 	/// Returns a result that reports failure.
 	/// </summary>
-	/// <param name="error">Error message.</param>
+	/// <param name="errors">Error messages.</param>
 	/// <returns>
 	/// A result that reports failure.
 	/// </returns>
-	public static RegisterResult Failure(string error) => new() { IsSuccess = false, Error = error };
+	public static RegisterResult Failure(IEnumerable<string> errors) => new(false, errors);
 }
