@@ -5,9 +5,13 @@ using AdvancedTodoList.Core.Validation;
 using AdvancedTodoList.Infrastructure.Data;
 using AdvancedTodoList.Infrastructure.Services;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,14 +23,45 @@ builder.Services.AddControllers()
 		options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 	});
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+	options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+	{
+		In = ParameterLocation.Header,
+		Description = "Please enter access token (JWT)",
+		Name = "Authorization",
+		Type = SecuritySchemeType.ApiKey
+	});
+
+	var scheme = new OpenApiSecurityScheme
+	{
+		Reference = new OpenApiReference
+		{
+			Type = ReferenceType.SecurityScheme,
+			Id = "Bearer"
+		}
+	};
+
+	options.AddSecurityRequirement(new OpenApiSecurityRequirement { { scheme, Array.Empty<string>() } });
+});
 
 // Configure antiforgery
-builder.Services.AddAntiforgery(o => o.HeaderName = "X-XSRF-Token");
+builder.Services.AddAntiforgery(options => options.HeaderName = "X-XSRF-Token");
 
 // Configure auth
+string? jwtSecret = builder.Configuration["Auth:SecretKey"] ?? 
+	throw new InvalidOperationException("JWT secret is not configured");
 builder.Services.AddAuthentication()
-	.AddBearerToken(IdentityConstants.BearerScheme);
+	.AddJwtBearer(options =>
+	{
+		options.SaveToken = true;
+		options.TokenValidationParameters = new TokenValidationParameters
+		{
+			ValidIssuer = builder.Configuration["Auth:ValidIssuer"],
+			ValidAudience = builder.Configuration["Auth:ValidAudience"],
+			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
+		};
+	});
 builder.Services.AddAuthorizationBuilder();
 
 // Get connection string
