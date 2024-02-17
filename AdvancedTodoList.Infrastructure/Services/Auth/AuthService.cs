@@ -25,20 +25,6 @@ public class AuthService(
 	private readonly UserManager<ApplicationUser> _userManager = userManager;
 	private readonly IConfiguration _configuration = configuration;
 
-	private static IEnumerable<RegisterError> IdentityErrorsToRegisterErrors(IEnumerable<IdentityError> identityErrors)
-	{
-		foreach (var error in identityErrors)
-		{
-			// Determine the property which caused an error
-			string property = "$";
-			if (error.Code.Contains("Password")) property = "Password";
-			else if (error.Code.Contains("UserName")) property = "UserName";
-			else if (error.Code.Contains("Email")) property = "Email";
-
-			yield return new(property, error.Description);
-		}
-	}
-
 	/// <summary>
 	/// Logs a user in asynchronously.
 	/// </summary>
@@ -198,6 +184,7 @@ public class AuthService(
 		using RandomNumberGenerator rng = RandomNumberGenerator.Create();
 		int refreshTokenSize = _configuration.GetValue<int>("Auth:RefreshTokenSize");
 		byte[] refreshTokenBytes = new byte[refreshTokenSize];
+		rng.GetBytes(refreshTokenBytes);
 
 		// Set the expiration date and assign token to the user
 		int expirationDays = _configuration.GetValue<int>("Auth:RefreshTokenExpirationDays");
@@ -251,5 +238,19 @@ public class AuthService(
 
 		// Check if user owns the token and if it's still valid
 		return tokenEntity != null && DateTime.UtcNow < tokenEntity.ValidTo;
+	}
+
+	private static IEnumerable<RegisterError> IdentityErrorsToRegisterErrors(IEnumerable<IdentityError> identityErrors)
+	{
+		foreach (var error in identityErrors)
+		{
+			// Determine the property which caused an error
+			string property = "$";
+			if (error.Code.Contains("Password")) property = "Password";
+			else if (error.Code.Contains("UserName")) property = "UserName";
+			else if (error.Code.Contains("Email")) property = "Email";
+
+			yield return new(property, error.Description);
+		}
 	}
 }

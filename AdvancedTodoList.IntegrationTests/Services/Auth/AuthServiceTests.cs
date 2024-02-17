@@ -45,7 +45,7 @@ public class AuthServiceTests : IntegrationTest
 		{
 			UserId = user.Id,
 			ValidTo = expired ? DateTime.UtcNow - TimeSpan.FromDays(366) : DateTime.UtcNow + TimeSpan.FromDays(366),
-			Token = Guid.NewGuid().ToString()
+			Token = Guid.NewGuid().ToString().Replace('-', 'A')
 		};
 		DbContext.UserRefreshTokens.Add(token);
 		await DbContext.SaveChangesAsync();
@@ -127,6 +127,8 @@ public class AuthServiceTests : IntegrationTest
 			await DbContext.UserRefreshTokens
 			.AnyAsync(x => x.Token == response.RefreshToken && x.UserId == user.Id)
 			);
+		// Assert that refresh token is not a default base 64 string
+		Assert.That(Convert.FromBase64String(response.RefreshToken).All(x => x == 0), Is.False);
 
 #pragma warning restore NUnit2045 // Use Assert.Multiple
 	}
