@@ -18,7 +18,7 @@ public class TodoListsEndpointsTests : RouteTest
 		WebApplicationFactory.TodoListsService
 			.GetByIdAsync(testId)
 			.Returns(testDto);
-		using HttpClient client = WebApplicationFactory.CreateClient();
+		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
 		var result = await client.GetAsync($"api/todo/{testId}");
@@ -32,6 +32,20 @@ public class TodoListsEndpointsTests : RouteTest
 	}
 
 	[Test]
+	public async Task GetTodoListById_NoAuthHeaderProvided_Returns401()
+	{
+		// Arrange
+		string testId = "TestId";
+		using HttpClient client = WebApplicationFactory.CreateClient();
+
+		// Act: send the request
+		var result = await client.GetAsync($"api/todo/{testId}");
+
+		// Assert that response code is 401
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+	}
+
+	[Test]
 	public async Task GetTodoListById_ElementDoesNotExist_Returns404()
 	{
 		// Arrange
@@ -39,7 +53,7 @@ public class TodoListsEndpointsTests : RouteTest
 		WebApplicationFactory.TodoListsService
 			.GetByIdAsync(testId)
 			.ReturnsNull();
-		using HttpClient client = WebApplicationFactory.CreateClient();
+		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
 		var result = await client.GetAsync($"api/todo/{testId}");
@@ -56,7 +70,7 @@ public class TodoListsEndpointsTests : RouteTest
 			.CreateAsync(Arg.Any<TodoListCreateDto>())
 			.Returns(new TodoList() { Id = "TestID", Name = "Test", Description = "Ok" });
 		TodoListCreateDto dto = new("Test", string.Empty);
-		using HttpClient client = WebApplicationFactory.CreateClient();
+		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
 		var result = await client.PostAsJsonAsync("api/todo", dto);
@@ -74,13 +88,27 @@ public class TodoListsEndpointsTests : RouteTest
 	{
 		// Arrange
 		TodoListCreateDto invalidDto = new(string.Empty, string.Empty);
-		using HttpClient client = WebApplicationFactory.CreateClient();
+		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
 		var result = await client.PostAsJsonAsync("api/todo", invalidDto);
 
 		// Assert that response code is 400
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+	}
+
+	[Test]
+	public async Task PostTodoList_NoAuthHeaderProvided_Returns401()
+	{
+		// Arrange
+		TodoListCreateDto dto = new("Name", "Descr");
+		using HttpClient client = WebApplicationFactory.CreateClient();
+
+		// Act: send the request
+		var result = await client.PostAsJsonAsync("api/todo", dto);
+
+		// Assert that response code is 401
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 	}
 
 	[Test]
@@ -93,7 +121,7 @@ public class TodoListsEndpointsTests : RouteTest
 		WebApplicationFactory.TodoListsService
 			.EditAsync(testId, dto)
 			.Returns(true);
-		using HttpClient client = WebApplicationFactory.CreateClient();
+		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
 		var result = await client.PutAsJsonAsync($"api/todo/{testId}", dto);
@@ -112,13 +140,28 @@ public class TodoListsEndpointsTests : RouteTest
 		// Arrange
 		string testId = "TestId";
 		TodoListCreateDto invalidDto = new(string.Empty, string.Empty);
-		using HttpClient client = WebApplicationFactory.CreateClient();
+		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
 		var result = await client.PutAsJsonAsync($"api/todo/{testId}", invalidDto);
 
 		// Assert that response code is 400
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+	}
+
+	[Test]
+	public async Task PutTodoList_NoAuthHeaderProvided_Returns401()
+	{
+		// Arrange
+		string testId = "TestId";
+		TodoListCreateDto invalidDto = new("Name", "Descr");
+		using HttpClient client = WebApplicationFactory.CreateClient();
+
+		// Act: send the request
+		var result = await client.PutAsJsonAsync($"api/todo/{testId}", invalidDto);
+
+		// Assert that response code is 401
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 	}
 
 	[Test]
@@ -131,7 +174,7 @@ public class TodoListsEndpointsTests : RouteTest
 		WebApplicationFactory.TodoListsService
 			.EditAsync(testId, dto)
 			.Returns(false);
-		using HttpClient client = WebApplicationFactory.CreateClient();
+		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
 		var result = await client.PutAsJsonAsync($"api/todo/{testId}", dto);
@@ -149,7 +192,7 @@ public class TodoListsEndpointsTests : RouteTest
 		WebApplicationFactory.TodoListsService
 			.DeleteAsync(testId)
 			.Returns(true);
-		using HttpClient client = WebApplicationFactory.CreateClient();
+		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
 		var result = await client.DeleteAsync($"api/todo/{testId}");
@@ -163,6 +206,21 @@ public class TodoListsEndpointsTests : RouteTest
 	}
 
 	[Test]
+	public async Task DeleteTodoList_NoAuthHeaderProvided_Returns401()
+	{
+		// Arrange
+		string testId = "TestId";
+
+		using HttpClient client = WebApplicationFactory.CreateClient();
+
+		// Act: send the request
+		var result = await client.DeleteAsync($"api/todo/{testId}");
+
+		// Assert that response code is 401
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+	}
+
+	[Test]
 	public async Task DeleteTodoList_ElementDoesNotExist_Returns404()
 	{
 		// Arrange
@@ -171,7 +229,7 @@ public class TodoListsEndpointsTests : RouteTest
 		WebApplicationFactory.TodoListsService
 			.DeleteAsync(testId)
 			.Returns(false);
-		using HttpClient client = WebApplicationFactory.CreateClient();
+		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
 		var result = await client.DeleteAsync($"api/todo/{testId}");

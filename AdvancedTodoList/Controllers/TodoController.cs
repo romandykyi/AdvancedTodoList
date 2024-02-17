@@ -2,10 +2,12 @@
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Services;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdvancedTodoList.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/todo")]
 public class TodoController(
