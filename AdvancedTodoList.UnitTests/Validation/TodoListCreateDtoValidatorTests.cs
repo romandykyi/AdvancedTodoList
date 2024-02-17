@@ -25,10 +25,7 @@ public class TodoListCreateDtoValidatorTests
 	}
 
 	[Test]
-	[TestCase("")]
-	[TestCase("    ")]
-	[TestCase("\r\t \t\t\r")]
-	[TestCase(null)]
+	[TestCaseSource(typeof(ValidationConstants), nameof(ValidationConstants.EmptyStrings))]
 	public void Name_Empty_ReturnsPropertyRequiredError(string testCase)
 	{
 		// Arrange
@@ -75,9 +72,7 @@ public class TodoListCreateDtoValidatorTests
 	}
 
 	[Test]
-	[TestCase("")]
-	[TestCase("    ")]
-	[TestCase("\r\t \t\t\r")]
+	[TestCaseSource(typeof(ValidationConstants), nameof(ValidationConstants.EmptyNotNullStrings))]
 	public void Description_EmptyAndNotNull_IsAllowed(string testCase)
 	{
 		// Arrange
