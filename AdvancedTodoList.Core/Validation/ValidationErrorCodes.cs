@@ -21,4 +21,8 @@ public static class ValidationErrorCodes
 	/// Property is invalid foreign key.
 	/// </summary>
 	public const string InvalidForeignKey = "400";
+	/// <summary>
+	/// Property is invalid email.
+	/// </summary>
+	public const string InvalidEmail = "500";
 }
