@@ -205,9 +205,14 @@ public class AuthServiceTests : IntegrationTest
 
 		// Act
 		var result = await _authService.RegisterAsync(dto);
+		Assert.Multiple(() =>
+		{
 
-		// Assert that result does not indicate success
-		Assert.That(result.IsSuccess, Is.False);
+			// Assert that result does not indicate success
+			Assert.That(result.IsSuccess, Is.False);
+			// Assert that 'Email' property caused this error
+			Assert.That(result.Errors.Any(x => x.Property == "Email"), "RegisterResult does not indicate that 'Email' property caused the error.");
+		});
 	}
 
 	[Test]
@@ -219,9 +224,13 @@ public class AuthServiceTests : IntegrationTest
 
 		// Act
 		var result = await _authService.RegisterAsync(dto);
-
-		// Assert that result does not indicate success
-		Assert.That(result.IsSuccess, Is.False);
+		Assert.Multiple(() =>
+		{
+			// Assert that result does not indicate success
+			Assert.That(result.IsSuccess, Is.False);
+			// Assert that 'UserName' property caused this error
+			Assert.That(result.Errors.Any(x => x.Property == "UserName"), "RegisterResult does not indicate that 'UserName' property caused the error.");
+		});
 	}
 
 	[Test]

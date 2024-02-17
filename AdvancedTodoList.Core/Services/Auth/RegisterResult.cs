@@ -12,9 +12,9 @@ public class RegisterResult
 	/// <summary>
 	/// Error messages.
 	/// </summary>
-	public IEnumerable<string> Errors { get; private init; }
+	public IEnumerable<RegisterError> Errors { get; private init; }
 
-	private RegisterResult(bool isSuccess, IEnumerable<string> errors) 
+	private RegisterResult(bool isSuccess, IEnumerable<RegisterError> errors) 
 	{
 		IsSuccess = isSuccess;
 		Errors = errors;
@@ -26,7 +26,7 @@ public class RegisterResult
 	/// <returns>
 	/// A result that reports success.
 	/// </returns>
-	public static RegisterResult Success() => new(true, Array.Empty<string>());
+	public static RegisterResult Success() => new(true, Array.Empty<RegisterError>());
 
 	/// <summary>
 	/// Returns a result that reports failure.
@@ -35,5 +35,12 @@ public class RegisterResult
 	/// <returns>
 	/// A result that reports failure.
 	/// </returns>
-	public static RegisterResult Failure(IEnumerable<string> errors) => new(false, errors);
+	public static RegisterResult Failure(IEnumerable<RegisterError> errors) => new(false, errors);
 }
+
+/// <summary>
+/// Record that represents a register error.
+/// </summary>
+/// <param name="Property">Property that caused an error or '$' if error was not caused by a property.</param>
+/// <param name="Message">An error message.</param>
+public record RegisterError(string Property, string Message);

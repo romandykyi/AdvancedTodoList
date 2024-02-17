@@ -25,6 +25,20 @@ public class AuthService(
 	private readonly UserManager<ApplicationUser> _userManager = userManager;
 	private readonly IConfiguration _configuration = configuration;
 
+	private static IEnumerable<RegisterError> IdentityErrorsToRegisterErrors(IEnumerable<IdentityError> identityErrors)
+	{
+		foreach (var error in identityErrors)
+		{
+			// Determine the property which caused an error
+			string property = "$";
+			if (error.Code.Contains("Password")) property = "Password";
+			else if (error.Code.Contains("UserName")) property = "UserName";
+			else if (error.Code.Contains("Email")) property = "Email";
+
+			yield return new(property, error.Description);
+		}
+	}
+
 	/// <summary>
 	/// Logs a user in asynchronously.
 	/// </summary>
@@ -124,13 +138,13 @@ public class AuthService(
 	/// </returns>
 	public async Task<RegisterResult> RegisterAsync(RegisterDto registerDto)
 	{
-		List<string> errors = [];
+		List<RegisterError> errors = [];
 		// Check if email is available
 		if (await _userManager.FindByEmailAsync(registerDto.Email) != null)
-			errors.Add("Email is already taken.");
+			errors.Add(new("Email", "Email is already taken."));
 		// Check if username is available
 		if (await _userManager.FindByNameAsync(registerDto.UserName) != null)
-			errors.Add("Username is already taken.");
+			errors.Add(new("UserName", "Username is already taken."));
 
 		if (errors.Count > 0) return RegisterResult.Failure(errors);
 
@@ -147,7 +161,7 @@ public class AuthService(
 		// Return the result
 		return result.Succeeded ? 
 			RegisterResult.Success() : 
-			RegisterResult.Failure(result.Errors.Select(x => x.Description));
+			RegisterResult.Failure(IdentityErrorsToRegisterErrors(result.Errors));
 	}
 
 	// Generates JWT token and returns a response, requires refresh token
