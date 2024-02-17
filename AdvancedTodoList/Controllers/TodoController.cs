@@ -24,9 +24,11 @@ public class TodoController(
 	/// </summary>
 	/// <param name="listId">ID of the to-do list to obtain.</param>
 	/// <response code="200">Returns requested to-do list.</response>
+	/// <response code="401">Authentication failed.</response>
 	/// <response code="404">To-do list was not found.</response>
 	[HttpGet("{listId}", Name = nameof(GetTodoListByIdAsync))]
 	[ProducesResponseType(typeof(TodoListGetByIdDto), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetTodoListByIdAsync([FromRoute] string listId)
 	{
@@ -38,8 +40,12 @@ public class TodoController(
 	/// Creates a new to-do list.
 	/// </summary>
 	/// <response code="201">Successfully created.</response>
+	/// <response code="400">Validation failed.</response>
+	/// <response code="401">Authentication failed.</response>
 	[HttpPost]
 	[ProducesResponseType(typeof(TodoListGetByIdDto), StatusCodes.Status201Created)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> PostTodoListAsync([FromBody] TodoListCreateDto dto)
 	{
 		var list = await _todoListsService.CreateAsync(dto);
@@ -52,9 +58,13 @@ public class TodoController(
 	/// Updates a to-do list.
 	/// </summary>
 	/// <response code="204">Success.</response>
+	/// <response code="400">Validation failed.</response>
+	/// <response code="401">Authentication failed.</response>
 	/// <response code="404">To-do list was not found.</response>
 	[HttpPut("{listId}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> PutTodoListAsync(
 		[FromRoute] string listId, [FromBody] TodoListCreateDto dto)
@@ -67,9 +77,11 @@ public class TodoController(
 	/// Deletes a to-do list.
 	/// </summary>
 	/// <response code="204">Success.</response>
+	/// <response code="401">Authentication failed.</response>
 	/// <response code="404">To-do list was not found.</response>
 	[HttpDelete("{listId}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> DeleteTodoListAsync([FromRoute] string listId)
 	{
@@ -90,9 +102,11 @@ public class TodoController(
 	/// </summary>
 	/// <param name="listId">ID of the to-do list.</param>
 	/// <response code="200">Returns items of the to-do list.</response>
+	/// <response code="401">Authentication failed.</response>
 	/// <response code="404">To-do list was not found.</response>
 	[HttpGet("{listId}/items", Name = nameof(GetListItemsAsync))]
 	[ProducesResponseType(typeof(IEnumerable<TodoItemPreviewDto>), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetListItemsAsync([FromRoute] string listId)
 	{
@@ -109,9 +123,11 @@ public class TodoController(
 	/// <param name="listId">ID of the to-do list which contans the item to obtain.</param>
 	/// <param name="itemId">ID of the to-do list item to obtain.</param>
 	/// <response code="200">Returns requested to-do list item.</response>
+	/// <response code="401">Authentication failed.</response>
 	/// <response code="404">To-do list item was not found.</response>
 	[HttpGet("{listId}/items/{itemId}", Name = nameof(GetTodoItemByIdAsync))]
 	[ProducesResponseType(typeof(TodoItemGetByIdDto), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetTodoItemByIdAsync(
 		[FromRoute] string listId, [FromRoute] int itemId)
@@ -129,9 +145,13 @@ public class TodoController(
 	/// <param name="listId">ID of the to-do list which will contain the item.</param>
 	/// <param name="dto"></param>
 	/// <response code="201">Successfully created.</response>
+	/// <response code="400">Validation failed.</response>
+	/// <response code="401">Authentication failed.</response>
 	/// <response code="404">To-do list was not found.</response>
 	[HttpPost("{listId}/items")]
 	[ProducesResponseType(typeof(TodoItemGetByIdDto), StatusCodes.Status201Created)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> PostTodoItemAsync(
 		[FromRoute] string listId, [FromBody] TodoItemCreateDto dto)
@@ -150,9 +170,13 @@ public class TodoController(
 	/// Updates a to-do list item.
 	/// </summary>
 	/// <response code="204">Success.</response>
+	/// <response code="400">Validation failed.</response>
+	/// <response code="401">Authentication failed.</response>
 	/// <response code="404">To-do list item was not found.</response>
 	[HttpPut("{listId}/items/{itemId}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> PutTodoItemAsync(
 		[FromRoute] string listId, [FromRoute] int itemId,
@@ -168,9 +192,13 @@ public class TodoController(
 	/// Updates a to-do list item's state.
 	/// </summary>
 	/// <response code="204">Success.</response>
+	/// <response code="400">Validation failed.</response>
+	/// <response code="401">Authentication failed.</response>
 	/// <response code="404">To-do list item was not found.</response>
 	[HttpPut("{listId}/items/{itemId}/state")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> PutTodoItemStateAsync(
 		[FromRoute] string listId, [FromRoute] int itemId,
@@ -186,9 +214,11 @@ public class TodoController(
 	/// Deletes a to-do list item.
 	/// </summary>
 	/// <response code="204">Success.</response>
+	/// <response code="401">Authentication failed.</response>
 	/// <response code="404">To-do list item was not found.</response>
 	[HttpDelete("{listId}/items/{itemId}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> DeleteTodoListAsync(
 		[FromRoute] string listId, [FromRoute] int itemId)
