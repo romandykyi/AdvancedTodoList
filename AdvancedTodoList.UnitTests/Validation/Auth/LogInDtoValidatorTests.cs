@@ -1,11 +1,6 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Validation;
 using AdvancedTodoList.Core.Validation.Auth;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdvancedTodoList.UnitTests.Validation.Auth;
 

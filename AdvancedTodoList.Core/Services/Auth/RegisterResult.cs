@@ -14,7 +14,7 @@ public class RegisterResult
 	/// </summary>
 	public IEnumerable<RegisterError> Errors { get; private init; }
 
-	private RegisterResult(bool isSuccess, IEnumerable<RegisterError> errors) 
+	private RegisterResult(bool isSuccess, IEnumerable<RegisterError> errors)
 	{
 		IsSuccess = isSuccess;
 		Errors = errors;

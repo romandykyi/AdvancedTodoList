@@ -107,7 +107,7 @@ public class AuthService(
 		if (!await ValidateRefreshTokenAsync(userId, refreshDto.RefreshToken)) return null;
 
 		// Find the user
-		ApplicationUser? user =  await _userManager.FindByIdAsync(userId);
+		ApplicationUser? user = await _userManager.FindByIdAsync(userId);
 		// User doesn't exist - return null
 		if (user == null) return null;
 
@@ -136,7 +136,7 @@ public class AuthService(
 
 		// Try to register the user
 		ApplicationUser user = new()
-		{ 
+		{
 			FirstName = registerDto.FirstName,
 			LastName = registerDto.LastName,
 			Email = registerDto.Email,
@@ -145,8 +145,8 @@ public class AuthService(
 		var result = await _userManager.CreateAsync(user, registerDto.Password);
 
 		// Return the result
-		return result.Succeeded ? 
-			RegisterResult.Success() : 
+		return result.Succeeded ?
+			RegisterResult.Success() :
 			RegisterResult.Failure(IdentityErrorsToRegisterErrors(result.Errors));
 	}
 

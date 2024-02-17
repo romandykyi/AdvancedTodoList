@@ -3,7 +3,6 @@ using AdvancedTodoList.Core.Services.Auth;
 using AdvancedTodoList.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace AdvancedTodoList.Controllers;
 

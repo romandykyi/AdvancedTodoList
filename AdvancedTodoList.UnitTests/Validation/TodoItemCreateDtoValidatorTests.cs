@@ -1,7 +1,6 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Validation;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace AdvancedTodoList.UnitTests.Validation;
 
