@@ -26,7 +26,7 @@ public class TodoListMember : IEntity<int>
 	[ForeignKey(nameof(TodoList))]
 	public required string TodoListId { get; set; }
 	/// <summary>
-	/// A foreign key of the role, if null user have no role
+	/// A foreign key of the role, if null user has no role
 	/// and has a read-only access.
 	/// </summary>
 	[ForeignKey(nameof(Role))]
