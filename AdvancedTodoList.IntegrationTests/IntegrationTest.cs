@@ -1,4 +1,5 @@
 ﻿using AdvancedTodoList.Infrastructure.Data;
+using AdvancedTodoList.IntegrationTests.Setup;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,6 +33,8 @@ public abstract class IntegrationTest
 		{
 			await DbContext.Database.MigrateAsync();
 			s_migrated = true;
+			// Populate database
+			await DbPopulator.PopulateDbAsync(DbContext);
 		}
 	}
 

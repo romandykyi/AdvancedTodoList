@@ -1,11 +1,16 @@
 using AdvancedTodoList.Core.Mapping;
+using AdvancedTodoList.Core.Models;
 using AdvancedTodoList.Core.Models.Auth;
+using AdvancedTodoList.Core.Pagination;
+using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Services.Auth;
 using AdvancedTodoList.Core.Validation;
 using AdvancedTodoList.Infrastructure.Data;
 using AdvancedTodoList.Infrastructure.Services;
 using AdvancedTodoList.Infrastructure.Services.Auth;
+using AdvancedTodoList.Infrastructure.Services.Repositories;
+using EUniversity.Core.Pagination;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -85,6 +90,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITodoListsService, TodoListsService>();
 builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
 builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
+builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
 // Apply mapping settings
 MappingGlobalSettings.Apply();
@@ -121,5 +127,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
 public partial class Program { }
