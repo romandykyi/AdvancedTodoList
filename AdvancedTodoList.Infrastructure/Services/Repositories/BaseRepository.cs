@@ -1,21 +1,30 @@
 ﻿using AdvancedTodoList.Core.Models;
+using AdvancedTodoList.Core.Repositories;
+using AdvancedTodoList.Infrastructure.Data;
 
-namespace AdvancedTodoList.Core.Repositories;
+namespace AdvancedTodoList.Infrastructure.Services.Repositories;
 
 /// <summary>
-/// Represents a generic repository interface for CRUD operations.
+/// Represents an abstract generic repository for CRUD operations.
 /// </summary>
 /// <typeparam name="TEntity">The type of entity.</typeparam>
 /// <typeparam name="TKey">The type of entity's primary key.</typeparam>
-public interface IRepository<TEntity, TKey>
+public abstract class BaseRepository<TEntity, TKey>(ApplicationDbContext dbContext)
+	: IRepository<TEntity, TKey>
 	where TEntity : class, IEntity<TKey>
 	where TKey : IEquatable<TKey>
 {
+	protected readonly ApplicationDbContext DbContext = dbContext;
+
 	/// <summary>
 	/// Asynchronously adds a new entity to the repository.
 	/// </summary>
 	/// <param name="entity">The entity to add.</param>
-	Task AddAsync(TEntity entity);
+	public async Task AddAsync(TEntity entity)
+	{
+		DbContext.Add(entity);
+		await DbContext.SaveChangesAsync();
+	}
 
 	/// <summary>
 	/// Asynchronously retrieves an entity by its primary key.
@@ -25,17 +34,28 @@ public interface IRepository<TEntity, TKey>
 	/// A task that represents an asynchronous operation and the entity if found; 
 	/// otherwise, <see langword="null"/>.
 	/// </returns>
-	Task<TEntity?> GetByIdAsync(TKey id);
+	public async Task<TEntity?> GetByIdAsync(TKey id)
+	{
+		return await DbContext.Set<TEntity>().FindAsync(id);
+	}
 
 	/// <summary>
 	/// Asynchronously updates an existing entity in the repository.
 	/// </summary>
 	/// <param name="entity">The entity to update.</param>
-	Task UpdateAsync(TEntity entity);
+	public async Task UpdateAsync(TEntity entity)
+	{
+		DbContext.Update(entity);
+		await DbContext.SaveChangesAsync();
+	}
 
 	/// <summary>
 	/// Asynchronously deletes an entity from the repository.
 	/// </summary>
 	/// <param name="entity">The entity to delete.</param>
-	Task DeleteAsync(TEntity entity);
+	public async Task DeleteAsync(TEntity entity)
+	{
+		DbContext.Remove(entity);
+		await DbContext.SaveChangesAsync();
+	}
 }

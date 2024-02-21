@@ -90,7 +90,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITodoListsService, TodoListsService>();
 builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
 builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
-builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+
 
 // Apply mapping settings
 MappingGlobalSettings.Apply();

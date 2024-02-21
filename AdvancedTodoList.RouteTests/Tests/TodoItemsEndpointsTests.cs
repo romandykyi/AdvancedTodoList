@@ -160,7 +160,7 @@ public class TodoItemsEndpointsTests : RouteTest
 			.Returns(true);
 		WebApplicationFactory.TodoItemsService
 			.CreateAsync(Arg.Any<string>(), Arg.Any<TodoItemCreateDto>())
-			.Returns(new TodoItem() { Id = 13480, Name = "A", Description = "", DeadlineDate = DateTime.UtcNow });
+			.Returns(new TodoItem() { Id = 13480, Name = "A", Description = "", DeadlineDate = DateTime.UtcNow, TodoListId = "a" });
 		TodoItemCreateDto dto = new("Item", "...", DateTime.MaxValue);
 		using HttpClient client = CreateAuthorizedHttpClient();
 

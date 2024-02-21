@@ -33,8 +33,6 @@ public abstract class IntegrationTest
 		{
 			await DbContext.Database.MigrateAsync();
 			s_migrated = true;
-			// Populate database
-			await DbPopulator.PopulateDbAsync(DbContext);
 		}
 	}
 
