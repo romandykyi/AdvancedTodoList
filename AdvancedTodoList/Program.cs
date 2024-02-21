@@ -1,6 +1,7 @@
 using AdvancedTodoList.Core.Mapping;
 using AdvancedTodoList.Core.Models;
 using AdvancedTodoList.Core.Models.Auth;
+using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
@@ -90,6 +91,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITodoListsService, TodoListsService>();
 builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
 builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
+builder.Services.AddScoped<IRepository<TodoList, string>, TodoListRepository>();
 
 
 // Apply mapping settings
