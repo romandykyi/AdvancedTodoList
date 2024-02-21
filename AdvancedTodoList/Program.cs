@@ -11,7 +11,6 @@ using AdvancedTodoList.Infrastructure.Data;
 using AdvancedTodoList.Infrastructure.Services;
 using AdvancedTodoList.Infrastructure.Services.Auth;
 using AdvancedTodoList.Infrastructure.Services.Repositories;
-using EUniversity.Core.Pagination;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

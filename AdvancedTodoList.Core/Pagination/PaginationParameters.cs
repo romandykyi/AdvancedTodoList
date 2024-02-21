@@ -1,4 +1,4 @@
-﻿namespace EUniversity.Core.Pagination;
+﻿namespace AdvancedTodoList.Core.Pagination;
 
 /// <summary>
 /// Represents the pagination parameters.
