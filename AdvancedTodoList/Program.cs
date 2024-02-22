@@ -1,11 +1,9 @@
 using AdvancedTodoList.Core.Mapping;
-using AdvancedTodoList.Core.Models;
 using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists;
-using AdvancedTodoList.Core.Pagination;
-using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Services.Auth;
+using AdvancedTodoList.Core.Services.Repositories;
 using AdvancedTodoList.Core.Validation;
 using AdvancedTodoList.Infrastructure.Data;
 using AdvancedTodoList.Infrastructure.Services;

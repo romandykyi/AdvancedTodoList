@@ -1,5 +1,5 @@
 ﻿using AdvancedTodoList.Core.Models;
-using AdvancedTodoList.Core.Repositories;
+using AdvancedTodoList.Core.Services.Repositories;
 
 namespace AdvancedTodoList.IntegrationTests.Services.Repositories;
 
