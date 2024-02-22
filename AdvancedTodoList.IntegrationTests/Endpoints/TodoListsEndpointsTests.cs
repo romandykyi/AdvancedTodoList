@@ -1,13 +1,14 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
+using AdvancedTodoList.IntegrationTests.Fixtures;
 using NSubstitute.ReturnsExtensions;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace AdvancedTodoList.RouteTests.Tests;
+namespace AdvancedTodoList.IntegrationTests.Endpoints;
 
 [TestFixture]
-public class TodoListsEndpointsTests : RouteTest
+public class TodoListsEndpointsTests : EndpointsFixture
 {
 	[Test]
 	public async Task GetTodoListById_ElementExists_ReturnsElement()

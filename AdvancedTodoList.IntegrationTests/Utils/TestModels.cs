@@ -1,5 +1,5 @@
 ﻿using AdvancedTodoList.Core.Models.TodoLists;
-using AdvancedTodoList.IntegrationTests.Setup;
+using AdvancedTodoList.IntegrationTests.Factories;
 
 namespace AdvancedTodoList.IntegrationTests.Utils;
 

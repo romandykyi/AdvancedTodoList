@@ -1,6 +1,7 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Services.Auth;
+using AdvancedTodoList.IntegrationTests.Fixtures;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,7 +14,7 @@ using System.Text;
 namespace AdvancedTodoList.IntegrationTests.Services.Auth;
 
 [TestFixture]
-public class AuthServiceTests : IntegrationTest
+public class AuthServiceTests : DataAccessFixture
 {
 	private UserManager<ApplicationUser> _userManager;
 	private IAuthService _authService;

@@ -1,13 +1,14 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Services.Auth;
+using AdvancedTodoList.IntegrationTests.Fixtures;
 using NSubstitute.ReturnsExtensions;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace AdvancedTodoList.RouteTests.Tests;
+namespace AdvancedTodoList.IntegrationTests.Endpoints;
 
 [TestFixture]
-public class AuthEndpointsTests : RouteTest
+public class AuthEndpointsTests : EndpointsFixture
 {
 	[Test]
 	public async Task LogIn_ValidCredentials_SucceedsAndReturnsValidResponse()

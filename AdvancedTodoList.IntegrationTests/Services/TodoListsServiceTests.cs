@@ -1,13 +1,14 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.IntegrationTests.Fixtures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 
 [TestFixture]
-public class TodoListsServiceTests : IntegrationTest
+public class TodoListsServiceTests : DataAccessFixture
 {
 	private ITodoListsService _service;
 

@@ -1,16 +1,17 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
-using AdvancedTodoList.RouteTests;
+using AdvancedTodoList.IntegrationTests.Fixtures;
 using NSubstitute.ReturnsExtensions;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace AdvancedTodoItem.RouteTests.Tests;
+namespace AdvancedTodoList.IntegrationTests.Endpoints;
 
 /// <summary>
 /// Tests for endpoints 'api/todo/{listId}/items'
 /// </summary>
-public class TodoItemsEndpointsTests : RouteTest
+[TestFixture]
+public class TodoItemsEndpointsTests : EndpointsFixture
 {
 	[Test]
 	public async Task GetTodoItems_ListExists_SucceedsAndReturnsItems()

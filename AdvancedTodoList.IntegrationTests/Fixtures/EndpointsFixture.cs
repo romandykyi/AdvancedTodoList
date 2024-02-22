@@ -1,20 +1,19 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using AdvancedTodoList.IntegrationTests.Factories;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace AdvancedTodoList.RouteTests;
+namespace AdvancedTodoList.IntegrationTests.Fixtures;
 
 /// <summary>
-/// Base class for route tests.
+/// Abstract test fixture for endpoints.
 /// </summary>
-public abstract class RouteTest
+public abstract class EndpointsFixture
 {
 	protected IConfiguration Configuration { get; private set; }
-	protected RouteTestsWebApplicationFactory WebApplicationFactory { get; private set; }
-	protected IServiceScopeFactory ScopeFactory { get; private set; }
+	protected EndpointsWebApplicationFactory WebApplicationFactory { get; private set; }
 	protected IServiceScope ServiceScope { get; private set; }
 
 	public const string TestUserId = "TestUserId";
@@ -49,11 +48,11 @@ public abstract class RouteTest
 	public void SetUpTest()
 	{
 		// Configure web application factory
-		WebApplicationFactory = new RouteTestsWebApplicationFactory();
+		WebApplicationFactory = new EndpointsWebApplicationFactory();
 		WebApplicationFactory.Server.PreserveExecutionContext = true;
 
-		ScopeFactory = WebApplicationFactory.Services.GetService<IServiceScopeFactory>()!;
-		ServiceScope = ScopeFactory.CreateScope();
+		var scopeFactory = WebApplicationFactory.Services.GetService<IServiceScopeFactory>()!;
+		ServiceScope = scopeFactory.CreateScope();
 		Configuration = ServiceScope.ServiceProvider.GetService<IConfiguration>()!;
 	}
 

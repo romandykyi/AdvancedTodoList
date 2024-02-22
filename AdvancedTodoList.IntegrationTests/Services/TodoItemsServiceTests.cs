@@ -1,6 +1,7 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.IntegrationTests.Fixtures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +10,7 @@ namespace AdvancedTodoList.IntegrationTests.Services;
 /// <summary>
 /// Tests for endpoints 'api/todo'
 /// </summary>
-public class TodoItemsServiceTests : IntegrationTest
+public class TodoItemsServiceTests : DataAccessFixture
 {
 	private ITodoItemsService _service;
 

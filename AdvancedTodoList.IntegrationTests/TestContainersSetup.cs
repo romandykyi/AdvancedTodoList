@@ -6,7 +6,7 @@ namespace AdvancedTodoList.IntegrationTests;
 /// Class that sets up integration testing environment.
 /// </summary>
 [SetUpFixture]
-public static class IntegrationTestsSetup
+public static class TestContainersSetup
 {
     /// <summary>
     /// Test container that contains a database.
@@ -14,7 +14,7 @@ public static class IntegrationTestsSetup
     public static MsSqlContainer TestDbContainer { get; private set; }
 
     [OneTimeSetUp]
-    public static async Task SetUpIntegrationTests()
+    public static async Task SetUp()
     {
         // Initialize and start a container with test DB
         TestDbContainer = new MsSqlBuilder().Build();
@@ -22,7 +22,7 @@ public static class IntegrationTestsSetup
     }
 
     [OneTimeTearDown]
-    public static async Task TearDownIntegrationTests()
+    public static async Task TearDown()
     {
         // Stop the DB container
         await TestDbContainer.StopAsync();

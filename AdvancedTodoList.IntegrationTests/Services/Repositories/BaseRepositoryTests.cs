@@ -2,6 +2,7 @@
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services.Repositories;
 using AdvancedTodoList.Core.Specifications;
+using AdvancedTodoList.IntegrationTests.Fixtures;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 
@@ -12,7 +13,7 @@ namespace AdvancedTodoList.IntegrationTests.Services.Repositories;
 /// </summary>
 /// <typeparam name="TEntity">The type of entity.</typeparam>
 /// <typeparam name="TKey">The type of entity's primary key.</typeparam>
-public abstract class BaseRepositoryTests<TEntity, TKey> : IntegrationTest
+public abstract class BaseRepositoryTests<TEntity, TKey> : DataAccessFixture
 	where TEntity : class, IEntity<TKey>
 	where TKey : IEquatable<TKey>
 {
