@@ -69,7 +69,7 @@ public class TodoListsEndpointsTests : EndpointsFixture
 		// Arrange
 		WebApplicationFactory.TodoListsService
 			.CreateAsync(Arg.Any<TodoListCreateDto>())
-			.Returns(new TodoList() { Id = "TestID", Name = "Test", Description = "Ok" });
+			.Returns(new TodoListGetByIdDto("", "", ""));
 		TodoListCreateDto dto = new("Test", string.Empty);
 		using HttpClient client = CreateAuthorizedHttpClient();
 

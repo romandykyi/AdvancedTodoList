@@ -1,11 +1,9 @@
 ﻿using AdvancedTodoList.Core.Models;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Repositories;
-using AdvancedTodoList.Core.Services.Repositories;
 using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
 
 namespace AdvancedTodoList.IntegrationTests.Repositories;
 

@@ -18,7 +18,8 @@ public abstract class DataAccessFixture
 	public async Task SetUpServices()
 	{
 		// Configure web application factory
-		WebApplicationFactory = new DataAccessWebApplicationFactory(TestContainersSetup.TestDbContainer);
+		var container = await TestContainersSetup.GetTestContainerAsync();
+		WebApplicationFactory = new DataAccessWebApplicationFactory(container);
 		WebApplicationFactory.Server.PreserveExecutionContext = true;
 
 		// Get services needed for integration testing
