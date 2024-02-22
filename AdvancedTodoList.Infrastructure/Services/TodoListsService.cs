@@ -1,18 +1,19 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
+using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
-using AdvancedTodoList.Infrastructure.Data;
 using Mapster;
-using Microsoft.EntityFrameworkCore;
 
 namespace AdvancedTodoList.Infrastructure.Services;
 
 /// <summary>
 /// A service that manages to-do lists.
 /// </summary>
-public class TodoListsService(ApplicationDbContext dbContext) : ITodoListsService
+public class TodoListsService(IRepository<TodoList, string> repository, 
+	IEntityExistenceChecker entityExistenceChecker) : ITodoListsService
 {
-	private readonly ApplicationDbContext _dbContext = dbContext;
+	private readonly IRepository<TodoList, string> _repository = repository;
+	private readonly IEntityExistenceChecker _entityExistenceChecker = entityExistenceChecker;
 
 	/// <summary>
 	/// Retrieves a to-do list by its ID asynchronously.
@@ -25,11 +26,10 @@ public class TodoListsService(ApplicationDbContext dbContext) : ITodoListsServic
 	/// </returns>
 	public async Task<TodoListGetByIdDto?> GetByIdAsync(string id)
 	{
-		return await _dbContext.TodoLists
-			.AsNoTracking()
-			.Where(x => x.Id == id)
-			.ProjectToType<TodoListGetByIdDto>()
-			.FirstOrDefaultAsync();
+		var todoList = await _repository.GetByIdAsync(id);
+		if (todoList == null) return null;
+
+		return todoList.Adapt<TodoListGetByIdDto>();
 	}
 
 	/// <summary>
@@ -38,14 +38,17 @@ public class TodoListsService(ApplicationDbContext dbContext) : ITodoListsServic
 	/// <param name="dto">The DTO containing information for creating the to-do list.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. 
-	/// The task result contains the created <see cref="TodoList"/>.
+	/// The task result contains the created <see cref="TodoList"/> mapped to 
+	/// <see cref="TodoListCreateDto"/>.
 	/// </returns>
-	public async Task<TodoList> CreateAsync(TodoListCreateDto dto)
+	public async Task<TodoListGetByIdDto> CreateAsync(TodoListCreateDto dto)
 	{
-		var list = dto.Adapt<TodoList>();
-		_dbContext.TodoLists.Add(list);
-		await _dbContext.SaveChangesAsync();
-		return list;
+		// Map DTO to model
+		var todoList = dto.Adapt<TodoList>();
+		// Add model to the database
+		await _repository.AddAsync(todoList);
+		// Return DTO of created model
+		return todoList.Adapt<TodoListGetByIdDto>();
 	}
 
 	/// <summary>
@@ -60,14 +63,14 @@ public class TodoListsService(ApplicationDbContext dbContext) : ITodoListsServic
 	/// </returns>
 	public async Task<bool> EditAsync(string id, TodoListCreateDto dto)
 	{
-		var entity = await _dbContext.TodoLists
-			.Where(x => x.Id == id)
-			.FirstOrDefaultAsync();
-		// To-do list does not exist - return false
-		if (entity == null) return false;
+		// Get the model
+		var todoList = await _repository.GetByIdAsync(id);
+		// Return false if the model doesn't exist
+		if (todoList == null) return false;
 
-		dto.Adapt(entity);
-		await _dbContext.SaveChangesAsync();
+		// Update the model
+		dto.Adapt(todoList);
+		await _repository.UpdateAsync(todoList);
 
 		return true;
 	}
@@ -83,14 +86,13 @@ public class TodoListsService(ApplicationDbContext dbContext) : ITodoListsServic
 	/// </returns>
 	public async Task<bool> DeleteAsync(string id)
 	{
-		var entity = await _dbContext.TodoLists
-			.Where(x => x.Id == id)
-			.FirstOrDefaultAsync();
-		// To-do list does not exist - return false
-		if (entity == null) return false;
+		// Get the model
+		var todoList = await _repository.GetByIdAsync(id);
+		// Return false if the model doesn't exist
+		if (todoList == null) return false;
 
-		_dbContext.TodoLists.Remove(entity);
-		await _dbContext.SaveChangesAsync();
+		// Delete the model
+		await _repository.DeleteAsync(todoList);
 
 		return true;
 	}

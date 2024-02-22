@@ -50,8 +50,7 @@ public class TodoController(
 	{
 		var list = await _todoListsService.CreateAsync(dto);
 		var routeValues = new { listId = list.Id };
-		var body = list.Adapt<TodoListGetByIdDto>();
-		return CreatedAtRoute(nameof(GetTodoListByIdAsync), routeValues, body);
+		return CreatedAtRoute(nameof(GetTodoListByIdAsync), routeValues, list);
 	}
 
 	/// <summary>

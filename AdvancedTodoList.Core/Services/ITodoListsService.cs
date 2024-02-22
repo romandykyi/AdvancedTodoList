@@ -25,9 +25,10 @@ public interface ITodoListsService
 	/// <param name="dto">The DTO containing information for creating the to-do list.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. 
-	/// The task result contains the created <see cref="TodoList"/>.
+	/// The task result contains the created <see cref="TodoList"/> mapped to 
+	/// <see cref="TodoListCreateDto"/>.
 	/// </returns>
-	public Task<TodoList> CreateAsync(TodoListCreateDto dto);
+	public Task<TodoListGetByIdDto> CreateAsync(TodoListCreateDto dto);
 
 	/// <summary>
 	/// Edits a to-do list asynchronously.

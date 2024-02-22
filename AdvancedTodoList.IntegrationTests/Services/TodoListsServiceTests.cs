@@ -7,6 +7,7 @@ using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute.ReturnsExtensions;
+using NUnit.Framework.Interfaces;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 
@@ -76,24 +77,24 @@ public class TodoListsServiceTests : BusinessLogicFixture
 	public async Task EditAsync_EntityExists_Succeeds()
 	{
 		// Arrange
-		string id = "ID";
-		TodoListCreateDto updateDto = new("Name", "Description");
-		WebApplicationFactory.EntityExistenceChecker
-			.ExistsAsync<TodoList, string>(id)
-			.Returns(true);
+		var todoList = TestModels.CreateTestTodoList();
+		TodoListCreateDto updateDto = new("NewName", "NewDescription");
+		WebApplicationFactory.TodoListsRepository
+			.GetByIdAsync(todoList.Id)
+			.Returns(todoList);
 		WebApplicationFactory.TodoListsRepository
 			.UpdateAsync(Arg.Any<TodoList>())
 			.Returns(Task.FromResult);
 
 		// Act
-		bool result = await _service.EditAsync(id, updateDto);
+		bool result = await _service.EditAsync(todoList.Id, updateDto);
 
 		// Assert that result is true
 		Assert.That(result, Is.True);
 		// Assert that update was called
 		await WebApplicationFactory.TodoListsRepository
 			.Received()
-			.UpdateAsync(Arg.Is<TodoList>(x => x.Id == id &&
+			.UpdateAsync(Arg.Is<TodoList>(x => x.Id == todoList.Id &&
 				x.Name == updateDto.Name && 
 				x.Description == updateDto.Description));
 	}
@@ -104,9 +105,9 @@ public class TodoListsServiceTests : BusinessLogicFixture
 		// Arrange
 		string id = "ID";
 		TodoListCreateDto updateDto = new("Name", "Description");
-		WebApplicationFactory.EntityExistenceChecker
-			.ExistsAsync<TodoList, string>(id)
-			.Returns(false);
+		WebApplicationFactory.TodoListsRepository
+			.GetByIdAsync(id)
+			.ReturnsNull();
 
 		// Act
 		bool result = await _service.EditAsync(id, updateDto);
@@ -119,23 +120,23 @@ public class TodoListsServiceTests : BusinessLogicFixture
 	public async Task DeleteAsync_EntityExists_Succeeds()
 	{
 		// Arrange
-		string id = "ID";
-		WebApplicationFactory.EntityExistenceChecker
-			.ExistsAsync<TodoList, string>(id)
-			.Returns(true);
+		var todoList = TestModels.CreateTestTodoList();
+		WebApplicationFactory.TodoListsRepository
+			.GetByIdAsync(todoList.Id)
+			.Returns(todoList);
 		WebApplicationFactory.TodoListsRepository
 			.DeleteAsync(Arg.Any<TodoList>())
 			.Returns(Task.FromResult);
 
 		// Act
-		bool result = await _service.DeleteAsync(id);
+		bool result = await _service.DeleteAsync(todoList.Id);
 
 		// Assert that result is true
 		Assert.That(result, Is.True);
 		// Assert that delete was called
 		await WebApplicationFactory.TodoListsRepository
 			.Received()
-			.DeleteAsync(Arg.Is<TodoList>(x => x.Id == id));
+			.DeleteAsync(Arg.Is<TodoList>(x => x.Id == todoList.Id));
 	}
 
 	[Test]
@@ -143,9 +144,9 @@ public class TodoListsServiceTests : BusinessLogicFixture
 	{
 		// Arrange
 		string id = "ID";
-		WebApplicationFactory.EntityExistenceChecker
-			.ExistsAsync<TodoList, string>(id)
-			.Returns(false);
+		WebApplicationFactory.TodoListsRepository
+			.GetByIdAsync(id)
+			.ReturnsNull();
 
 		// Act
 		bool result = await _service.DeleteAsync(id);
