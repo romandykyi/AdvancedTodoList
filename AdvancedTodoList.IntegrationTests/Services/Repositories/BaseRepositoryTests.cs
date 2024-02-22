@@ -1,5 +1,9 @@
 ﻿using AdvancedTodoList.Core.Models;
+using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services.Repositories;
+using AdvancedTodoList.Core.Specifications;
+using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 
 namespace AdvancedTodoList.IntegrationTests.Services.Repositories;
 
@@ -12,6 +16,15 @@ public abstract class BaseRepositoryTests<TEntity, TKey> : IntegrationTest
 	where TEntity : class, IEntity<TKey>
 	where TKey : IEquatable<TKey>
 {
+	protected class TestSpecification : ISpecification<TEntity>
+	{
+		public Expression<Func<TEntity, bool>> Criteria { get; set; } = _ => true;
+
+		public List<Expression<Func<TEntity, object>>> Includes { get; set; } = [];
+
+		public List<string> IncludeStrings { get; set; } = [];
+	}
+
 	/// <summary>
 	/// When implemented, gets an ID of non-existing entity.
 	/// </summary>
@@ -99,6 +112,48 @@ public abstract class BaseRepositoryTests<TEntity, TKey> : IntegrationTest
 		// Assert
 		Assert.That(result, Is.Not.Null);
 		Assert.That(result.Id, Is.EqualTo(entity.Id));
+	}
+
+	[Test]
+	public async Task GetPageAsync_AppliesSpecification()
+	{
+		// Arrange
+		var entity = await AddTestEntityToDbAsync();
+		TestSpecification specification = new()
+		{
+			Criteria = x => x.Id.Equals(entity.Id)
+		};
+
+		// Act
+		var page = await Repository.GetPageAsync<TEntity>(new(1, 5), specification);
+
+		// Assert
+		Assert.Multiple(() =>
+		{
+			Assert.That(page.TotalCount, Is.EqualTo(1));
+			Assert.That(page.Items.Single().Id, Is.EqualTo(entity.Id));
+		});
+	}
+
+	[Test]
+	public async Task GetPageAsync_AppliesPaginationParameters()
+	{
+		// Arrange
+		var entity = await CreateTestEntityAsync();
+		TestSpecification specification = new();
+		PaginationParameters paginationParameters = new(2, 10);
+
+		// Act
+		var page = await Repository.GetPageAsync<TEntity>(paginationParameters, specification);
+
+		// Assert
+		int totalCount = await DbContext.Set<TEntity>().CountAsync();
+		Assert.Multiple(() =>
+		{
+			Assert.That(page.TotalCount, Is.EqualTo(totalCount));
+			Assert.That(page.PageNumber, Is.EqualTo(paginationParameters.Page));
+			Assert.That(page.PageSize, Is.EqualTo(paginationParameters.PageSize));
+		});
 	}
 
 	[Test]

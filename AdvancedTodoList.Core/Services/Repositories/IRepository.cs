@@ -1,4 +1,6 @@
 ﻿using AdvancedTodoList.Core.Models;
+using AdvancedTodoList.Core.Pagination;
+using AdvancedTodoList.Core.Specifications;
 
 namespace AdvancedTodoList.Core.Services.Repositories;
 
@@ -26,6 +28,18 @@ public interface IRepository<TEntity, TKey>
     /// otherwise, <see langword="null"/>.
     /// </returns>
     Task<TEntity?> GetByIdAsync(TKey id);
+
+	/// <summary>
+	/// Gets a page with entities mapped to type <typeparamref name="TItem"/> asynchronously.
+	/// </summary>
+	/// <typeparam name="TItem">Returned type of items on the page.</typeparam>
+	/// <param name="paginationParameters">Pagination parameters.</param>
+	/// <param name="specification">Specification used for entities retrival.</param>
+	/// <returns>
+	/// A task that represents an asynchronous operation and a page with entities mapped
+    /// to <typeparamref name="TItem"/> type.
+	/// </returns>
+	Task<Page<TItem>> GetPageAsync<TItem>(PaginationParameters paginationParameters, ISpecification<TEntity> specification);
 
     /// <summary>
     /// Asynchronously updates an existing entity in the repository.
