@@ -37,7 +37,7 @@ public class TodoListsService(IRepository<TodoList, string> repository) : ITodoL
 	/// <returns>
 	/// A task representing the asynchronous operation. 
 	/// The task result contains the created <see cref="TodoList"/> mapped to 
-	/// <see cref="TodoListCreateDto"/>.
+	/// <see cref="TodoListGetByIdDto"/>.
 	/// </returns>
 	public async Task<TodoListGetByIdDto> CreateAsync(TodoListCreateDto dto)
 	{

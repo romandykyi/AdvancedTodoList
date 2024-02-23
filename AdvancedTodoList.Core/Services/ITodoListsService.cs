@@ -26,7 +26,7 @@ public interface ITodoListsService
 	/// <returns>
 	/// A task representing the asynchronous operation. 
 	/// The task result contains the created <see cref="TodoList"/> mapped to 
-	/// <see cref="TodoListCreateDto"/>.
+	/// <see cref="TodoListGetByIdDto"/>.
 	/// </returns>
 	public Task<TodoListGetByIdDto> CreateAsync(TodoListCreateDto dto);
 
