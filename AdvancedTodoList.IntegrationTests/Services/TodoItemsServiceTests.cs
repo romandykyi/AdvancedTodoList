@@ -11,9 +11,6 @@ using NSubstitute.ReturnsExtensions;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 
-/// <summary>
-/// Tests for endpoints 'api/todo'
-/// </summary>
 public class TodoItemsServiceTests : BusinessLogicFixture
 {
 	private ITodoItemsService _service;
