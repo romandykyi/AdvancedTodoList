@@ -6,7 +6,7 @@ namespace AdvancedTodoList.Core.Models.Auth;
 /// <summary>
 /// Model which represents a user's refresh token.
 /// </summary>
-public class UserRefreshToken
+public class UserRefreshToken : IEntity<int>
 {
 	/// <summary>
 	/// The unique identifier.

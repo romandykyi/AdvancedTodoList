@@ -90,6 +90,8 @@ builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
 builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
 builder.Services.AddScoped<IRepository<TodoList, string>, TodoListRepository>();
 builder.Services.AddScoped<IRepository<TodoItem, int>, TodoItemsRepository>();
+builder.Services.AddScoped<IRepository<UserRefreshToken, int>, UserRefreshTokensRepository>();
+builder.Services.AddScoped<IUserRefreshTokensRepository, UserRefreshTokensRepository>();
 
 // Apply mapping settings
 MappingGlobalSettings.Apply();
