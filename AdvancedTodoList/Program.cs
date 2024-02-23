@@ -1,6 +1,7 @@
 using AdvancedTodoList.Core.Mapping;
 using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists;
+using AdvancedTodoList.Core.Options;
 using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Services.Auth;
@@ -88,10 +89,16 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITodoListsService, TodoListsService>();
 builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
 builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
+// Register application repositories
 builder.Services.AddScoped<IRepository<TodoList, string>, TodoListRepository>();
 builder.Services.AddScoped<IRepository<TodoItem, int>, TodoItemsRepository>();
 builder.Services.AddScoped<IRepository<UserRefreshToken, int>, UserRefreshTokensRepository>();
 builder.Services.AddScoped<IUserRefreshTokensRepository, UserRefreshTokensRepository>();
+// Bind options
+builder.Services.Configure<AccessTokenOptions>(
+	builder.Configuration.GetSection("Auth:AccessToken"));
+builder.Services.Configure<RefreshTokenOptions>(
+	builder.Configuration.GetSection("Auth:RefreshToken"));
 
 // Apply mapping settings
 MappingGlobalSettings.Apply();
