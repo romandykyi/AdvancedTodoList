@@ -1,5 +1,6 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
+using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
@@ -90,30 +91,24 @@ public class TodoController(
 	#endregion
 
 	#region Items
-	// Check if listId matches with an actual list ID
-	private async Task<bool> CheckListIdAsync(string listId, int itemId)
-	{
-		return listId == (await _todoItemsService.GetTodoListByIdAsync(itemId));
-	}
-
 	/// <summary>
-	/// Gets items of the to-do list with the specified ID.
+	/// Gets a page with items of the to-do list with the specified ID.
 	/// </summary>
 	/// <param name="listId">ID of the to-do list.</param>
+	/// <param name="paginationParameters">Paginations parameters to apply.</param>
 	/// <response code="200">Returns items of the to-do list.</response>
 	/// <response code="401">Authentication failed.</response>
 	/// <response code="404">To-do list was not found.</response>
 	[HttpGet("{listId}/items", Name = nameof(GetListItemsAsync))]
-	[ProducesResponseType(typeof(IEnumerable<TodoItemPreviewDto>), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(Page<TodoItemPreviewDto>), StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> GetListItemsAsync([FromRoute] string listId)
+	public async Task<IActionResult> GetListItemsAsync(
+		[FromRoute] string listId, [FromQuery] PaginationParameters paginationParameters)
 	{
-		// Check if list exists
-		if (!await _existenceChecker.ExistsAsync<TodoList, string>(listId))
-			return NotFound();
-
-		return Ok(await _todoItemsService.GetItemsOfListAsync(listId));
+		var page = await _todoItemsService.GetItemsOfListAsync(listId, paginationParameters);
+		if (page == null) return NotFound();
+		return Ok();
 	}
 
 	/// <summary>
@@ -131,9 +126,9 @@ public class TodoController(
 	public async Task<IActionResult> GetTodoItemByIdAsync(
 		[FromRoute] string listId, [FromRoute] int itemId)
 	{
-		var item = await _todoItemsService.GetByIdAsync(itemId);
-		// Check if item exists and has valid to-do list ID
-		if (item == null || item.TodoListId != listId) return NotFound();
+		var item = await _todoItemsService.GetByIdAsync(listId, itemId);
+		// Check if item exists
+		if (item == null) return NotFound();
 
 		return Ok(item);
 	}
@@ -155,11 +150,9 @@ public class TodoController(
 	public async Task<IActionResult> PostTodoItemAsync(
 		[FromRoute] string listId, [FromBody] TodoItemCreateDto dto)
 	{
-		// Check if list exists
-		if (!await _existenceChecker.ExistsAsync<TodoList, string>(listId))
-			return NotFound();
-
 		var item = await _todoItemsService.CreateAsync(listId, dto);
+		if (item == null) return NotFound();
+
 		var routeValues = new { listId, itemId = item.Id };
 		var body = item.Adapt<TodoItemGetByIdDto>();
 		return CreatedAtRoute(nameof(GetTodoItemByIdAsync), routeValues, body);
@@ -181,9 +174,7 @@ public class TodoController(
 		[FromRoute] string listId, [FromRoute] int itemId,
 		[FromBody] TodoItemCreateDto dto)
 	{
-		if (!await CheckListIdAsync(listId, itemId)) return NotFound();
-
-		bool result = await _todoItemsService.EditAsync(itemId, dto);
+		bool result = await _todoItemsService.EditAsync(listId, itemId, dto);
 		return result ? NoContent() : NotFound();
 	}
 
@@ -203,9 +194,7 @@ public class TodoController(
 		[FromRoute] string listId, [FromRoute] int itemId,
 		[FromBody] TodoItemUpdateStateDto dto)
 	{
-		if (!await CheckListIdAsync(listId, itemId)) return NotFound();
-
-		bool result = await _todoItemsService.UpdateStateAsync(itemId, dto);
+		bool result = await _todoItemsService.UpdateStateAsync(listId, itemId, dto);
 		return result ? NoContent() : NotFound();
 	}
 
@@ -222,9 +211,7 @@ public class TodoController(
 	public async Task<IActionResult> DeleteTodoListAsync(
 		[FromRoute] string listId, [FromRoute] int itemId)
 	{
-		if (!await CheckListIdAsync(listId, itemId)) return NotFound();
-
-		bool result = await _todoItemsService.DeleteAsync(itemId);
+		bool result = await _todoItemsService.DeleteAsync(listId, itemId);
 		return result ? NoContent() : NotFound();
 	}
 	#endregion

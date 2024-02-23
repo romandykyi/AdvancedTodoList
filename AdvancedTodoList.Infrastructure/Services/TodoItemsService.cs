@@ -1,72 +1,65 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
+using AdvancedTodoList.Core.Pagination;
+using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
-using AdvancedTodoList.Infrastructure.Data;
+using AdvancedTodoList.Infrastructure.Specifications;
 using Mapster;
-using Microsoft.EntityFrameworkCore;
 
 namespace AdvancedTodoList.Infrastructure.Services;
 
 /// <summary>
 /// A service that manages to-do lists items.
 /// </summary>
-public class TodoItemsService(ApplicationDbContext dbContext) : ITodoItemsService
+public class TodoItemsService(IRepository<TodoItem, int> repository,
+	IEntityExistenceChecker existenceChecker) : ITodoItemsService
 {
-	private readonly ApplicationDbContext _dbContext = dbContext;
+	private readonly IRepository<TodoItem, int> _repository = repository;
+	private readonly IEntityExistenceChecker _existenceChecker = existenceChecker;
 
 	/// <summary>
-	/// Retrieves to-do list items of the list with the specified ID.
+	/// Retrieves a page of to-do list items of the list with the specified ID.
 	/// </summary>
-	/// <remarks>
-	/// Does not throw exceptions if ID is invalid.
-	/// </remarks>
-	/// <param name="id">The ID of the to-do list which items will be retrieved.</param>
+	/// <param name="todoListId">The ID of the to-do list which items will be retrieved.</param>
+	/// <param name="paginationParameters">Pagination parameters to use.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. 
-	/// The task result contains a collection of <see cref="TodoItemPreviewDto"/> objects.
+	/// The task result contains a page of <see cref="TodoItemPreviewDto"/> objects or
+	/// <see langword="null" /> if the to-do list does not exist.
 	/// </returns>
-	public async Task<IEnumerable<TodoItemPreviewDto>> GetItemsOfListAsync(string id)
+	public async Task<Page<TodoItemPreviewDto>?> GetItemsOfListAsync(string todoListId, PaginationParameters paginationParameters)
 	{
-		return await _dbContext.TodoItems
-			.Where(x => x.TodoListId == id)
-			.ProjectToType<TodoItemPreviewDto>()
-			.ToListAsync();
-	}
+		// Check if to-do list exists
+		if (!await _existenceChecker.ExistsAsync<TodoList, string>(todoListId))
+			return null;
 
-	/// <summary>
-	/// Retrieves a to-do list ID of the to-do list item.
-	/// </summary>
-	/// <param name="id">ID of the to-do list item.</param>
-	/// <returns>
-	/// A task representing the asynchronous operation. The task result contains
-	/// an ID of the to-do list which owns a to-do list item with the specified ID if it's found;
-	/// otherwise, returns <see langword="null"/>.
-	/// </returns>
-	public async Task<string?> GetTodoListByIdAsync(int id)
-	{
-		return await _dbContext.TodoItems
-			.AsNoTracking()
-			.Where(x => x.Id == id)
-			.Select(x => x.TodoListId)
-			.FirstOrDefaultAsync();
+		// Get the requested page
+		TodoItemsSpecification specification = new(todoListId);
+		return await _repository.GetPageAsync<TodoItemPreviewDto>(paginationParameters, specification);
 	}
 
 	/// <summary>
 	/// Retrieves a to-do list item by its ID asynchronously.
 	/// </summary>
-	/// <param name="id">The ID of the to-do list item to retrieve.</param>
+	/// <param name="todoListId">The ID of the to-do list which contains the item.</param>
+	/// <param name="itemId">The ID of the to-do list item to retrieve.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. The task result contains
 	/// a <see cref="TodoItemGetByIdDto"/> object if the specified ID is found;
 	/// otherwise, returns <see langword="null"/>.
 	/// </returns>
-	public async Task<TodoItemGetByIdDto?> GetByIdAsync(int id)
+	public async Task<TodoItemGetByIdDto?> GetByIdAsync(string todoListId, int itemId)
 	{
-		return await _dbContext.TodoItems
-			.AsNoTracking()
-			.Where(x => x.Id == id)
-			.ProjectToType<TodoItemGetByIdDto>()
-			.FirstOrDefaultAsync();
+		// Check if to-do list exists
+		if (!await _existenceChecker.ExistsAsync<TodoList, string>(todoListId))
+			return null;
+
+		// Get the model
+		var todoItem = await _repository.GetByIdAsync(itemId);
+		// Return null if model is null
+		if (todoItem == null) return null;
+		// Map it to DTO and return
+		return todoItem.Adapt<TodoItemGetByIdDto>();
 	}
 
 	/// <summary>
@@ -76,37 +69,49 @@ public class TodoItemsService(ApplicationDbContext dbContext) : ITodoItemsServic
 	/// <param name="dto">The DTO containing information for creating the to-do list item.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. 
-	/// The task result contains the created <see cref="TodoItem"/>.
+	/// The task result contains the created <see cref="TodoItem"/> mapped to 
+	/// <see cref="TodoItemGetByIdDto"/> or <see langword="null" /> if to-do list with ID
+	/// <paramref name="todoListId"/> does not exist.
 	/// </returns>
-	public async Task<TodoItem> CreateAsync(string todoListId, TodoItemCreateDto dto)
+	public async Task<TodoItemGetByIdDto?> CreateAsync(string todoListId, TodoItemCreateDto dto)
 	{
-		var item = dto.Adapt<TodoItem>();
-		item.TodoListId = todoListId;
-		_dbContext.TodoItems.Add(item);
-		await _dbContext.SaveChangesAsync();
-		return item;
+		// Check if to-do list exists
+		if (!await _existenceChecker.ExistsAsync<TodoList, string>(todoListId))
+			return null;
+
+		// Create the model
+		var todoItem = dto.Adapt<TodoItem>();
+		// Set the foreign key
+		todoItem.TodoListId = todoListId;
+		// Save it
+		await _repository.AddAsync(todoItem);
+		// Map it to DTO and return
+		return todoItem.Adapt<TodoItemGetByIdDto>();
 	}
 
 	/// <summary>
 	/// Edits a to-do list item asynchronously.
 	/// </summary>
-	/// <param name="id">The ID of the to-do list item to edit.</param>
+	/// <param name="todoListId">The ID of the to-do list which contains the item.</param>
+	/// <param name="itemId">The ID of the to-do list item to edit.</param>
 	/// <param name="dto">The DTO containing information for editing the to-do list item.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. 
 	/// The task result contains <see langword="true"/> on success;
 	/// otherwise <see langword="false"/> if the entity was not found.
 	/// </returns>
-	public async Task<bool> EditAsync(int id, TodoItemCreateDto dto)
+	public async Task<bool> EditAsync(string todoListId, int itemId, TodoItemCreateDto dto)
 	{
-		var item = await _dbContext.TodoItems
-			.Where(x => x.Id == id)
-			.FirstOrDefaultAsync();
-		// To-do item does not exist - return false
-		if (item == null) return false;
+		// Get the model of a to-do list item
+		var todoItem = await _repository.GetByIdAsync(itemId);
+		// Check if it's valid
+		if (todoItem == null || todoItem.TodoListId != todoListId)
+			return false;
 
-		dto.Adapt(item);
-		await _dbContext.SaveChangesAsync();
+		// Update the model
+		dto.Adapt(todoItem);
+		// Save changes
+		await _repository.UpdateAsync(todoItem);
 
 		return true;
 	}
@@ -114,23 +119,26 @@ public class TodoItemsService(ApplicationDbContext dbContext) : ITodoItemsServic
 	/// <summary>
 	/// Updates the state of a to-do list item asynchronously.
 	/// </summary>
-	/// <param name="id">The ID of the to-do list item to update the state.</param>
-	/// <param name="dto">The DTO containing information for updating the state of the to-do list item.</param>
+	/// <param name="todoListId">The ID of the to-do list which contains the item.</param>
+	/// <param name="itemId">The ID of the to-do list item to update the state.</param>
+	/// <param name="state">State of the to-do item to set.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. 
 	/// The task result contains <see langword="true"/> on success;
 	/// otherwise <see langword="false"/> if the entity was not found.
 	/// </returns>
-	public async Task<bool> UpdateStateAsync(int id, TodoItemUpdateStateDto dto)
+	public async Task<bool> UpdateStateAsync(string todoListId, int itemId, TodoItemUpdateStateDto stateDto)
 	{
-		var item = await _dbContext.TodoItems
-			.Where(x => x.Id == id)
-			.FirstOrDefaultAsync();
-		// To-do item does not exist - return false
-		if (item == null) return false;
+		// Get the model of a to-do list item
+		var todoItem = await _repository.GetByIdAsync(itemId);
+		// Check if it's valid
+		if (todoItem == null || todoItem.TodoListId != todoListId)
+			return false;
 
-		item.State = dto.State;
-		await _dbContext.SaveChangesAsync();
+		// Update the model
+		todoItem.State = stateDto.State;
+		// Save changes
+		await _repository.UpdateAsync(todoItem);
 
 		return true;
 	}
@@ -138,22 +146,23 @@ public class TodoItemsService(ApplicationDbContext dbContext) : ITodoItemsServic
 	/// <summary>
 	/// Deletes a to-do list item asynchronously.
 	/// </summary>
-	/// <param name="id">The ID of the to-do list item to delete.</param>
+	/// <param name="todoListId">The ID of the to-do list which contains the item.</param>
+	/// <param name="itemId">The ID of the to-do list item to delete.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. 
 	/// The task result contains <see langword="true"/> on success;
 	/// otherwise <see langword="false"/> if the entity was not found.
 	/// </returns>
-	public async Task<bool> DeleteAsync(int id)
+	public async Task<bool> DeleteAsync(string todoListId, int itemId)
 	{
-		var item = await _dbContext.TodoItems
-			.Where(x => x.Id == id)
-			.FirstOrDefaultAsync();
-		// To-do item does not exist - return false
-		if (item == null) return false;
+		// Get the model of a to-do list item
+		var todoItem = await _repository.GetByIdAsync(itemId);
+		// Check if it's valid
+		if (todoItem == null || todoItem.TodoListId != todoListId)
+			return false;
 
-		_dbContext.TodoItems.Remove(item);
-		await _dbContext.SaveChangesAsync();
+		// Delete the model
+		await _repository.DeleteAsync(todoItem);
 
 		return true;
 	}
