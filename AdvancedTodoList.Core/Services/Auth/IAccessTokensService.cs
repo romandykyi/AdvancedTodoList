@@ -7,6 +7,7 @@ namespace AdvancedTodoList.Core.Services.Auth;
 /// </summary>
 public interface IAccessTokensService
 {
+	/// <summary>
 	/// Generates an access token for the user.
 	/// </summary>
 	/// <param name="user">User which will receive an access token.</param>

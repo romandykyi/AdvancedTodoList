@@ -83,7 +83,7 @@ public class AuthServiceTests : DataAccessFixture
 		_userManager.Dispose();
 	}
 
-	// Assert if LogInResponse is valid
+	// Assert that LogInResponse is valid
 	private async Task AssertSuccessLogInAsync(LogInResponse? response, ApplicationUser user)
 	{
 		// Assert that response is not null (success)
