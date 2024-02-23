@@ -4,10 +4,7 @@ using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
 using Mapster;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using NSubstitute.ReturnsExtensions;
-using NUnit.Framework.Interfaces;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 
@@ -95,7 +92,7 @@ public class TodoListsServiceTests : BusinessLogicFixture
 		await WebApplicationFactory.TodoListsRepository
 			.Received()
 			.UpdateAsync(Arg.Is<TodoList>(x => x.Id == todoList.Id &&
-				x.Name == updateDto.Name && 
+				x.Name == updateDto.Name &&
 				x.Description == updateDto.Description));
 	}
 

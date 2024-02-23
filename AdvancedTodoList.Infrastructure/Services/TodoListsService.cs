@@ -9,11 +9,9 @@ namespace AdvancedTodoList.Infrastructure.Services;
 /// <summary>
 /// A service that manages to-do lists.
 /// </summary>
-public class TodoListsService(IRepository<TodoList, string> repository, 
-	IEntityExistenceChecker entityExistenceChecker) : ITodoListsService
+public class TodoListsService(IRepository<TodoList, string> repository) : ITodoListsService
 {
 	private readonly IRepository<TodoList, string> _repository = repository;
-	private readonly IEntityExistenceChecker _entityExistenceChecker = entityExistenceChecker;
 
 	/// <summary>
 	/// Retrieves a to-do list by its ID asynchronously.
