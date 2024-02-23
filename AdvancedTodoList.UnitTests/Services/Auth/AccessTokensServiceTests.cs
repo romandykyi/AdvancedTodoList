@@ -2,6 +2,7 @@
 using AdvancedTodoList.Core.Options;
 using AdvancedTodoList.Infrastructure.Services.Auth;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
@@ -11,18 +12,21 @@ namespace AdvancedTodoList.UnitTests.Services.Auth;
 [TestFixture]
 public class AccessTokensServiceTests
 {
-	private AccessTokenOptions _options;
+	private AccessTokenOptions _accessTokenOptions;
+	private IOptions<AccessTokenOptions> _options;
 
 	[SetUp]
 	public void Setup()
 	{
-		_options = new()
+		_accessTokenOptions = new()
 		{
 			SecretKey = "TestSecretKeyWhichIsNotGoingToBeUsedInProductionOfCourse",
 			ValidIssuer = "valid_issuer",
 			ValidAudience = "valid_audience",
 			ExpirationSeconds = 3600 // 1 hour expiration
 		};
+		_options = Substitute.For<IOptions<AccessTokenOptions>>();
+		_options.Value.Returns(_accessTokenOptions);
 	}
 
 	[Test]
@@ -45,9 +49,9 @@ public class AccessTokensServiceTests
 		// Assert
 		TokenValidationParameters validationParameters = new()
 		{
-			ValidIssuer = _options.ValidIssuer,
-			ValidAudience = _options.ValidAudience,
-			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey))
+			ValidIssuer = _accessTokenOptions.ValidIssuer,
+			ValidAudience = _accessTokenOptions.ValidAudience,
+			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_accessTokenOptions.SecretKey))
 		};
 		JwtSecurityTokenHandler tokenHandler = new();
 		var validationResult = await tokenHandler.ValidateTokenAsync(

@@ -84,21 +84,24 @@ builder.Services.AddIdentityCore<ApplicationUser>()
 	.AddEntityFrameworkStores<ApplicationDbContext>()
 	.AddApiEndpoints();
 
-// Register application services
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ITodoListsService, TodoListsService>();
-builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
-builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
-// Register application repositories
-builder.Services.AddScoped<IRepository<TodoList, string>, TodoListRepository>();
-builder.Services.AddScoped<IRepository<TodoItem, int>, TodoItemsRepository>();
-builder.Services.AddScoped<IRepository<UserRefreshToken, int>, UserRefreshTokensRepository>();
-builder.Services.AddScoped<IUserRefreshTokensRepository, UserRefreshTokensRepository>();
 // Bind options
 builder.Services.Configure<AccessTokenOptions>(
 	builder.Configuration.GetSection("Auth:AccessToken"));
 builder.Services.Configure<RefreshTokenOptions>(
 	builder.Configuration.GetSection("Auth:RefreshToken"));
+
+// Register application services
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITodoListsService, TodoListsService>();
+builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
+builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
+builder.Services.AddSingleton<IAccessTokensService, AccessTokensService>();
+builder.Services.AddScoped<IRefreshTokensService, RefreshTokensService>();
+// Register application repositories
+builder.Services.AddScoped<IRepository<TodoList, string>, TodoListRepository>();
+builder.Services.AddScoped<IRepository<TodoItem, int>, TodoItemsRepository>();
+builder.Services.AddScoped<IRepository<UserRefreshToken, int>, UserRefreshTokensRepository>();
+builder.Services.AddScoped<IUserRefreshTokensRepository, UserRefreshTokensRepository>();
 
 // Apply mapping settings
 MappingGlobalSettings.Apply();

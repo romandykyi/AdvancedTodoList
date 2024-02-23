@@ -1,6 +1,7 @@
 ﻿using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Options;
 using AdvancedTodoList.Core.Services.Auth;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -11,9 +12,9 @@ namespace AdvancedTodoList.Infrastructure.Services.Auth;
 /// <summary>
 /// A service that manages access tokens.
 /// </summary>
-public class AccessTokensService(AccessTokenOptions options) : IAccessTokensService
+public class AccessTokensService(IOptions<AccessTokenOptions> options) : IAccessTokensService
 {
-	private readonly AccessTokenOptions _options = options;
+	private readonly AccessTokenOptions _tokenOptions = options.Value;
 
 	/// <summary>
 	/// Generates an access token for the user.
@@ -24,7 +25,7 @@ public class AccessTokensService(AccessTokenOptions options) : IAccessTokensServ
 	/// </returns>
 	public string GenerateAccessToken(ApplicationUser user)
 	{
-		SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(_options.SecretKey));
+		SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(_tokenOptions.SecretKey));
 
 		List<Claim> claims =
 		[
@@ -36,9 +37,9 @@ public class AccessTokensService(AccessTokenOptions options) : IAccessTokensServ
 		];
 
 		JwtSecurityToken token = new(
-			issuer: _options.ValidIssuer,
-			audience: _options.ValidAudience,
-			expires: DateTime.UtcNow.AddSeconds(_options.ExpirationSeconds),
+			issuer: _tokenOptions.ValidIssuer,
+			audience: _tokenOptions.ValidAudience,
+			expires: DateTime.UtcNow.AddSeconds(_tokenOptions.ExpirationSeconds),
 			claims: claims,
 			signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
 			);
@@ -58,13 +59,13 @@ public class AccessTokensService(AccessTokenOptions options) : IAccessTokensServ
 	public async Task<string?> GetUserIdFromExpiredTokenAsync(string accessToken)
 	{
 		// Validate the access token
-		string key = _options.SecretKey;
+		string key = _tokenOptions.SecretKey;
 		JwtSecurityTokenHandler tokenHandler = new();
 		TokenValidationParameters validationParameters = new()
 		{
 			ValidateLifetime = false, // Ignore expiration time
-			ValidIssuer = _options.ValidIssuer,
-			ValidAudience = _options.ValidAudience,
+			ValidIssuer = _tokenOptions.ValidIssuer,
+			ValidAudience = _tokenOptions.ValidAudience,
 			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
 		};
 		var validationResult = await tokenHandler.ValidateTokenAsync(

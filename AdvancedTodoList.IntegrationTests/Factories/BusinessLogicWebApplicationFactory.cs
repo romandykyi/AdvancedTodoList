@@ -15,6 +15,7 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 	public IEntityExistenceChecker EntityExistenceChecker { get; private set; } = null!;
 	public IRepository<TodoList, string> TodoListsRepository { get; private set; } = null!;
 	public IRepository<TodoItem, int> TodoItemsRepository { get; private set; } = null!;
+	public IUserRefreshTokensRepository RefreshTokensRepository { get; private set; } = null!;
 
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
@@ -22,12 +23,14 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 		EntityExistenceChecker = Substitute.For<IEntityExistenceChecker>();
 		TodoListsRepository = Substitute.For<IRepository<TodoList, string>>();
 		TodoItemsRepository = Substitute.For<IRepository<TodoItem, int>>();
+		RefreshTokensRepository = Substitute.For<IUserRefreshTokensRepository>();
 
 		builder.ConfigureTestServices(services =>
 		{
 			services.AddScoped(_ => EntityExistenceChecker);
 			services.AddScoped(_ => TodoListsRepository);
 			services.AddScoped(_ => TodoItemsRepository);
+			services.AddScoped(_ => RefreshTokensRepository);
 		});
 	}
 }
