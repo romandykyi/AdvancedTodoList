@@ -242,7 +242,7 @@ public class AuthServiceTests : DataAccessFixture
 		// Arrange
 		var user = await CreateTestUserAsync();
 		UserRefreshToken token = await CreateTestRefreshTokenAsync(user);
-		string expiredToken = CreateTestJwt(user, expires: DateTime.UtcNow.AddSeconds(-5));
+		string expiredToken = CreateTestJwt(user, expires: DateTime.UtcNow.AddDays(-5));
 		RefreshDto dto = new(expiredToken, token.Token);
 
 		// Act

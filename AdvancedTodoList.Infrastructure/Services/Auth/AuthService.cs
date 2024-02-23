@@ -211,7 +211,7 @@ public class AuthService(
 		JwtSecurityTokenHandler tokenHandler = new();
 		TokenValidationParameters validationParameters = new()
 		{
-			RequireExpirationTime = false, // Ignore expiration time
+			ValidateLifetime = false, // Ignore expiration time
 			ValidIssuer = _configuration["Auth:ValidIssuer"],
 			ValidAudience = _configuration["Auth:ValidAudience"],
 			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
