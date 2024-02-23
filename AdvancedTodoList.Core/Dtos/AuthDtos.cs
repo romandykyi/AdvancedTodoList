@@ -8,7 +8,7 @@ public record LogInDto(string UserNameOrEmail, string Password);
 /// <summary>
 /// Response of the log in and the refresh endpoints.
 /// </summary>
-public record LogInResponse(string AccessToken, int ExpirationSeconds, string RefreshToken);
+public record LogInResponse(string AccessToken, string RefreshToken);
 
 /// <summary>
 /// DTO for register.

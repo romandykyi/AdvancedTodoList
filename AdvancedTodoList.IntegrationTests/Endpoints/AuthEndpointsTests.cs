@@ -15,7 +15,7 @@ public class AuthEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		LogInDto logInDto = new("UserName", "Password");
-		LogInResponse expectedResponse = new("Access", 300, "Refresh");
+		LogInResponse expectedResponse = new("Access", "Refresh");
 		using var client = WebApplicationFactory.CreateClient();
 
 		WebApplicationFactory.AuthService
@@ -119,7 +119,7 @@ public class AuthEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		RefreshDto refreshDto = new("Access", "Refresh");
-		LogInResponse expectedResponse = new("Access", 300, "Refresh");
+		LogInResponse expectedResponse = new("Access", "Refresh");
 		using var client = WebApplicationFactory.CreateClient();
 
 		WebApplicationFactory.AuthService

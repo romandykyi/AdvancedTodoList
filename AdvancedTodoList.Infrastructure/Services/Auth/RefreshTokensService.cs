@@ -13,9 +13,9 @@ public class RefreshTokensService(
 	IOptions<RefreshTokenOptions> options,
 	IEntityExistenceChecker existenceChecker) : IRefreshTokensService
 {
-	private IUserRefreshTokensRepository _repository = repository;
-	private RefreshTokenOptions _tokenOptions = options.Value;
-	private IEntityExistenceChecker _existenceChecker = existenceChecker;
+	private readonly IUserRefreshTokensRepository _repository = repository;
+	private readonly RefreshTokenOptions _tokenOptions = options.Value;
+	private readonly IEntityExistenceChecker _existenceChecker = existenceChecker;
 
 	/// <summary>
 	/// Generates a refresh token for the user and saves it asynchronously.

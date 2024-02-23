@@ -115,8 +115,6 @@ public class AuthServiceTests : DataAccessFixture
 
 #pragma warning disable NUnit2045 // Use Assert.Multiple
 
-		// Assert that returned expiration is valid
-		Assert.That(response.ExpirationSeconds, Is.EqualTo(_configuration.GetValue<int>("Auth:AccessToken:ExpirationSeconds")));
 		// Assert that refresh token is present
 		Assert.That(
 			await DbContext.UserRefreshTokens
