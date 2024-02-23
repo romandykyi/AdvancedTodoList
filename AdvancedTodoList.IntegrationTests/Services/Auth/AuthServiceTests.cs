@@ -2,6 +2,7 @@
 using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Services.Auth;
 using AdvancedTodoList.IntegrationTests.Fixtures;
+using AdvancedTodoList.IntegrationTests.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,14 +25,7 @@ public class AuthServiceTests : DataAccessFixture
 	// Creates a test user and adds it to the DB
 	private async Task<ApplicationUser> CreateTestUserAsync()
 	{
-		string userName = Guid.NewGuid().ToString();
-		ApplicationUser user = new()
-		{
-			UserName = userName,
-			FirstName = "Test",
-			LastName = "User",
-			Email = $"{userName}@example.com"
-		};
+		ApplicationUser user = TestModels.CreateTestUser();
 
 		var result = await _userManager.CreateAsync(user, TestPassword);
 		Assert.That(result.Succeeded, "Failed to create a test user");

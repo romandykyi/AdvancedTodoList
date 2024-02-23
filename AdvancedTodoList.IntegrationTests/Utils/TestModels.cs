@@ -1,4 +1,5 @@
-﻿using AdvancedTodoList.Core.Models.TodoLists;
+﻿using AdvancedTodoList.Core.Models.Auth;
+using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.IntegrationTests.Factories;
 
 namespace AdvancedTodoList.IntegrationTests.Utils;
@@ -28,5 +29,28 @@ public static class TestModels
 		State = TodoItemState.Completed,
 		DeadlineDate = DateTime.UtcNow.AddDays(365),
 		TodoListId = todoListId
+	};
+	/// <summary>
+	/// Creates and returns a valid model of an application user.
+	/// </summary>
+	public static ApplicationUser CreateTestUser()
+	{
+		string userName = Guid.NewGuid().ToString();
+		return new()
+		{
+			UserName = userName,
+			FirstName = "Test",
+			LastName = "User",
+			Email = $"{userName}@example.com"
+		};
+	}
+	/// <summary>
+	/// Creates and returns a valid model of a refresh token.
+	/// </summary>
+	public static UserRefreshToken CreateTestUserRefreshToken(string userId) => new()
+	{
+		UserId = userId,
+		Token = "TestToken",
+		ValidTo = DateTime.UtcNow.AddDays(180)
 	};
 }
