@@ -51,7 +51,7 @@ public class AuthServiceTests : DataAccessFixture
 	// Creates a test JWT for a user
 	private string CreateTestJwt(ApplicationUser user, bool valid = true, DateTime? expires = null)
 	{
-		string strKey = valid ? _configuration["Auth:SecretKey"]! : "Invalid" + _configuration["Auth:SecretKey"]!;
+		string strKey = valid ? _configuration["Auth:AccessToken:SecretKey"]! : "Invalid" + _configuration["Auth:AccessToken:SecretKey"]!;
 		SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(strKey));
 
 		List<Claim> authClaims =
@@ -59,8 +59,8 @@ public class AuthServiceTests : DataAccessFixture
 			new(JwtRegisteredClaimNames.Sub, user.Id)
 		];
 		JwtSecurityToken token = new(
-				issuer: _configuration["Auth:ValidIssuer"],
-				audience: _configuration["Auth:ValidAudience"],
+				issuer: _configuration["Auth:AccessToken:ValidIssuer"],
+				audience: _configuration["Auth:AccessToken:ValidAudience"],
 				expires: expires ?? DateTime.UtcNow.AddMinutes(30),
 				claims: authClaims,
 				signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
@@ -92,11 +92,11 @@ public class AuthServiceTests : DataAccessFixture
 		Assert.That(response.AccessToken, Is.Not.Null);
 		// Assert that access token is valid
 		JwtSecurityTokenHandler tokenHandler = new();
-		string key = _configuration["Auth:SecretKey"]!;
+		string key = _configuration["Auth:AccessToken:SecretKey"]!;
 		TokenValidationParameters validationParameters = new()
 		{
-			ValidIssuer = _configuration["Auth:ValidIssuer"],
-			ValidAudience = _configuration["Auth:ValidAudience"],
+			ValidIssuer = _configuration["Auth:AccessToken:ValidIssuer"],
+			ValidAudience = _configuration["Auth:AccessToken:ValidAudience"],
 			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
 		};
 		tokenHandler.ValidateToken(response.AccessToken, validationParameters, out var token);
@@ -116,7 +116,7 @@ public class AuthServiceTests : DataAccessFixture
 #pragma warning disable NUnit2045 // Use Assert.Multiple
 
 		// Assert that returned expiration is valid
-		Assert.That(response.ExpirationSeconds, Is.EqualTo(_configuration.GetValue<int>("Auth:AccessTokenExpirationSeconds")));
+		Assert.That(response.ExpirationSeconds, Is.EqualTo(_configuration.GetValue<int>("Auth:AccessToken:ExpirationSeconds")));
 		// Assert that refresh token is present
 		Assert.That(
 			await DbContext.UserRefreshTokens

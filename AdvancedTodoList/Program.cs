@@ -53,7 +53,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddAntiforgery(options => options.HeaderName = "X-XSRF-Token");
 
 // Configure auth
-string? jwtSecret = builder.Configuration["Auth:SecretKey"] ??
+string? jwtSecret = builder.Configuration["Auth:AccessToken:SecretKey"] ??
 	throw new InvalidOperationException("JWT secret is not configured");
 builder.Services.AddAuthentication()
 	.AddJwtBearer(options =>
@@ -61,8 +61,8 @@ builder.Services.AddAuthentication()
 		options.SaveToken = true;
 		options.TokenValidationParameters = new TokenValidationParameters
 		{
-			ValidIssuer = builder.Configuration["Auth:ValidIssuer"],
-			ValidAudience = builder.Configuration["Auth:ValidAudience"],
+			ValidIssuer = builder.Configuration["Auth:AccessToken:ValidIssuer"],
+			ValidAudience = builder.Configuration["Auth:AccessToken:ValidAudience"],
 			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
 		};
 	});

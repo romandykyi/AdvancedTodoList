@@ -90,7 +90,7 @@ public class AuthService(
 	}
 
 	/// <summary>
-	/// Refreshes the authentication token asynchronously.
+	/// Refreshes the access token asynchronously.
 	/// </summary>
 	/// <param name="refreshDto">Data required for token refresh.</param>
 	/// <returns>
@@ -153,8 +153,8 @@ public class AuthService(
 	// Generates JWT token and returns a response, requires refresh token
 	private LogInResponse GetLogInResponse(ApplicationUser user, string refreshToken)
 	{
-		SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(_configuration["Auth:SecretKey"]!));
-		int expirationSeconds = _configuration.GetValue<int>("Auth:AccessTokenExpirationSeconds");
+		SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(_configuration["Auth:AccessToken:SecretKey"]!));
+		int expirationSeconds = _configuration.GetValue<int>("Auth:AccessToken:ExpirationSeconds");
 
 		List<Claim> claims =
 		[
@@ -166,8 +166,8 @@ public class AuthService(
 		];
 
 		JwtSecurityToken token = new(
-			issuer: _configuration["Auth:ValidIssuer"],
-			audience: _configuration["Auth:ValidAudience"],
+			issuer: _configuration["Auth:AccessToken:ValidIssuer"],
+			audience: _configuration["Auth:AccessToken:ValidAudience"],
 			expires: DateTime.UtcNow.AddSeconds(expirationSeconds),
 			claims: claims,
 			signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
@@ -182,12 +182,12 @@ public class AuthService(
 	{
 		// Generate a token
 		using RandomNumberGenerator rng = RandomNumberGenerator.Create();
-		int refreshTokenSize = _configuration.GetValue<int>("Auth:RefreshTokenSize");
+		int refreshTokenSize = _configuration.GetValue<int>("Auth:RefreshToken:Size");
 		byte[] refreshTokenBytes = new byte[refreshTokenSize];
 		rng.GetBytes(refreshTokenBytes);
 
 		// Set the expiration date and assign token to the user
-		int expirationDays = _configuration.GetValue<int>("Auth:RefreshTokenExpirationDays");
+		int expirationDays = _configuration.GetValue<int>("Auth:RefreshToken:ExpirationDays");
 		UserRefreshToken tokenEntity = new()
 		{
 			Token = Convert.ToBase64String(refreshTokenBytes),
@@ -207,13 +207,13 @@ public class AuthService(
 	private async Task<string?> GetUserIdFromExpiredTokenAsync(string accessToken)
 	{
 		// Validate the access token
-		string key = _configuration["Auth:SecretKey"]!;
+		string key = _configuration["Auth:AccessToken:SecretKey"]!;
 		JwtSecurityTokenHandler tokenHandler = new();
 		TokenValidationParameters validationParameters = new()
 		{
 			ValidateLifetime = false, // Ignore expiration time
-			ValidIssuer = _configuration["Auth:ValidIssuer"],
-			ValidAudience = _configuration["Auth:ValidAudience"],
+			ValidIssuer = _configuration["Auth:AccessToken:ValidIssuer"],
+			ValidAudience = _configuration["Auth:AccessToken:ValidAudience"],
 			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
 		};
 		var validationResult = await tokenHandler.ValidateTokenAsync(

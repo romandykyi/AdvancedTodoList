@@ -21,7 +21,7 @@ public abstract class EndpointsFixture
 	protected HttpClient CreateAuthorizedHttpClient(string userId = TestUserId)
 	{
 		// Create a valid JWT
-		string strKey = Configuration["Auth:SecretKey"]!;
+		string strKey = Configuration["Auth:AccessToken:SecretKey"]!;
 		SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(strKey));
 
 		List<Claim> authClaims =
@@ -29,8 +29,8 @@ public abstract class EndpointsFixture
 			new(JwtRegisteredClaimNames.Sub, userId)
 		];
 		JwtSecurityToken token = new(
-				issuer: Configuration["Auth:ValidIssuer"],
-				audience: Configuration["Auth:ValidAudience"],
+				issuer: Configuration["Auth:AccessToken:ValidIssuer"],
+				audience: Configuration["Auth:AccessToken:ValidAudience"],
 				expires: DateTime.UtcNow.AddMinutes(30),
 				claims: authClaims,
 				signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
