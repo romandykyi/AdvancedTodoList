@@ -108,7 +108,7 @@ public class TodoController(
 	{
 		var page = await _todoItemsService.GetItemsOfListAsync(listId, paginationParameters);
 		if (page == null) return NotFound();
-		return Ok();
+		return Ok(page);
 	}
 
 	/// <summary>
