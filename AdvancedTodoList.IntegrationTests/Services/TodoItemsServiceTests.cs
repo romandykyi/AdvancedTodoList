@@ -41,7 +41,7 @@ public class TodoItemsServiceTests : BusinessLogicFixture
 		Assert.That(result, Is.Not.Null);
 		await WebApplicationFactory.TodoItemsRepository
 			.Received()
-			.GetPageAsync<TodoItemPreviewDto>(parameters, Arg.Any<TodoItemsSpecification>());
+			.GetPageAsync<TodoItemPreviewDto>(parameters, Arg.Any<TodoDependantEntitySpecification<TodoItem>>());
 	}
 
 	[Test]

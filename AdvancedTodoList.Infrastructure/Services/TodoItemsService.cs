@@ -34,7 +34,7 @@ public class TodoItemsService(IRepository<TodoItem, int> repository,
 			return null;
 
 		// Get the requested page
-		TodoItemsSpecification specification = new(todoListId);
+		TodoDependantEntitySpecification<TodoItem> specification = new(todoListId);
 		return await _repository.GetPageAsync<TodoItemPreviewDto>(paginationParameters, specification);
 	}
 
