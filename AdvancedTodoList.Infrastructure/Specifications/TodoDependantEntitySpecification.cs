@@ -5,17 +5,32 @@ using System.Linq.Expressions;
 namespace AdvancedTodoList.Infrastructure.Specifications;
 
 /// <summary>
-/// Represents a specification that defines criteria for filtering any todo-list items.
+/// Represents a specification that defines criteria for filtering any todo-list dependant entities.
 /// </summary>
 /// <param name="todoListId">ID of the list items of which will be obtained.</param>
 public class TodoDependantEntitySpecification<TEntity>(string todoListId) : ISpecification<TEntity>
 	where TEntity : ITodoListDependant
 {
-	private readonly Expression<Func<TEntity, bool>> _criteria = x => x.TodoListId == todoListId;
+	/// <summary>
+	/// Gets the ID of the to-do list to filter entities by.
+	/// </summary>
+	protected string? TodoListId { get; } = todoListId;
 
-	public Expression<Func<TEntity, bool>> Criteria => _criteria;
+	/// <summary>
+	/// Gets the criteria expression that defines the filtering conditions.
+	/// Filters only by the to-do list ID when not overriden.
+	/// </summary>
+	public virtual Expression<Func<TEntity, bool>> Criteria => x => x.TodoListId == TodoListId;
 
-	public List<Expression<Func<TEntity, object>>> Includes => [];
+	/// <summary>
+	/// Gets the list of include expressions specifying related entities to be included in the query results.
+	/// Is empty when not overriden.
+	/// </summary>
+	public virtual List<Expression<Func<TEntity, object>>> Includes => [];
 
-	public List<string> IncludeStrings => [];
+	/// <summary>
+	/// Gets the list of include strings specifying related entities to be included in the query results.
+	/// Is empty when not overriden.
+	/// </summary>
+	public virtual List<string> IncludeStrings => [];
 }

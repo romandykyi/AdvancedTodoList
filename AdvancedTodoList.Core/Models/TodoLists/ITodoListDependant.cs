@@ -8,5 +8,5 @@ public interface ITodoListDependant
 	/// <summary>
 	/// A foreign key of a to-do list.
 	/// </summary>
-	string TodoListId { get; }
+	string TodoListId { get; set; }
 }

@@ -1,6 +1,7 @@
 ﻿using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.IntegrationTests.Factories;
+using AdvancedTodoList.IntegrationTests.Services;
 
 namespace AdvancedTodoList.IntegrationTests.Utils;
 
@@ -28,6 +29,14 @@ public static class TestModels
 		Description = "Description",
 		State = TodoItemState.Completed,
 		DeadlineDate = DateTime.UtcNow.AddDays(365),
+		TodoListId = todoListId
+	};
+	/// <summary>
+	/// Creates and returns a valid model of a test to-do list dependant entity. 
+	/// </summary>
+	public static TestTodoListDependantEntity CreateTestTodoListDependantEntity(string todoListId) => new()
+	{
+		TestProperty = "Test",
 		TodoListId = todoListId
 	};
 	/// <summary>

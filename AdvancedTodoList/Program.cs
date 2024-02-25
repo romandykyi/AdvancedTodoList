@@ -97,6 +97,8 @@ builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
 builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
 builder.Services.AddSingleton<IAccessTokensService, AccessTokensService>();
 builder.Services.AddScoped<IRefreshTokensService, RefreshTokensService>();
+builder.Services.AddScoped(typeof(ITodoListDependantEntitiesService<,>), 
+	typeof(TodoListDependantEntitiesService<,>));
 // Register application repositories
 builder.Services.AddScoped<IRepository<TodoList, string>, TodoListRepository>();
 builder.Services.AddScoped<IRepository<TodoItem, int>, TodoItemsRepository>();
