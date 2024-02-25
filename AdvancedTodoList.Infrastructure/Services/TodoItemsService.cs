@@ -11,11 +11,9 @@ namespace AdvancedTodoList.Infrastructure.Services;
 /// <summary>
 /// A service that manages to-do lists items.
 /// </summary>
-public class TodoItemsService(IRepository<TodoItem, int> repository,
-	IEntityExistenceChecker existenceChecker) : ITodoItemsService
+public class TodoItemsService(ITodoListDependantEntitiesService<TodoItem, int> helperService) : ITodoItemsService
 {
-	private readonly IRepository<TodoItem, int> _repository = repository;
-	private readonly IEntityExistenceChecker _existenceChecker = existenceChecker;
+	private readonly ITodoListDependantEntitiesService<TodoItem, int> _helperService = helperService;
 
 	/// <summary>
 	/// Retrieves a page of to-do list items of the list with the specified ID.
@@ -27,15 +25,10 @@ public class TodoItemsService(IRepository<TodoItem, int> repository,
 	/// The task result contains a page of <see cref="TodoItemPreviewDto"/> objects or
 	/// <see langword="null" /> if the to-do list does not exist.
 	/// </returns>
-	public async Task<Page<TodoItemPreviewDto>?> GetItemsOfListAsync(string todoListId, PaginationParameters paginationParameters)
+	public Task<Page<TodoItemPreviewDto>?> GetItemsOfListAsync(string todoListId, PaginationParameters paginationParameters)
 	{
-		// Check if to-do list exists
-		if (!await _existenceChecker.ExistsAsync<TodoList, string>(todoListId))
-			return null;
-
-		// Get the requested page
-		TodoDependantEntitySpecification<TodoItem> specification = new(todoListId);
-		return await _repository.GetPageAsync<TodoItemPreviewDto>(paginationParameters, specification);
+		TodoListDependantEntitiesSpecification<TodoItem> specification = new(todoListId);
+		return _helperService.GetPageAsync<TodoItemPreviewDto>(todoListId, specification, paginationParameters);
 	}
 
 	/// <summary>
@@ -48,18 +41,9 @@ public class TodoItemsService(IRepository<TodoItem, int> repository,
 	/// a <see cref="TodoItemGetByIdDto"/> object if the specified ID is found;
 	/// otherwise, returns <see langword="null"/>.
 	/// </returns>
-	public async Task<TodoItemGetByIdDto?> GetByIdAsync(string todoListId, int itemId)
+	public Task<TodoItemGetByIdDto?> GetByIdAsync(string todoListId, int itemId)
 	{
-		// Check if to-do list exists
-		if (!await _existenceChecker.ExistsAsync<TodoList, string>(todoListId))
-			return null;
-
-		// Get the model
-		var todoItem = await _repository.GetByIdAsync(itemId);
-		// Return null if model is null
-		if (todoItem == null) return null;
-		// Map it to DTO and return
-		return todoItem.Adapt<TodoItemGetByIdDto>();
+		return _helperService.GetByIdAsync<TodoItemGetByIdDto>(todoListId, itemId);
 	}
 
 	/// <summary>
@@ -73,20 +57,9 @@ public class TodoItemsService(IRepository<TodoItem, int> repository,
 	/// <see cref="TodoItemGetByIdDto"/> or <see langword="null" /> if to-do list with ID
 	/// <paramref name="todoListId"/> does not exist.
 	/// </returns>
-	public async Task<TodoItemGetByIdDto?> CreateAsync(string todoListId, TodoItemCreateDto dto)
+	public Task<TodoItemGetByIdDto?> CreateAsync(string todoListId, TodoItemCreateDto dto)
 	{
-		// Check if to-do list exists
-		if (!await _existenceChecker.ExistsAsync<TodoList, string>(todoListId))
-			return null;
-
-		// Create the model
-		var todoItem = dto.Adapt<TodoItem>();
-		// Set the foreign key
-		todoItem.TodoListId = todoListId;
-		// Save it
-		await _repository.AddAsync(todoItem);
-		// Map it to DTO and return
-		return todoItem.Adapt<TodoItemGetByIdDto>();
+		return _helperService.CreateAsync<TodoItemCreateDto, TodoItemGetByIdDto>(todoListId, dto);
 	}
 
 	/// <summary>
@@ -100,20 +73,9 @@ public class TodoItemsService(IRepository<TodoItem, int> repository,
 	/// The task result contains <see langword="true"/> on success;
 	/// otherwise <see langword="false"/> if the entity was not found.
 	/// </returns>
-	public async Task<bool> EditAsync(string todoListId, int itemId, TodoItemCreateDto dto)
+	public Task<bool> EditAsync(string todoListId, int itemId, TodoItemCreateDto dto)
 	{
-		// Get the model of a to-do list item
-		var todoItem = await _repository.GetByIdAsync(itemId);
-		// Check if it's valid
-		if (todoItem == null || todoItem.TodoListId != todoListId)
-			return false;
-
-		// Update the model
-		dto.Adapt(todoItem);
-		// Save changes
-		await _repository.UpdateAsync(todoItem);
-
-		return true;
+		return _helperService.UpdateAsync(todoListId, itemId, dto);
 	}
 
 	/// <summary>
@@ -127,20 +89,9 @@ public class TodoItemsService(IRepository<TodoItem, int> repository,
 	/// The task result contains <see langword="true"/> on success;
 	/// otherwise <see langword="false"/> if the entity was not found.
 	/// </returns>
-	public async Task<bool> UpdateStateAsync(string todoListId, int itemId, TodoItemUpdateStateDto stateDto)
+	public Task<bool> UpdateStateAsync(string todoListId, int itemId, TodoItemUpdateStateDto stateDto)
 	{
-		// Get the model of a to-do list item
-		var todoItem = await _repository.GetByIdAsync(itemId);
-		// Check if it's valid
-		if (todoItem == null || todoItem.TodoListId != todoListId)
-			return false;
-
-		// Update the model
-		todoItem.State = stateDto.State;
-		// Save changes
-		await _repository.UpdateAsync(todoItem);
-
-		return true;
+		return _helperService.UpdateAsync(todoListId, itemId, stateDto);
 	}
 
 	/// <summary>
@@ -153,17 +104,8 @@ public class TodoItemsService(IRepository<TodoItem, int> repository,
 	/// The task result contains <see langword="true"/> on success;
 	/// otherwise <see langword="false"/> if the entity was not found.
 	/// </returns>
-	public async Task<bool> DeleteAsync(string todoListId, int itemId)
+	public Task<bool> DeleteAsync(string todoListId, int itemId)
 	{
-		// Get the model of a to-do list item
-		var todoItem = await _repository.GetByIdAsync(itemId);
-		// Check if it's valid
-		if (todoItem == null || todoItem.TodoListId != todoListId)
-			return false;
-
-		// Delete the model
-		await _repository.DeleteAsync(todoItem);
-
-		return true;
+		return _helperService.DeleteAsync(todoListId, itemId);
 	}
 }

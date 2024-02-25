@@ -17,6 +17,7 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 	public IRepository<TodoList, string> TodoListsRepository { get; private set; } = null!;
 	public IRepository<TodoItem, int> TodoItemsRepository { get; private set; } = null!;
 	public IRepository<TestTodoListDependantEntity, int> TestTodoListDependantEntitiesRepository { get; private set; } = null!;
+	public ITodoListDependantEntitiesService<TodoItem, int> TodoItemsHelperService { get; set; } = null!;
 	public IUserRefreshTokensRepository RefreshTokensRepository { get; private set; } = null!;
 
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -26,6 +27,7 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 		TodoListsRepository = Substitute.For<IRepository<TodoList, string>>();
 		TodoItemsRepository = Substitute.For<IRepository<TodoItem, int>>();
 		TestTodoListDependantEntitiesRepository = Substitute.For<IRepository<TestTodoListDependantEntity, int>>();
+		TodoItemsHelperService = Substitute.For<ITodoListDependantEntitiesService<TodoItem, int>>();
 		RefreshTokensRepository = Substitute.For<IUserRefreshTokensRepository>();
 
 		builder.ConfigureTestServices(services =>
@@ -34,6 +36,7 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 			services.AddScoped(_ => TodoListsRepository);
 			services.AddScoped(_ => TodoItemsRepository);
 			services.AddScoped(_ => TestTodoListDependantEntitiesRepository);
+			services.AddScoped(_ => TodoItemsHelperService);
 			services.AddScoped(_ => RefreshTokensRepository);
 		});
 	}
