@@ -1,5 +1,4 @@
-﻿using AdvancedTodoList.Infrastructure.Services;
-using AdvancedTodoList.IntegrationTests.Factories;
+﻿using AdvancedTodoList.IntegrationTests.Factories;
 
 namespace AdvancedTodoList.IntegrationTests.Fixtures;
 
@@ -8,24 +7,24 @@ namespace AdvancedTodoList.IntegrationTests.Fixtures;
 /// </summary>
 public abstract class BusinessLogicFixture
 {
-    protected BusinessLogicWebApplicationFactory WebApplicationFactory { get; private set; }
-    protected IServiceScope ServiceScope { get; private set; }
+	protected BusinessLogicWebApplicationFactory WebApplicationFactory { get; private set; }
+	protected IServiceScope ServiceScope { get; private set; }
 
-    [SetUp]
-    public void SetUpTest()
-    {
-        // Configure web application factory
-        WebApplicationFactory = new BusinessLogicWebApplicationFactory();
-        WebApplicationFactory.Server.PreserveExecutionContext = true;
+	[SetUp]
+	public void SetUpTest()
+	{
+		// Configure web application factory
+		WebApplicationFactory = new BusinessLogicWebApplicationFactory();
+		WebApplicationFactory.Server.PreserveExecutionContext = true;
 
-        var scopeFactory = WebApplicationFactory.Services.GetService<IServiceScopeFactory>()!;
-        ServiceScope = scopeFactory.CreateScope();
-    }
+		var scopeFactory = WebApplicationFactory.Services.GetService<IServiceScopeFactory>()!;
+		ServiceScope = scopeFactory.CreateScope();
+	}
 
-    [TearDown]
-    public Task TearDownTestAsync()
-    {
-        ServiceScope.Dispose();
-        return WebApplicationFactory.DisposeAsync().AsTask();
-    }
+	[TearDown]
+	public Task TearDownTestAsync()
+	{
+		ServiceScope.Dispose();
+		return WebApplicationFactory.DisposeAsync().AsTask();
+	}
 }

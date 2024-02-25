@@ -5,9 +5,6 @@ using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
-using AdvancedTodoList.IntegrationTests.Utils;
-using Mapster;
-using NSubstitute.ReturnsExtensions;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 
@@ -38,7 +35,7 @@ public class TodoItemsServiceTests : BusinessLogicFixture
 		Assert.That(result, Is.Not.Null);
 		await WebApplicationFactory.TodoItemsHelperService
 			.Received()
-			.GetPageAsync<TodoItemPreviewDto>(todoListId, 
+			.GetPageAsync<TodoItemPreviewDto>(todoListId,
 			Arg.Is<TodoListDependantEntitiesSpecification<TodoItem>>(x => x.TodoListId == todoListId),
 			Arg.Any<PaginationParameters>());
 	}

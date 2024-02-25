@@ -1,7 +1,6 @@
 ﻿using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Options;
 using AdvancedTodoList.Infrastructure.Services.Auth;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -62,15 +61,15 @@ public class AccessTokensServiceTests
 		var token = (JwtSecurityToken)validationResult.SecurityToken;
 		Assert.Multiple(() =>
 		{
-			Assert.That(token.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value, 
+			Assert.That(token.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value,
 				Is.EqualTo(user.Id));
-			Assert.That(token.Claims.First(x => x.Type == JwtRegisteredClaimNames.Email).Value, 
+			Assert.That(token.Claims.First(x => x.Type == JwtRegisteredClaimNames.Email).Value,
 				Is.EqualTo(user.Email));
-			Assert.That(token.Claims.First(x => x.Type == JwtRegisteredClaimNames.UniqueName).Value, 
+			Assert.That(token.Claims.First(x => x.Type == JwtRegisteredClaimNames.UniqueName).Value,
 				Is.EqualTo(user.UserName));
-			Assert.That(token.Claims.First(x => x.Type == JwtRegisteredClaimNames.GivenName).Value, 
+			Assert.That(token.Claims.First(x => x.Type == JwtRegisteredClaimNames.GivenName).Value,
 				Is.EqualTo(user.FirstName));
-			Assert.That(token.Claims.First(x => x.Type == JwtRegisteredClaimNames.FamilyName).Value, 
+			Assert.That(token.Claims.First(x => x.Type == JwtRegisteredClaimNames.FamilyName).Value,
 				Is.EqualTo(user.LastName));
 		});
 	}

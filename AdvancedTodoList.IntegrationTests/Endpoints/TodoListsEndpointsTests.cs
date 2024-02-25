@@ -1,7 +1,5 @@
 ﻿using AdvancedTodoList.Core.Dtos;
-using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.IntegrationTests.Fixtures;
-using NSubstitute.ReturnsExtensions;
 using System.Net;
 using System.Net.Http.Json;
 

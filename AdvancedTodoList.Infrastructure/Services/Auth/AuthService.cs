@@ -2,7 +2,6 @@
 using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Services.Auth;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace AdvancedTodoList.Infrastructure.Services.Auth;
 

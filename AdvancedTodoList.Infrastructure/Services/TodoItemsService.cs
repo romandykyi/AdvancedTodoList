@@ -1,10 +1,8 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Pagination;
-using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Infrastructure.Specifications;
-using Mapster;
 
 namespace AdvancedTodoList.Infrastructure.Services;
 

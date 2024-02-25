@@ -1,5 +1,5 @@
-﻿using AdvancedTodoList.Core.Models.TodoLists;
-using AdvancedTodoList.Core.Models;
+﻿using AdvancedTodoList.Core.Models;
+using AdvancedTodoList.Core.Models.TodoLists;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 

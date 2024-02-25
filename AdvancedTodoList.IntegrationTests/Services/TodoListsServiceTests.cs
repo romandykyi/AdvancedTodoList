@@ -4,7 +4,6 @@ using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
 using Mapster;
-using NSubstitute.ReturnsExtensions;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 

@@ -7,6 +7,6 @@ namespace AdvancedTodoList.Infrastructure.Repositories;
 /// Represents a repository for CRUD operations on a to-do lists.
 /// </summary>
 public class TodoListRepository(ApplicationDbContext dbContext) :
-    BaseRepository<TodoList, string>(dbContext)
+	BaseRepository<TodoList, string>(dbContext)
 {
 }

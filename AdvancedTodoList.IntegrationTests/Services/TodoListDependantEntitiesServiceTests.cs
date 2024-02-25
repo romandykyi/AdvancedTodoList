@@ -1,10 +1,7 @@
-﻿using AdvancedTodoList.Core.Dtos;
-using AdvancedTodoList.Core.Models;
-using AdvancedTodoList.Core.Models.TodoLists;
+﻿using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Specifications;
-using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
 using Mapster;
@@ -197,7 +194,7 @@ public class TodoListDependantEntitiesServiceTests : BusinessLogicFixture
 		// Assert that update was called
 		await WebApplicationFactory.TestTodoListDependantEntitiesRepository
 			.Received()
-			.UpdateAsync(Arg.Is<TestTodoListDependantEntity>(x => 
+			.UpdateAsync(Arg.Is<TestTodoListDependantEntity>(x =>
 			x.Id == entity.Id && x.TestProperty == updateDto.TestProperty));
 	}
 

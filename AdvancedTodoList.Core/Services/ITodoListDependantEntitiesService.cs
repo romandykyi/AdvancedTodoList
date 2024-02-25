@@ -2,7 +2,6 @@
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Specifications;
-using System.Data.SqlTypes;
 
 namespace AdvancedTodoList.Core.Services;
 
@@ -58,7 +57,7 @@ public interface ITodoListDependantEntitiesService<TEntity, TKey>
 	/// <typeparamref name="TOutputDto"/> or <see langword="null" /> if to-do list with ID
 	/// <paramref name="todoListId"/> does not exist.
 	/// </returns>
-	public Task<TOutputDto?> CreateAsync<TInputDto, TOutputDto>(string todoListId, TInputDto dto) 
+	public Task<TOutputDto?> CreateAsync<TInputDto, TOutputDto>(string todoListId, TInputDto dto)
 		where TOutputDto : class;
 
 	/// <summary>

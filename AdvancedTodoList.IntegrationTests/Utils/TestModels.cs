@@ -1,6 +1,5 @@
 ﻿using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists;
-using AdvancedTodoList.IntegrationTests.Factories;
 using AdvancedTodoList.IntegrationTests.Services;
 
 namespace AdvancedTodoList.IntegrationTests.Utils;
