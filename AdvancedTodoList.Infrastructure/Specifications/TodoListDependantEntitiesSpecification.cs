@@ -8,13 +8,13 @@ namespace AdvancedTodoList.Infrastructure.Specifications;
 /// Represents a specification that defines criteria for filtering any todo-list dependant entities.
 /// </summary>
 /// <param name="todoListId">ID of the list items of which will be obtained.</param>
-public class TodoDependantEntitySpecification<TEntity>(string todoListId) : ISpecification<TEntity>
+public class TodoListDependantEntitiesSpecification<TEntity>(string todoListId) : ISpecification<TEntity>
 	where TEntity : ITodoListDependant
 {
 	/// <summary>
 	/// Gets the ID of the to-do list to filter entities by.
 	/// </summary>
-	protected string? TodoListId { get; } = todoListId;
+	public string? TodoListId { get; } = todoListId;
 
 	/// <summary>
 	/// Gets the criteria expression that defines the filtering conditions.
