@@ -1,20 +1,20 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Services.Auth;
-using NSubstitute.ReturnsExtensions;
+using AdvancedTodoList.IntegrationTests.Fixtures;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace AdvancedTodoList.RouteTests.Tests;
+namespace AdvancedTodoList.IntegrationTests.Endpoints;
 
 [TestFixture]
-public class AuthEndpointsTests : RouteTest
+public class AuthEndpointsTests : EndpointsFixture
 {
 	[Test]
 	public async Task LogIn_ValidCredentials_SucceedsAndReturnsValidResponse()
 	{
 		// Arrange
 		LogInDto logInDto = new("UserName", "Password");
-		LogInResponse expectedResponse = new("Access", 300, "Refresh");
+		LogInResponse expectedResponse = new("Access", "Refresh");
 		using var client = WebApplicationFactory.CreateClient();
 
 		WebApplicationFactory.AuthService
@@ -118,7 +118,7 @@ public class AuthEndpointsTests : RouteTest
 	{
 		// Arrange
 		RefreshDto refreshDto = new("Access", "Refresh");
-		LogInResponse expectedResponse = new("Access", 300, "Refresh");
+		LogInResponse expectedResponse = new("Access", "Refresh");
 		using var client = WebApplicationFactory.CreateClient();
 
 		WebApplicationFactory.AuthService

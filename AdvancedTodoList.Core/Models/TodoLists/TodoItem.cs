@@ -6,7 +6,7 @@ namespace AdvancedTodoList.Core.Models.TodoLists;
 /// <summary>
 /// Represents a to-do list item entity.
 /// </summary>
-public class TodoItem : IEntity<int>
+public class TodoItem : IEntity<int>, ITodoListDependant
 {
 	/// <summary>
 	/// An unique identifier for the to-do list item.
@@ -17,12 +17,12 @@ public class TodoItem : IEntity<int>
 	/// Name (title) of the to-do item.
 	/// </summary>
 	[MaxLength(NameMaxLength)]
-	public required string Name { get; set; } = null!;
+	public required string Name { get; set; }
 	/// <summary>
 	/// Description of the to-do item.
 	/// </summary>
 	[MaxLength(DescriptionMaxLength)]
-	public required string Description { get; set; } = null!;
+	public required string Description { get; set; }
 	/// <summary>
 	/// Current state of the to-do item.
 	/// </summary>
@@ -36,7 +36,7 @@ public class TodoItem : IEntity<int>
 	/// Foreign key referencing the associated to-do list.
 	/// </summary>
 	[ForeignKey(nameof(TodoList))]
-	public string TodoListId { get; set; } = null!;
+	public required string TodoListId { get; set; }
 
 	/// <summary>
 	/// Maximum allowed length of <see cref="Name"/>.

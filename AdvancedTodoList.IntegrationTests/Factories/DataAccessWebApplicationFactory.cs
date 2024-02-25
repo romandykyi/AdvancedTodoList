@@ -1,14 +1,15 @@
 ﻿using AdvancedTodoList.Infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using System.Data.Common;
 using Testcontainers.MsSql;
 
-namespace AdvancedTodoList.IntegrationTests;
+namespace AdvancedTodoList.IntegrationTests.Factories;
 
-public class TestingWebApplicationFactory(MsSqlContainer testDbContainer) : WebApplicationFactory<Program>
+/// <summary>
+/// A web application factory used for integration testing data access layer on a test container DB.
+/// </summary>
+public class DataAccessWebApplicationFactory(MsSqlContainer testDbContainer) : WebApplicationFactory<Program>
 {
 	private readonly MsSqlContainer _testDbContainer = testDbContainer;
 

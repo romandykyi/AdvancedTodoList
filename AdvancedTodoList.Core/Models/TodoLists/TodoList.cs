@@ -38,5 +38,5 @@ public class TodoList : IEntity<string>
 	/// <summary>
 	/// Collection of to-do items associated with this todo list.
 	/// </summary>
-	public virtual IEnumerable<TodoItem> TodoItems { get; set; } = null!;
+	public virtual ICollection<TodoItem> TodoItems { get; set; } = null!;
 }

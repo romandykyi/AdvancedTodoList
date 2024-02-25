@@ -27,7 +27,7 @@ public interface IAuthService
 	Task<RegisterResult> RegisterAsync(RegisterDto registerDto);
 
 	/// <summary>
-	/// Refreshes the authentication token asynchronously.
+	/// Refreshes the access token asynchronously.
 	/// </summary>
 	/// <param name="refreshDto">Data required for token refresh.</param>
 	/// <returns>

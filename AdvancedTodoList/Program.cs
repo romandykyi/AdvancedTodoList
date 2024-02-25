@@ -1,9 +1,13 @@
 using AdvancedTodoList.Core.Mapping;
 using AdvancedTodoList.Core.Models.Auth;
+using AdvancedTodoList.Core.Models.TodoLists;
+using AdvancedTodoList.Core.Options;
+using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Services.Auth;
 using AdvancedTodoList.Core.Validation;
 using AdvancedTodoList.Infrastructure.Data;
+using AdvancedTodoList.Infrastructure.Repositories;
 using AdvancedTodoList.Infrastructure.Services;
 using AdvancedTodoList.Infrastructure.Services.Auth;
 using FluentValidation;
@@ -50,7 +54,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddAntiforgery(options => options.HeaderName = "X-XSRF-Token");
 
 // Configure auth
-string? jwtSecret = builder.Configuration["Auth:SecretKey"] ??
+string? jwtSecret = builder.Configuration["Auth:AccessToken:SecretKey"] ??
 	throw new InvalidOperationException("JWT secret is not configured");
 builder.Services.AddAuthentication()
 	.AddJwtBearer(options =>
@@ -58,8 +62,9 @@ builder.Services.AddAuthentication()
 		options.SaveToken = true;
 		options.TokenValidationParameters = new TokenValidationParameters
 		{
-			ValidIssuer = builder.Configuration["Auth:ValidIssuer"],
-			ValidAudience = builder.Configuration["Auth:ValidAudience"],
+			ClockSkew = TimeSpan.FromSeconds(5),
+			ValidIssuer = builder.Configuration["Auth:AccessToken:ValidIssuer"],
+			ValidAudience = builder.Configuration["Auth:AccessToken:ValidAudience"],
 			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
 		};
 	});
@@ -80,11 +85,26 @@ builder.Services.AddIdentityCore<ApplicationUser>()
 	.AddEntityFrameworkStores<ApplicationDbContext>()
 	.AddApiEndpoints();
 
+// Bind options
+builder.Services.Configure<AccessTokenOptions>(
+	builder.Configuration.GetSection("Auth:AccessToken"));
+builder.Services.Configure<RefreshTokenOptions>(
+	builder.Configuration.GetSection("Auth:RefreshToken"));
+
 // Register application services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITodoListsService, TodoListsService>();
 builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
 builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
+builder.Services.AddSingleton<IAccessTokensService, AccessTokensService>();
+builder.Services.AddScoped<IRefreshTokensService, RefreshTokensService>();
+builder.Services.AddScoped(typeof(ITodoListDependantEntitiesService<,>),
+	typeof(TodoListDependantEntitiesService<,>));
+// Register application repositories
+builder.Services.AddScoped<IRepository<TodoList, string>, TodoListRepository>();
+builder.Services.AddScoped<IRepository<TodoItem, int>, TodoItemsRepository>();
+builder.Services.AddScoped<IRepository<UserRefreshToken, int>, UserRefreshTokensRepository>();
+builder.Services.AddScoped<IUserRefreshTokensRepository, UserRefreshTokensRepository>();
 
 // Apply mapping settings
 MappingGlobalSettings.Apply();
@@ -121,5 +141,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
 public partial class Program { }
