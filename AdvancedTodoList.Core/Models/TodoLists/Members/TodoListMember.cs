@@ -7,7 +7,7 @@ namespace AdvancedTodoList.Core.Models.TodoLists.Members;
 /// <summary>
 /// A model which represents a member of the to-do list and his/her role.
 /// </summary>
-public class TodoListMember : IEntity<int>
+public class TodoListMember : IEntity<int>, ITodoListDependant
 {
 	/// <summary>
 	/// An unique identifier.
@@ -43,5 +43,5 @@ public class TodoListMember : IEntity<int>
 	/// <summary>
 	/// A navigation property to the role.
 	/// </summary>
-	public TodoListMemberRole Role { get; set; } = null!;
+	public TodoListMemberRole? Role { get; set; }
 }

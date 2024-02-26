@@ -1,6 +1,7 @@
 using AdvancedTodoList.Core.Mapping;
 using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists;
+using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Options;
 using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
@@ -103,6 +104,8 @@ builder.Services.AddScoped(typeof(ITodoListDependantEntitiesService<,>),
 // Register application repositories
 builder.Services.AddScoped<IRepository<TodoList, string>, TodoListRepository>();
 builder.Services.AddScoped<IRepository<TodoItem, int>, TodoItemsRepository>();
+builder.Services.AddScoped<IRepository<TodoListMember, int>, TodoListMembersRepository>();
+builder.Services.AddScoped<IRepository<TodoListMemberRole, int>, TodoListMembersRolesRepository>();
 builder.Services.AddScoped<IRepository<UserRefreshToken, int>, UserRefreshTokensRepository>();
 builder.Services.AddScoped<IUserRefreshTokensRepository, UserRefreshTokensRepository>();
 

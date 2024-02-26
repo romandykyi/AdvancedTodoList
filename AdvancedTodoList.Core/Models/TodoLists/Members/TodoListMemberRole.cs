@@ -6,7 +6,7 @@ namespace AdvancedTodoList.Core.Models.TodoLists.Members;
 /// <summary>
 /// A model which represents a role inside the to-do list with its own permissions.
 /// </summary>
-public class TodoListMemberRole : IEntity<int>
+public class TodoListMemberRole : IEntity<int>, ITodoListDependant
 {
 	/// <summary>
 	/// A unique identifier.
@@ -27,7 +27,7 @@ public class TodoListMemberRole : IEntity<int>
 	/// <summary>
 	/// A navigation property to the to-do list which has this role.
 	/// </summary>
-	public TodoList TodoList { get; set; } =null!;
+	public TodoList TodoList { get; set; } = null!;
 
 	/// <summary>
 	/// A flag that determines whether user can change a state 
