@@ -3,14 +3,14 @@ using AdvancedTodoList.IntegrationTests.Utils;
 
 namespace AdvancedTodoList.IntegrationTests.Repositories;
 
-public class TodoListMembersRolesRepositoryTests : BaseRepositoryTests<TodoListMemberRole, int>
+public class TodoListRolesRepositoryTests : BaseRepositoryTests<TodoListRole, int>
 {
 	protected override int NonExistingId => -1;
 
 	private bool UpdatedHasSetStatePermission = true;
 	private bool UpdatedHasAddMembersPermission = true;
 
-	protected override void AssertUpdated(TodoListMemberRole updatedEntity)
+	protected override void AssertUpdated(TodoListRole updatedEntity)
 	{
 		Assert.Multiple(() =>
 		{
@@ -19,7 +19,7 @@ public class TodoListMembersRolesRepositoryTests : BaseRepositoryTests<TodoListM
 		});
 	}
 
-	protected override async Task<TodoListMemberRole> CreateTestEntityAsync()
+	protected override async Task<TodoListRole> CreateTestEntityAsync()
 	{
 		var user = TestModels.CreateTestUser();
 		DbContext.Add(user);
@@ -30,7 +30,7 @@ public class TodoListMembersRolesRepositoryTests : BaseRepositoryTests<TodoListM
 		return TestModels.CreateTestRole(todoList.Id);
 	}
 
-	protected override void UpdateEntity(TodoListMemberRole entity)
+	protected override void UpdateEntity(TodoListRole entity)
 	{
 		entity.HasSetStatePermission = UpdatedHasSetStatePermission;
 		entity.HasAddMembersPermission = UpdatedHasAddMembersPermission;

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdvancedTodoList.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240218120639_AddMembersAndRolesEntities")]
+    [Migration("20240226193007_AddMembersAndRolesEntities")]
     partial class AddMembersAndRolesEntities
     {
         /// <inheritdoc />
@@ -156,7 +156,7 @@ namespace AdvancedTodoList.Infrastructure.Migrations
                     b.ToTable("TodoListsMembers");
                 });
 
-            modelBuilder.Entity("AdvancedTodoList.Core.Models.TodoLists.Members.TodoListMemberRole", b =>
+            modelBuilder.Entity("AdvancedTodoList.Core.Models.TodoLists.Members.TodoListRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -201,7 +201,7 @@ namespace AdvancedTodoList.Infrastructure.Migrations
 
                     b.HasIndex("TodoListId");
 
-                    b.ToTable("TodoListMemberRoles");
+                    b.ToTable("TodoListRoles");
                 });
 
             modelBuilder.Entity("AdvancedTodoList.Core.Models.TodoLists.TodoItem", b =>
@@ -406,7 +406,7 @@ namespace AdvancedTodoList.Infrastructure.Migrations
 
             modelBuilder.Entity("AdvancedTodoList.Core.Models.TodoLists.Members.TodoListMember", b =>
                 {
-                    b.HasOne("AdvancedTodoList.Core.Models.TodoLists.Members.TodoListMemberRole", "Role")
+                    b.HasOne("AdvancedTodoList.Core.Models.TodoLists.Members.TodoListRole", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId");
 
@@ -429,7 +429,7 @@ namespace AdvancedTodoList.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("AdvancedTodoList.Core.Models.TodoLists.Members.TodoListMemberRole", b =>
+            modelBuilder.Entity("AdvancedTodoList.Core.Models.TodoLists.Members.TodoListRole", b =>
                 {
                     b.HasOne("AdvancedTodoList.Core.Models.TodoLists.TodoList", "TodoList")
                         .WithMany()

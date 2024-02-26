@@ -43,5 +43,5 @@ public class TodoListMember : IEntity<int>, ITodoListDependant
 	/// <summary>
 	/// A navigation property to the role.
 	/// </summary>
-	public TodoListMemberRole? Role { get; set; }
+	public TodoListRole? Role { get; set; }
 }

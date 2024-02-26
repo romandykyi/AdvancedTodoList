@@ -11,7 +11,7 @@ namespace AdvancedTodoList.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "TodoListMemberRoles",
+                name: "TodoListRoles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -29,9 +29,9 @@ namespace AdvancedTodoList.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TodoListMemberRoles", x => x.Id);
+                    table.PrimaryKey("PK_TodoListRoles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TodoListMemberRoles_TodoLists_TodoListId",
+                        name: "FK_TodoListRoles_TodoLists_TodoListId",
                         column: x => x.TodoListId,
                         principalTable: "TodoLists",
                         principalColumn: "Id",
@@ -58,9 +58,9 @@ namespace AdvancedTodoList.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TodoListsMembers_TodoListMemberRoles_RoleId",
+                        name: "FK_TodoListsMembers_TodoListRoles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "TodoListMemberRoles",
+                        principalTable: "TodoListRoles",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_TodoListsMembers_TodoLists_TodoListId",
@@ -71,8 +71,8 @@ namespace AdvancedTodoList.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TodoListMemberRoles_TodoListId",
-                table: "TodoListMemberRoles",
+                name: "IX_TodoListRoles_TodoListId",
+                table: "TodoListRoles",
                 column: "TodoListId");
 
             migrationBuilder.CreateIndex(
@@ -98,7 +98,7 @@ namespace AdvancedTodoList.Infrastructure.Migrations
                 name: "TodoListsMembers");
 
             migrationBuilder.DropTable(
-                name: "TodoListMemberRoles");
+                name: "TodoListRoles");
         }
     }
 }

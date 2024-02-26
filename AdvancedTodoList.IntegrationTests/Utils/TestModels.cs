@@ -62,7 +62,7 @@ public static class TestModels
 		Token = "TestToken",
 		ValidTo = DateTime.UtcNow.AddDays(180)
 	};
-	public static TodoListMemberRole CreateTestRole(string todoListId) => new()
+	public static TodoListRole CreateTestRole(string todoListId) => new()
 	{
 		Name = "Role1",
 		TodoListId = todoListId
