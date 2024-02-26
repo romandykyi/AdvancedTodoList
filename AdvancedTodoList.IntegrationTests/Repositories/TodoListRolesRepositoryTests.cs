@@ -7,15 +7,13 @@ public class TodoListRolesRepositoryTests : BaseRepositoryTests<TodoListRole, in
 {
 	protected override int NonExistingId => -1;
 
-	private bool UpdatedHasSetStatePermission = true;
-	private bool UpdatedHasAddMembersPermission = true;
+	private readonly RolePermissions UpdatedPermissions = new(AddMembers: true, SetItemsState: true);
 
 	protected override void AssertUpdated(TodoListRole updatedEntity)
 	{
 		Assert.Multiple(() =>
 		{
-			Assert.That(updatedEntity.HasSetStatePermission, Is.EqualTo(UpdatedHasSetStatePermission));
-			Assert.That(updatedEntity.HasAddMembersPermission, Is.EqualTo(UpdatedHasAddMembersPermission));
+			Assert.That(updatedEntity.Permissions, Is.EqualTo(UpdatedPermissions));
 		});
 	}
 
@@ -32,7 +30,6 @@ public class TodoListRolesRepositoryTests : BaseRepositoryTests<TodoListRole, in
 
 	protected override void UpdateEntity(TodoListRole entity)
 	{
-		entity.HasSetStatePermission = UpdatedHasSetStatePermission;
-		entity.HasAddMembersPermission = UpdatedHasAddMembersPermission;
+		entity.Permissions = UpdatedPermissions;
 	}
 }

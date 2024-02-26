@@ -161,30 +161,6 @@ namespace AdvancedTodoList.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("HasAddItemsPermission")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("HasAddMembersPermission")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("HasAssignRolesPermission")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("HasDeleteItemsPermission")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("HasEditPermission")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("HasEditRolesPermission")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("HasRemoveMembersPermission")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("HasSetStatePermission")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -432,6 +408,46 @@ namespace AdvancedTodoList.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("TodoListId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("AdvancedTodoList.Core.Models.TodoLists.Members.RolePermissions", "Permissions", b1 =>
+                        {
+                            b1.Property<int>("TodoListRoleId")
+                                .HasColumnType("int");
+
+                            b1.Property<bool>("AddItems")
+                                .HasColumnType("bit");
+
+                            b1.Property<bool>("AddMembers")
+                                .HasColumnType("bit");
+
+                            b1.Property<bool>("AssignRoles")
+                                .HasColumnType("bit");
+
+                            b1.Property<bool>("DeleteItems")
+                                .HasColumnType("bit");
+
+                            b1.Property<bool>("EditItems")
+                                .HasColumnType("bit");
+
+                            b1.Property<bool>("EditRoles")
+                                .HasColumnType("bit");
+
+                            b1.Property<bool>("RemoveMembers")
+                                .HasColumnType("bit");
+
+                            b1.Property<bool>("SetItemsState")
+                                .HasColumnType("bit");
+
+                            b1.HasKey("TodoListRoleId");
+
+                            b1.ToTable("TodoListRoles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TodoListRoleId");
+                        });
+
+                    b.Navigation("Permissions")
                         .IsRequired();
 
                     b.Navigation("TodoList");
