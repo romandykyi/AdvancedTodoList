@@ -1,18 +1,16 @@
 ﻿using AdvancedTodoList.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using AdvancedTodoList.IntegrationTests.Factories;
 
-namespace AdvancedTodoList.IntegrationTests;
+namespace AdvancedTodoList.IntegrationTests.Fixtures;
 
 /// <summary>
-/// Base class for integration tests.
+/// Abstract test fixture for data access layer.
 /// </summary>
-public abstract class IntegrationTest
+public abstract class DataAccessFixture
 {
 	private static bool s_migrated = false;
 
-	protected static TestingWebApplicationFactory WebApplicationFactory { get; private set; }
-	protected IServiceScopeFactory ScopeFactory { get; private set; }
+	protected static DataAccessWebApplicationFactory WebApplicationFactory { get; private set; }
 	protected IServiceScope ServiceScope { get; private set; }
 	protected ApplicationDbContext DbContext { get; private set; }
 
@@ -20,12 +18,13 @@ public abstract class IntegrationTest
 	public async Task SetUpServices()
 	{
 		// Configure web application factory
-		WebApplicationFactory = new TestingWebApplicationFactory(IntegrationTestsSetup.TestDbContainer);
+		var container = await TestContainersSetup.GetTestContainerAsync();
+		WebApplicationFactory = new DataAccessWebApplicationFactory(container);
 		WebApplicationFactory.Server.PreserveExecutionContext = true;
 
 		// Get services needed for integration testing
-		ScopeFactory = WebApplicationFactory.Services.GetService<IServiceScopeFactory>()!;
-		ServiceScope = ScopeFactory.CreateScope();
+		var scopeFactory = WebApplicationFactory.Services.GetService<IServiceScopeFactory>()!;
+		ServiceScope = scopeFactory.CreateScope();
 		DbContext = ServiceScope.ServiceProvider.GetService<ApplicationDbContext>()!;
 		// Migrate database if it isn't migrated yet
 		if (!s_migrated)

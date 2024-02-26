@@ -1,10 +1,10 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Services.Auth;
+using AdvancedTodoList.IntegrationTests.Fixtures;
+using AdvancedTodoList.IntegrationTests.Utils;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,7 +13,7 @@ using System.Text;
 namespace AdvancedTodoList.IntegrationTests.Services.Auth;
 
 [TestFixture]
-public class AuthServiceTests : IntegrationTest
+public class AuthServiceTests : DataAccessFixture
 {
 	private UserManager<ApplicationUser> _userManager;
 	private IAuthService _authService;
@@ -23,14 +23,7 @@ public class AuthServiceTests : IntegrationTest
 	// Creates a test user and adds it to the DB
 	private async Task<ApplicationUser> CreateTestUserAsync()
 	{
-		string userName = Guid.NewGuid().ToString();
-		ApplicationUser user = new()
-		{
-			UserName = userName,
-			FirstName = "Test",
-			LastName = "User",
-			Email = $"{userName}@example.com"
-		};
+		ApplicationUser user = TestModels.CreateTestUser();
 
 		var result = await _userManager.CreateAsync(user, TestPassword);
 		Assert.That(result.Succeeded, "Failed to create a test user");
@@ -56,7 +49,7 @@ public class AuthServiceTests : IntegrationTest
 	// Creates a test JWT for a user
 	private string CreateTestJwt(ApplicationUser user, bool valid = true, DateTime? expires = null)
 	{
-		string strKey = valid ? _configuration["Auth:SecretKey"]! : "Invalid" + _configuration["Auth:SecretKey"]!;
+		string strKey = valid ? _configuration["Auth:AccessToken:SecretKey"]! : "Invalid" + _configuration["Auth:AccessToken:SecretKey"]!;
 		SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(strKey));
 
 		List<Claim> authClaims =
@@ -64,8 +57,8 @@ public class AuthServiceTests : IntegrationTest
 			new(JwtRegisteredClaimNames.Sub, user.Id)
 		];
 		JwtSecurityToken token = new(
-				issuer: _configuration["Auth:ValidIssuer"],
-				audience: _configuration["Auth:ValidAudience"],
+				issuer: _configuration["Auth:AccessToken:ValidIssuer"],
+				audience: _configuration["Auth:AccessToken:ValidAudience"],
 				expires: expires ?? DateTime.UtcNow.AddMinutes(30),
 				claims: authClaims,
 				signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
@@ -88,7 +81,7 @@ public class AuthServiceTests : IntegrationTest
 		_userManager.Dispose();
 	}
 
-	// Assert if LogInResponse is valid
+	// Assert that LogInResponse is valid
 	private async Task AssertSuccessLogInAsync(LogInResponse? response, ApplicationUser user)
 	{
 		// Assert that response is not null (success)
@@ -97,11 +90,11 @@ public class AuthServiceTests : IntegrationTest
 		Assert.That(response.AccessToken, Is.Not.Null);
 		// Assert that access token is valid
 		JwtSecurityTokenHandler tokenHandler = new();
-		string key = _configuration["Auth:SecretKey"]!;
+		string key = _configuration["Auth:AccessToken:SecretKey"]!;
 		TokenValidationParameters validationParameters = new()
 		{
-			ValidIssuer = _configuration["Auth:ValidIssuer"],
-			ValidAudience = _configuration["Auth:ValidAudience"],
+			ValidIssuer = _configuration["Auth:AccessToken:ValidIssuer"],
+			ValidAudience = _configuration["Auth:AccessToken:ValidAudience"],
 			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
 		};
 		tokenHandler.ValidateToken(response.AccessToken, validationParameters, out var token);
@@ -120,8 +113,6 @@ public class AuthServiceTests : IntegrationTest
 
 #pragma warning disable NUnit2045 // Use Assert.Multiple
 
-		// Assert that returned expiration is valid
-		Assert.That(response.ExpirationSeconds, Is.EqualTo(_configuration.GetValue<int>("Auth:AccessTokenExpirationSeconds")));
 		// Assert that refresh token is present
 		Assert.That(
 			await DbContext.UserRefreshTokens
@@ -241,7 +232,7 @@ public class AuthServiceTests : IntegrationTest
 		// Arrange
 		var user = await CreateTestUserAsync();
 		UserRefreshToken token = await CreateTestRefreshTokenAsync(user);
-		string expiredToken = CreateTestJwt(user, expires: DateTime.UtcNow.AddSeconds(-5));
+		string expiredToken = CreateTestJwt(user, expires: DateTime.UtcNow.AddDays(-5));
 		RefreshDto dto = new(expiredToken, token.Token);
 
 		// Act

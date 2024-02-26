@@ -1,13 +1,12 @@
 ﻿using AdvancedTodoList.Core.Dtos;
-using AdvancedTodoList.Core.Models.TodoLists;
-using NSubstitute.ReturnsExtensions;
+using AdvancedTodoList.IntegrationTests.Fixtures;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace AdvancedTodoList.RouteTests.Tests;
+namespace AdvancedTodoList.IntegrationTests.Endpoints;
 
 [TestFixture]
-public class TodoListsEndpointsTests : RouteTest
+public class TodoListsEndpointsTests : EndpointsFixture
 {
 	[Test]
 	public async Task GetTodoListById_ElementExists_ReturnsElement()
@@ -68,7 +67,7 @@ public class TodoListsEndpointsTests : RouteTest
 		// Arrange
 		WebApplicationFactory.TodoListsService
 			.CreateAsync(Arg.Any<TodoListCreateDto>())
-			.Returns(new TodoList() { Id = "TestID", Name = "Test", Description = "Ok" });
+			.Returns(new TodoListGetByIdDto("Id", "", ""));
 		TodoListCreateDto dto = new("Test", string.Empty);
 		using HttpClient client = CreateAuthorizedHttpClient();
 

@@ -3,11 +3,13 @@ using AdvancedTodoList.Core.Services.Auth;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace AdvancedTodoList.RouteTests;
+namespace AdvancedTodoList.IntegrationTests.Factories;
 
-public class RouteTestsWebApplicationFactory : WebApplicationFactory<Program>
+/// <summary>
+/// A web application factory used for testing endpoints with mocked business logic layer.
+/// </summary>
+public class EndpointsWebApplicationFactory : WebApplicationFactory<Program>
 {
 	public IAuthService AuthService { get; private set; } = null!;
 	public ITodoListsService TodoListsService { get; private set; } = null!;

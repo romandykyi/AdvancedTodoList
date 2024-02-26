@@ -1,15 +1,7 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Services.Auth;
-using AdvancedTodoList.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace AdvancedTodoList.Infrastructure.Services.Auth;
 
@@ -17,13 +9,14 @@ namespace AdvancedTodoList.Infrastructure.Services.Auth;
 /// Service that performs authentication operations.
 /// </summary>
 public class AuthService(
-	ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager,
-	IConfiguration configuration)
+	IAccessTokensService accessTokensService,
+	IRefreshTokensService refreshTokensService,
+	UserManager<ApplicationUser> userManager)
 	: IAuthService
 {
-	private readonly ApplicationDbContext _dbContext = dbContext;
+	private readonly IAccessTokensService _accessTokensService = accessTokensService;
+	private readonly IRefreshTokensService _refreshTokensService = refreshTokensService;
 	private readonly UserManager<ApplicationUser> _userManager = userManager;
-	private readonly IConfiguration _configuration = configuration;
 
 	/// <summary>
 	/// Logs a user in asynchronously.
@@ -53,15 +46,17 @@ public class AuthService(
 
 		// Invalid password - fail
 		if (!await _userManager.CheckPasswordAsync(user, logInDto.Password))
-		{
 			return null;
-		}
 
 		// Generate a new refresh token for the user
-		string refreshToken = await GenerateRefreshTokenAsync(user);
+		string? refreshToken = await _refreshTokensService.GenerateAsync(user.Id);
+		if (refreshToken == null) return null;
 
-		// Generate an access token and return the response
-		return GetLogInResponse(user, refreshToken);
+		// Generate an access token
+		string accessToken = _accessTokensService.GenerateAccessToken(user);
+
+		// Return both tokens
+		return new(accessToken, refreshToken);
 	}
 
 	/// <summary>
@@ -75,22 +70,12 @@ public class AuthService(
 	/// </returns>
 	public async Task<bool> LogOutAsync(string userId, LogOutDto logOutDto)
 	{
-		// Try to find a refresh token in the DB
-		UserRefreshToken? refreshToken = await _dbContext.UserRefreshTokens
-			.Where(x => x.UserId == userId && x.Token == logOutDto.RefreshToken)
-			.FirstOrDefaultAsync();
-		// Token does not exist - fail
-		if (refreshToken == null) return false;
-
-		// Delete the token
-		_dbContext.UserRefreshTokens.Remove(refreshToken);
-		await _dbContext.SaveChangesAsync();
-
-		return true;
+		// Revoke the token
+		return await _refreshTokensService.RevokeAsync(userId, logOutDto.RefreshToken);
 	}
 
 	/// <summary>
-	/// Refreshes the authentication token asynchronously.
+	/// Refreshes the access token asynchronously.
 	/// </summary>
 	/// <param name="refreshDto">Data required for token refresh.</param>
 	/// <returns>
@@ -100,19 +85,24 @@ public class AuthService(
 	public async Task<LogInResponse?> RefreshAsync(RefreshDto refreshDto)
 	{
 		// Try to get a user ID
-		string? userId = await GetUserIdFromExpiredTokenAsync(refreshDto.AccessToken);
+		string? userId = await _accessTokensService
+			.GetUserIdFromExpiredTokenAsync(refreshDto.AccessToken);
 		if (userId == null) return null;
 
 		// Validate the refresh token
-		if (!await ValidateRefreshTokenAsync(userId, refreshDto.RefreshToken)) return null;
+		if (!await _refreshTokensService.ValidateAsync(userId, refreshDto.RefreshToken))
+			return null;
 
 		// Find the user
 		ApplicationUser? user = await _userManager.FindByIdAsync(userId);
 		// User doesn't exist - return null
 		if (user == null) return null;
 
-		// Return access token
-		return GetLogInResponse(user, refreshDto.RefreshToken);
+		// Generate access token
+		string accessToken = _accessTokensService.GenerateAccessToken(user);
+
+		// Return tokens
+		return new LogInResponse(accessToken, refreshDto.RefreshToken);
 	}
 
 	/// <summary>
@@ -148,96 +138,6 @@ public class AuthService(
 		return result.Succeeded ?
 			RegisterResult.Success() :
 			RegisterResult.Failure(IdentityErrorsToRegisterErrors(result.Errors));
-	}
-
-	// Generates JWT token and returns a response, requires refresh token
-	private LogInResponse GetLogInResponse(ApplicationUser user, string refreshToken)
-	{
-		SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(_configuration["Auth:SecretKey"]!));
-		int expirationSeconds = _configuration.GetValue<int>("Auth:AccessTokenExpirationSeconds");
-
-		List<Claim> claims =
-		[
-			new(JwtRegisteredClaimNames.Sub, user.Id),
-			new(JwtRegisteredClaimNames.Email, user.Email!),
-			new(JwtRegisteredClaimNames.UniqueName, user.UserName!),
-			new(JwtRegisteredClaimNames.GivenName, user.FirstName),
-			new(JwtRegisteredClaimNames.FamilyName, user.LastName),
-		];
-
-		JwtSecurityToken token = new(
-			issuer: _configuration["Auth:ValidIssuer"],
-			audience: _configuration["Auth:ValidAudience"],
-			expires: DateTime.UtcNow.AddSeconds(expirationSeconds),
-			claims: claims,
-			signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
-			);
-		string accessToken = new JwtSecurityTokenHandler().WriteToken(token);
-
-		return new(accessToken, expirationSeconds, refreshToken);
-	}
-
-	// Generates a refresh token for the user and adds it to the DB
-	private async Task<string> GenerateRefreshTokenAsync(ApplicationUser user)
-	{
-		// Generate a token
-		using RandomNumberGenerator rng = RandomNumberGenerator.Create();
-		int refreshTokenSize = _configuration.GetValue<int>("Auth:RefreshTokenSize");
-		byte[] refreshTokenBytes = new byte[refreshTokenSize];
-		rng.GetBytes(refreshTokenBytes);
-
-		// Set the expiration date and assign token to the user
-		int expirationDays = _configuration.GetValue<int>("Auth:RefreshTokenExpirationDays");
-		UserRefreshToken tokenEntity = new()
-		{
-			Token = Convert.ToBase64String(refreshTokenBytes),
-			UserId = user.Id,
-			ValidTo = DateTime.UtcNow.AddDays(expirationDays)
-		};
-
-		// Save the token
-		_dbContext.UserRefreshTokens.Add(tokenEntity);
-		await _dbContext.SaveChangesAsync();
-
-		// Return the token
-		return tokenEntity.Token;
-	}
-
-	// Gets a user ID from the expired access token, returns null if token is invalid
-	private async Task<string?> GetUserIdFromExpiredTokenAsync(string accessToken)
-	{
-		// Validate the access token
-		string key = _configuration["Auth:SecretKey"]!;
-		JwtSecurityTokenHandler tokenHandler = new();
-		TokenValidationParameters validationParameters = new()
-		{
-			RequireExpirationTime = false, // Ignore expiration time
-			ValidIssuer = _configuration["Auth:ValidIssuer"],
-			ValidAudience = _configuration["Auth:ValidAudience"],
-			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
-		};
-		var validationResult = await tokenHandler.ValidateTokenAsync(
-			accessToken, validationParameters);
-		// Return null if validation failed
-		if (!validationResult.IsValid) return null;
-
-		// Get ID of the user
-		JwtSecurityToken jwtToken = (JwtSecurityToken)validationResult.SecurityToken;
-		var subClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub);
-		if (subClaim == null) return null;
-
-		return subClaim.Value;
-	}
-
-	// Checks whether the refresh token is valid
-	private async Task<bool> ValidateRefreshTokenAsync(string userId, string refreshToken)
-	{
-		UserRefreshToken? tokenEntity = await _dbContext.UserRefreshTokens
-			.Where(x => x.UserId == userId && x.Token == refreshToken)
-			.FirstOrDefaultAsync();
-
-		// Check if user owns the token and if it's still valid
-		return tokenEntity != null && DateTime.UtcNow < tokenEntity.ValidTo;
 	}
 
 	private static IEnumerable<RegisterError> IdentityErrorsToRegisterErrors(IEnumerable<IdentityError> identityErrors)
