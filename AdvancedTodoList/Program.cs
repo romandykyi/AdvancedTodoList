@@ -104,6 +104,7 @@ builder.Services.AddScoped(typeof(ITodoListDependantEntitiesService<,>),
 // Register application repositories
 builder.Services.AddScoped<IRepository<TodoList, string>, TodoListRepository>();
 builder.Services.AddScoped<IRepository<TodoItem, int>, TodoItemsRepository>();
+builder.Services.AddScoped<ITodoListMembersRepository, TodoListMembersRepository>();
 builder.Services.AddScoped<IRepository<TodoListMember, int>, TodoListMembersRepository>();
 builder.Services.AddScoped<IRepository<TodoListRole, int>, TodoListRolesRepository>();
 builder.Services.AddScoped<IRepository<UserRefreshToken, int>, UserRefreshTokensRepository>();
