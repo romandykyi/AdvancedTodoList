@@ -19,6 +19,7 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 	public IRepository<TodoItem, int> TodoItemsRepository { get; private set; } = null!;
 	public IRepository<TestTodoListDependantEntity, int> TestTodoListDependantEntitiesRepository { get; private set; } = null!;
 	public ITodoListDependantEntitiesService<TodoItem, int> TodoItemsHelperService { get; set; } = null!;
+	public ITodoListDependantEntitiesService<TodoListRole, int> TodoRolesHelperService { get; set; } = null!;
 	public ITodoListDependantEntitiesService<TodoListMember, int> TodoMembersHelperService { get; set; } = null!;
 	public IUserRefreshTokensRepository RefreshTokensRepository { get; private set; } = null!;
 	public ITodoListMembersRepository TodoListMembersRepository { get; private set; } = null!;
@@ -31,6 +32,7 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 		TodoItemsRepository = Substitute.For<IRepository<TodoItem, int>>();
 		TestTodoListDependantEntitiesRepository = Substitute.For<IRepository<TestTodoListDependantEntity, int>>();
 		TodoItemsHelperService = Substitute.For<ITodoListDependantEntitiesService<TodoItem, int>>();
+		TodoRolesHelperService = Substitute.For<ITodoListDependantEntitiesService<TodoListRole, int>>();
 		TodoMembersHelperService = Substitute.For<ITodoListDependantEntitiesService<TodoListMember, int>>();
 		RefreshTokensRepository = Substitute.For<IUserRefreshTokensRepository>();
 		TodoListMembersRepository = Substitute.For<ITodoListMembersRepository>();
@@ -42,6 +44,7 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 			services.AddScoped(_ => TodoItemsRepository);
 			services.AddScoped(_ => TestTodoListDependantEntitiesRepository);
 			services.AddScoped(_ => TodoItemsHelperService);
+			services.AddScoped(_ => TodoRolesHelperService);
 			services.AddScoped(_ => TodoMembersHelperService);
 			services.AddScoped(_ => RefreshTokensRepository);
 			services.AddScoped(_ => TodoListMembersRepository);
