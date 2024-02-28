@@ -77,8 +77,7 @@ public class TodoListRolesController(ITodoListRolesService rolesService) : Contr
 		if (role == null) return NotFound();
 
 		var routeValues = new { listId, roleId = role.Id };
-		var body = role.Adapt<TodoListRoleViewDto>();
-		return CreatedAtRoute(nameof(GetTodoListRoleByIdAsync), routeValues, body);
+		return CreatedAtRoute(nameof(GetTodoListRoleByIdAsync), routeValues, role);
 	}
 
 	/// <summary>

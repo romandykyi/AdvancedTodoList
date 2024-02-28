@@ -77,8 +77,7 @@ public class TodoItemsController(ITodoItemsService todoItemsService) : Controlle
 		if (item == null) return NotFound();
 
 		var routeValues = new { listId, itemId = item.Id };
-		var body = item.Adapt<TodoItemGetByIdDto>();
-		return CreatedAtRoute(nameof(GetTodoItemByIdAsync), routeValues, body);
+		return CreatedAtRoute(nameof(GetTodoItemByIdAsync), routeValues, item);
 	}
 
 	/// <summary>
