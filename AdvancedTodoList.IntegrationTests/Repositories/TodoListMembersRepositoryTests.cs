@@ -1,5 +1,8 @@
-﻿using AdvancedTodoList.Core.Models.TodoLists.Members;
+﻿using AdvancedTodoList.Core.Dtos;
+using AdvancedTodoList.Core.Models;
+using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Repositories;
+using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Utils;
 
 namespace AdvancedTodoList.IntegrationTests.Repositories;
@@ -72,5 +75,26 @@ public class TodoListMembersRepositoryTests : BaseRepositoryTests<TodoListMember
 
 		// Assert
 		Assert.That(result, Is.Null);
+	}
+
+	[Test]
+	public async Task GetPageAsync_IntegratesWithMembersSpecification()
+	{
+#pragma warning disable NUnit2045 // Use Assert.Multiple
+		// Arrange
+		var entity = await AddTestEntityToDbAsync();
+		TodoListMembersSpecification specification = new(entity.TodoListId);
+
+		// Act
+		var page = await Repository.GetPageAsync<TodoListMemberPreviewDto>(new(1, 5), specification);
+
+		// Assert
+		var dto = page.Items.Where(x => x.Id == entity.Id).SingleOrDefault();
+		Assert.That(dto, Is.Not.Null);
+		Assert.That(dto.User, Is.Not.Null);
+		Assert.That(dto.User.Id, Is.EqualTo(entity.UserId));
+		Assert.That(dto.Role, Is.Not.Null);
+		Assert.That(dto.Role.Id, Is.EqualTo(entity.RoleId));
+#pragma warning restore NUnit2045 // Use Assert.Multiple
 	}
 }
