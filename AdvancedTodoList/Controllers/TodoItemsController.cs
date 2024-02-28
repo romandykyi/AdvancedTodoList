@@ -12,7 +12,7 @@ namespace AdvancedTodoList.Controllers;
 [Route("api/todo/{listId}/items")]
 public class TodoItemsController(ITodoItemsService todoItemsService) : ControllerBase
 {
-	private readonly ITodoItemsService _todoItemsService = todoItemsService;
+	private readonly ITodoItemsService _rolesService = todoItemsService;
 
 	/// <summary>
 	/// Gets a page with items of the to-do list with the specified ID.
@@ -29,7 +29,7 @@ public class TodoItemsController(ITodoItemsService todoItemsService) : Controlle
 	public async Task<IActionResult> GetListItemsAsync(
 		[FromRoute] string listId, [FromQuery] PaginationParameters paginationParameters)
 	{
-		var page = await _todoItemsService.GetItemsOfListAsync(listId, paginationParameters);
+		var page = await _rolesService.GetItemsOfListAsync(listId, paginationParameters);
 		if (page == null) return NotFound();
 		return Ok(page);
 	}
@@ -49,7 +49,7 @@ public class TodoItemsController(ITodoItemsService todoItemsService) : Controlle
 	public async Task<IActionResult> GetTodoItemByIdAsync(
 		[FromRoute] string listId, [FromRoute] int itemId)
 	{
-		var item = await _todoItemsService.GetByIdAsync(listId, itemId);
+		var item = await _rolesService.GetByIdAsync(listId, itemId);
 		// Check if item exists
 		if (item == null) return NotFound();
 
@@ -73,7 +73,7 @@ public class TodoItemsController(ITodoItemsService todoItemsService) : Controlle
 	public async Task<IActionResult> PostTodoItemAsync(
 		[FromRoute] string listId, [FromBody] TodoItemCreateDto dto)
 	{
-		var item = await _todoItemsService.CreateAsync(listId, dto);
+		var item = await _rolesService.CreateAsync(listId, dto);
 		if (item == null) return NotFound();
 
 		var routeValues = new { listId, itemId = item.Id };
@@ -97,7 +97,7 @@ public class TodoItemsController(ITodoItemsService todoItemsService) : Controlle
 		[FromRoute] string listId, [FromRoute] int itemId,
 		[FromBody] TodoItemCreateDto dto)
 	{
-		bool result = await _todoItemsService.EditAsync(listId, itemId, dto);
+		bool result = await _rolesService.EditAsync(listId, itemId, dto);
 		return result ? NoContent() : NotFound();
 	}
 
@@ -117,7 +117,7 @@ public class TodoItemsController(ITodoItemsService todoItemsService) : Controlle
 		[FromRoute] string listId, [FromRoute] int itemId,
 		[FromBody] TodoItemUpdateStateDto dto)
 	{
-		bool result = await _todoItemsService.UpdateStateAsync(listId, itemId, dto);
+		bool result = await _rolesService.UpdateStateAsync(listId, itemId, dto);
 		return result ? NoContent() : NotFound();
 	}
 
@@ -134,7 +134,7 @@ public class TodoItemsController(ITodoItemsService todoItemsService) : Controlle
 	public async Task<IActionResult> DeleteTodoListAsync(
 		[FromRoute] string listId, [FromRoute] int itemId)
 	{
-		bool result = await _todoItemsService.DeleteAsync(listId, itemId);
+		bool result = await _rolesService.DeleteAsync(listId, itemId);
 		return result ? NoContent() : NotFound();
 	}
 }
