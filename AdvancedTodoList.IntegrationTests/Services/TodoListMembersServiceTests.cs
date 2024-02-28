@@ -48,12 +48,12 @@ public class TodoListMembersServiceTests : BusinessLogicFixture
 		string todoListId = "Id";
 		string userId = "UserId";
 		TodoListMemberAddDto inputDto = new(userId, null);
-		TodoListMemberMinimalView outputDto = new(500, userId, todoListId, null);
+		TodoListMemberMinimalViewDto outputDto = new(500, userId, todoListId, null);
 		WebApplicationFactory.TodoListMembersRepository
 			.FindAsync(todoListId, userId)
 			.ReturnsNull();
 		WebApplicationFactory.TodoMembersHelperService
-			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalView>(todoListId, inputDto)
+			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalViewDto>(todoListId, inputDto)
 			.Returns(outputDto);
 
 		// Act
@@ -67,7 +67,7 @@ public class TodoListMembersServiceTests : BusinessLogicFixture
 		});
 		await WebApplicationFactory.TodoMembersHelperService
 			.Received()
-			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalView>(todoListId, inputDto);
+			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalViewDto>(todoListId, inputDto);
 	}
 
 	[Test]
@@ -103,7 +103,7 @@ public class TodoListMembersServiceTests : BusinessLogicFixture
 			.FindAsync(todoListId, userId)
 			.ReturnsNull();
 		WebApplicationFactory.TodoMembersHelperService
-			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalView>(todoListId, inputDto)
+			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalViewDto>(todoListId, inputDto)
 			.ReturnsNull();
 
 		// Act

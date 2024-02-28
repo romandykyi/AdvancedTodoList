@@ -6,7 +6,7 @@ namespace AdvancedTodoList.Core.Services;
 /// Class that represents possible results of the method <see cref="ITodoListMembersService.AddMemberAsync(string, AdvancedTodoList.Core.Dtos.TodoListMemberAddDto)"/>.
 /// </summary>
 public class AddTodoListMemberResult(
-	AddTodoListMemberResultStatus status, TodoListMemberMinimalView? dto = null)
+	AddTodoListMemberResultStatus status, TodoListMemberMinimalViewDto? dto = null)
 {
 	/// <summary>
 	/// Status of the operation.
@@ -17,7 +17,7 @@ public class AddTodoListMemberResult(
 	/// Gets DTO of added to-do list member or <see langword="null" /> if
 	/// status does not indicate success.
 	/// </summary>
-	public TodoListMemberMinimalView? Dto { get; } = dto;
+	public TodoListMemberMinimalViewDto? Dto { get; } = dto;
 }
 
 /// <summary>

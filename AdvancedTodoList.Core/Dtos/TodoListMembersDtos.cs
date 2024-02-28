@@ -3,12 +3,12 @@
 /// <summary>
 /// DTO for a minimal view of a to-do list.
 /// </summary>
-public record TodoListMemberMinimalView(int Id, string UserId, string TodoListId, int? RoleId);
+public record TodoListMemberMinimalViewDto(int Id, string UserId, string TodoListId, int? RoleId);
 
 /// <summary>
 /// DTO to view a member and their role.
 /// </summary>
-public record TodoListMemberPreviewDto(ApplicationUserPreviewDto Member, TodoListRolePreviewDto Role);
+public record TodoListMemberPreviewDto(int Id, ApplicationUserPreviewDto User, TodoListRolePreviewDto? Role);
 
 /// <summary>
 /// DTO for adding a member to a to-do list.

@@ -36,6 +36,7 @@ public class EndpointsWebApplicationFactory : WebApplicationFactory<Program>
 			services.AddScoped(_ => TodoItemsService);
 			services.AddScoped(_ => TodoItemsService);
 			services.AddScoped(_ => TodoListRolesService);
+			services.AddScoped(_ => TodoListMembersService);
 			services.AddScoped(_ => EntityExistenceChecker);
 		});
 	}

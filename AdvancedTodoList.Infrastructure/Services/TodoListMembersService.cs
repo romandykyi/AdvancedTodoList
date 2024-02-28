@@ -56,7 +56,7 @@ public class TodoListMembersService(
 
 		// Add member
 		var outputDto = await _helperService
-			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalView>(todoListId, dto);
+			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalViewDto>(todoListId, dto);
 		if (outputDto == null) return new(AddTodoListMemberResultStatus.NotFound);
 
 		return new(AddTodoListMemberResultStatus.Success, outputDto);
