@@ -26,7 +26,7 @@ public class TodoListDependantEntitiesSpecification<TEntity>(string todoListId) 
 	/// Gets the list of include expressions specifying related entities to be included in the query results.
 	/// Is empty when not overriden.
 	/// </summary>
-	public virtual List<Expression<Func<TEntity, object>>> Includes => [];
+	public virtual List<Expression<Func<TEntity, object?>>> Includes => [];
 
 	/// <summary>
 	/// Gets the list of include strings specifying related entities to be included in the query results.

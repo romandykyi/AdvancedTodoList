@@ -16,7 +16,7 @@ public interface ISpecification<T>
 	/// <summary>
 	/// Gets the list of include expressions specifying related entities to be included in the query results.
 	/// </summary>
-	List<Expression<Func<T, object>>> Includes { get; }
+	List<Expression<Func<T, object?>>> Includes { get; }
 
 	/// <summary>
 	/// Gets the list of include strings specifying related entities to be included in the query results.
