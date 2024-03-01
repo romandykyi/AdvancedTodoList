@@ -62,7 +62,7 @@ public class TodoListMembersServiceTests : BusinessLogicFixture
 		// Assert
 		Assert.Multiple(() =>
 		{
-			Assert.That(result.Status, Is.EqualTo(AddTodoListMemberResultStatus.Success));
+			Assert.That(result.Status, Is.EqualTo(TodoListMemberServiceResultStatus.Success));
 			Assert.That(result.Dto, Is.EqualTo(outputDto));
 		});
 		await WebApplicationFactory.TodoMembersHelperService
@@ -89,7 +89,7 @@ public class TodoListMembersServiceTests : BusinessLogicFixture
 		var result = await _service.AddMemberAsync(todoListId, inputDto);
 
 		// Assert
-		Assert.That(result.Status, Is.EqualTo(AddTodoListMemberResultStatus.UserAlreadyAdded));
+		Assert.That(result.Status, Is.EqualTo(TodoListMemberServiceResultStatus.UserAlreadyAdded));
 	}
 
 	[Test]
@@ -110,7 +110,63 @@ public class TodoListMembersServiceTests : BusinessLogicFixture
 		var result = await _service.AddMemberAsync(todoListId, inputDto);
 
 		// Assert
-		Assert.That(result.Status, Is.EqualTo(AddTodoListMemberResultStatus.NotFound));
+		Assert.That(result.Status, Is.EqualTo(TodoListMemberServiceResultStatus.NotFound));
+	}
+
+	[Test]
+	public async Task UpdateMemberRoleAsync_MemberExists_ReturnsSuccessStatus()
+	{
+		// Arrange
+		string todoListId = "Id";
+		int memberId = 121;
+		int? roleId = 13;
+		TodoListMemberUpdateRoleDto dto = new(roleId);
+		WebApplicationFactory.TodoMembersHelperService
+			.UpdateAsync(todoListId, memberId, dto)
+			.Returns(true);
+
+		// Act
+		var result = await _service.UpdateMemberRoleAsync(todoListId, memberId, dto);
+
+		// Assert
+		Assert.That(result.Status, Is.EqualTo(TodoListMemberServiceResultStatus.Success));
+	}
+
+	[Test]
+	public async Task UpdateMemberRoleAsync_MemberDoesNotExist_ReturnsNotFoundStatus()
+	{
+		// Arrange
+		string todoListId = "Id";
+		int memberId = 121;
+		int? roleId = 13;
+		TodoListMemberUpdateRoleDto dto = new(roleId);
+		WebApplicationFactory.TodoMembersHelperService
+			.UpdateAsync(todoListId, memberId, dto)
+			.Returns(false);
+
+		// Act
+		var result = await _service.UpdateMemberRoleAsync(todoListId, memberId, dto);
+
+		// Assert
+		Assert.That(result.Status, Is.EqualTo(TodoListMemberServiceResultStatus.NotFound));
+	}
+
+	[Test]
+	public async Task UpdateMemberRoleAsync_InvalidRoleId_ReturnsInvalidRoleIdStatus()
+	{
+		Assert.Fail("Functionality is not implemented yet");
+		//// Arrange
+		//string todoListId = "Id";
+		//int memberId = 121;
+		//int? roleId = 13;
+		//TodoListMemberUpdateRoleDto dto = new(roleId);
+		//// Mock here service which will check the role
+
+		//// Act
+		//var result = await _service.UpdateMemberRoleAsync(todoListId, memberId, dto);
+
+		//// Assert
+		//Assert.That(result.Status, Is.EqualTo(TodoListMemberServiceResultStatus.InvalidRoleId));
 	}
 
 	// Tests for other methods are useless, because they are just wrappers.

@@ -116,7 +116,7 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 		TodoListMemberMinimalViewDto outputDto = new(4124, dto.UserId, listId, dto.RoleId);
 		WebApplicationFactory.TodoListMembersService
 			.AddMemberAsync(listId, dto)
-			.Returns(new AddTodoListMemberResult(AddTodoListMemberResultStatus.Success, outputDto));
+			.Returns(new TodoListMemberServiceResult(TodoListMemberServiceResultStatus.Success, outputDto));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -138,7 +138,25 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 		TodoListMemberAddDto dto = new("Name", 123);
 		WebApplicationFactory.TodoListMembersService
 			.AddMemberAsync(listId, dto)
-			.Returns(new AddTodoListMemberResult(AddTodoListMemberResultStatus.UserAlreadyAdded));
+			.Returns(new TodoListMemberServiceResult(TodoListMemberServiceResultStatus.UserAlreadyAdded));
+		using HttpClient client = CreateAuthorizedHttpClient();
+
+		// Act: send the request
+		var result = await client.PostAsJsonAsync($"api/todo/{listId}/members", dto);
+
+		// Assert that response code doesn't indicate success
+		Assert.That(result.IsSuccessStatusCode, Is.False, "Unsuccessfull status code was expected.");
+	}
+
+	[Test]
+	public async Task AddMember_InvalidRoleId_Fails()
+	{
+		// Arrange
+		string listId = "ListId";
+		TodoListMemberAddDto dto = new("Name", 123);
+		WebApplicationFactory.TodoListMembersService
+			.AddMemberAsync(listId, dto)
+			.Returns(new TodoListMemberServiceResult(TodoListMemberServiceResultStatus.InvalidRoleId));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -156,7 +174,7 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 		TodoListMemberAddDto dto = new("Name", 123);
 		WebApplicationFactory.TodoListMembersService
 			.AddMemberAsync(listId, dto)
-			.Returns(new AddTodoListMemberResult(AddTodoListMemberResultStatus.NotFound));
+			.Returns(new TodoListMemberServiceResult(TodoListMemberServiceResultStatus.NotFound));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -205,7 +223,7 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 		TodoListMemberUpdateRoleDto dto = new(777);
 		WebApplicationFactory.TodoListMembersService
 			.UpdateMemberRoleAsync(testListId, testMemberId, dto)
-			.Returns(true);
+			.Returns(new TodoListMemberServiceResult(TodoListMemberServiceResultStatus.Success));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -228,7 +246,7 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 		TodoListMemberUpdateRoleDto dto = new(777);
 		WebApplicationFactory.TodoListMembersService
 			.UpdateMemberRoleAsync(testListId, testMemberId, dto)
-			.Returns(false);
+			.Returns(new TodoListMemberServiceResult(TodoListMemberServiceResultStatus.NotFound));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -236,6 +254,25 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 
 		// Assert that response code is 404
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+	}
+
+	[Test]
+	public async Task UpdateMemberRole_InvalidRoleId_Fails()
+	{
+		// Arrange
+		string testListId = "TestId";
+		int testMemberId = 12412;
+		TodoListMemberUpdateRoleDto dto = new(777);
+		WebApplicationFactory.TodoListMembersService
+			.UpdateMemberRoleAsync(testListId, testMemberId, dto)
+			.Returns(new TodoListMemberServiceResult(TodoListMemberServiceResultStatus.InvalidRoleId));
+		using HttpClient client = CreateAuthorizedHttpClient();
+
+		// Act: send the request
+		var result = await client.PutAsJsonAsync($"api/todo/{testListId}/members/{testMemberId}", dto);
+
+		// Assert that response code indicates failure
+		Assert.That(result.IsSuccessStatusCode, Is.False, "Unsuccessfull status code was expected.");
 	}
 
 	[Test]

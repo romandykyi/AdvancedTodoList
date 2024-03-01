@@ -5,17 +5,16 @@ namespace AdvancedTodoList.Core.Services;
 /// <summary>
 /// Class that represents possible results of the method <see cref="ITodoListMembersService.AddMemberAsync(string, AdvancedTodoList.Core.Dtos.TodoListMemberAddDto)"/>.
 /// </summary>
-public class AddTodoListMemberResult(
-	AddTodoListMemberResultStatus status, TodoListMemberMinimalViewDto? dto = null)
+public class TodoListMemberServiceResult(
+	TodoListMemberServiceResultStatus status, TodoListMemberMinimalViewDto? dto = null)
 {
 	/// <summary>
 	/// Status of the operation.
 	/// </summary>
-	public AddTodoListMemberResultStatus Status { get; } = status;
+	public TodoListMemberServiceResultStatus Status { get; } = status;
 
 	/// <summary>
-	/// Gets DTO of added to-do list member or <see langword="null" /> if
-	/// status does not indicate success.
+	/// Gets additional DTO of the member, can be <see langword="null" />.
 	/// </summary>
 	public TodoListMemberMinimalViewDto? Dto { get; } = dto;
 }
@@ -23,7 +22,7 @@ public class AddTodoListMemberResult(
 /// <summary>
 /// Enum that represents possible result types of the method<see cref="ITodoListMembersService.AddMemberAsync(string, AdvancedTodoList.Core.Dtos.TodoListMemberAddDto)"/>.
 /// </summary>
-public enum AddTodoListMemberResultStatus
+public enum TodoListMemberServiceResultStatus
 {
 	/// <summary>
 	/// Operation was successfull.
@@ -34,7 +33,11 @@ public enum AddTodoListMemberResultStatus
 	/// </summary>
 	NotFound,
 	/// <summary>
-	/// User is already a member of the to-do list.
+	/// User is already a member of the to-do list, returned only in the add member method.
 	/// </summary>
-	UserAlreadyAdded
+	UserAlreadyAdded,
+	/// <summary>
+	/// Role either doesn't exist or it's invalid for the current to-do list.
+	/// </summary>
+	InvalidRoleId
 }

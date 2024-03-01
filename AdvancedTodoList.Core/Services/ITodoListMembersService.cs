@@ -23,15 +23,12 @@ public interface ITodoListMembersService
 	/// <summary>
 	/// Adds a member to a to-do list asynchronously.
 	/// </summary>
-	/// <remarks>
-	/// Parameter <paramref name="dto"/> is not validated in this method.
-	/// </remarks>
 	/// <param name="todoListId">ID of the to-do list to add member to.</param>
 	/// <param name="dto">DTO that contains information needed for adding a member. Supossed to be valid.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	Task<AddTodoListMemberResult> AddMemberAsync(string todoListId, TodoListMemberAddDto dto);
+	Task<TodoListMemberServiceResult> AddMemberAsync(string todoListId, TodoListMemberAddDto dto);
 
 	/// <summary>
 	/// Updates a role of the member of a to-do list asynchronously.
@@ -40,11 +37,9 @@ public interface ITodoListMembersService
 	/// <param name="memberId">ID of the member.</param>
 	/// <param name="dto">DTO that contains information needed for updating a role.</param>
 	/// <returns>
-	/// A task representing the asynchronous operation.
-	/// If user's role was updated successfully than <see langword="true"/> is returned;
-	/// otherwise <see langword="false" /> if the user or the to-do list was not found
+	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	Task<bool> UpdateMemberRoleAsync(string todoListId, int memberId, TodoListMemberUpdateRoleDto dto);
+	Task<TodoListMemberServiceResult> UpdateMemberRoleAsync(string todoListId, int memberId, TodoListMemberUpdateRoleDto dto);
 
 	/// <summary>
 	/// Removes a member from a to-do list asynchronously.

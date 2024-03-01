@@ -47,19 +47,19 @@ public class TodoListMembersService(
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public async Task<AddTodoListMemberResult> AddMemberAsync(string todoListId, TodoListMemberAddDto dto)
+	public async Task<TodoListMemberServiceResult> AddMemberAsync(string todoListId, TodoListMemberAddDto dto)
 	{
 		// Try to find already existing member
 		var member = await _repository.FindAsync(todoListId, dto.UserId);
 		// Return error if it exists
-		if (member != null) return new(AddTodoListMemberResultStatus.UserAlreadyAdded);
+		if (member != null) return new(TodoListMemberServiceResultStatus.UserAlreadyAdded);
 
 		// Add member
 		var outputDto = await _helperService
 			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalViewDto>(todoListId, dto);
-		if (outputDto == null) return new(AddTodoListMemberResultStatus.NotFound);
+		if (outputDto == null) return new(TodoListMemberServiceResultStatus.NotFound);
 
-		return new(AddTodoListMemberResultStatus.Success, outputDto);
+		return new(TodoListMemberServiceResultStatus.Success, outputDto);
 	}
 
 	/// <summary>
@@ -73,9 +73,13 @@ public class TodoListMembersService(
 	/// If user's role was updated successfully than <see langword="true"/> is returned;
 	/// otherwise <see langword="false" /> if the user or the to-do list was not found
 	/// </returns>
-	public Task<bool> UpdateMemberRoleAsync(string todoListId, int memberId, TodoListMemberUpdateRoleDto dto)
+	public async Task<TodoListMemberServiceResult> UpdateMemberRoleAsync(string todoListId, int memberId, TodoListMemberUpdateRoleDto dto)
 	{
-		return _helperService.UpdateAsync(todoListId, memberId, dto);
+		// Checks if role is valid for the action should be implemented here
+
+		bool updated = await _helperService.UpdateAsync(todoListId, memberId, dto);
+		return new(updated ? TodoListMemberServiceResultStatus.Success :
+			TodoListMemberServiceResultStatus.NotFound);
 	}
 
 	/// <summary>

@@ -57,16 +57,16 @@ public class TodoListMembersController(
 		var result = await _membersService.AddMemberAsync(listId, dto);
 		switch (result.Status)
 		{
-			case AddTodoListMemberResultStatus.Success:
+			case TodoListMemberServiceResultStatus.Success:
 				var routeValues = new { listId };
 				return CreatedAtRoute(nameof(GetTodoListMembersAsync), routeValues, result.Dto!);
-			case AddTodoListMemberResultStatus.NotFound:
+			case TodoListMemberServiceResultStatus.NotFound:
 				return NotFound();
-			case AddTodoListMemberResultStatus.UserAlreadyAdded:
+			case TodoListMemberServiceResultStatus.UserAlreadyAdded:
 				ModelState.AddModelError("UserId", "User is already a member of the to-do list.");
 				return BadRequest(ModelState);
 		}
-		_logger.LogError("Unexpected add member result status from to-do list members service.");
+		_logger.LogError("Unexpected result status from to-do list members service when trying to add a member.");
 		return StatusCode(StatusCodes.Status500InternalServerError);
 	}
 
@@ -86,8 +86,18 @@ public class TodoListMembersController(
 		[FromRoute] string listId, [FromRoute] int memberId,
 		[FromBody] TodoListMemberUpdateRoleDto dto)
 	{
-		bool result = await _membersService.UpdateMemberRoleAsync(listId, memberId, dto);
-		return result ? NoContent() : NotFound();
+		var result = await _membersService.UpdateMemberRoleAsync(listId, memberId, dto);
+		switch (result.Status)
+		{
+			case TodoListMemberServiceResultStatus.Success:
+				return NoContent();
+			case TodoListMemberServiceResultStatus.NotFound:
+				return NotFound();
+			case TodoListMemberServiceResultStatus.InvalidRoleId:
+				return Forbid();
+		}
+		_logger.LogError("Unexpected result status from to-do list members service when trying to update member's role.");
+		return StatusCode(StatusCodes.Status500InternalServerError);
 	}
 
 	/// <summary>
