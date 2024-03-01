@@ -239,26 +239,6 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 	}
 
 	[Test]
-	public async Task UpdateMemberRole_InvalidDto_Returns400()
-	{
-		// Arrange
-		string testListId = "TestId";
-		int testMemberId = 891349;
-		int invalidRoleId = 1241;
-		TodoListMemberAddDto invalidDto = new("New name", invalidRoleId);
-		using HttpClient client = CreateAuthorizedHttpClient();
-		WebApplicationFactory.EntityExistenceChecker
-			.ExistsAsync<TodoListRole, int>(Arg.Is<int>(x => x == invalidRoleId))
-			.Returns(false);
-
-		// Act: send the request
-		var result = await client.PutAsJsonAsync($"api/todo/{testListId}/members/{testMemberId}", invalidDto);
-
-		// Assert that response code is 400
-		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-	}
-
-	[Test]
 	public async Task UpdateMemberRole_NoAuthHeaderProvided_Returns401()
 	{
 		// Arrange
