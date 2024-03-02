@@ -40,5 +40,48 @@ public class TodoItemsServiceTests : BusinessLogicFixture
 			Arg.Any<PaginationParameters>());
 	}
 
+	[Test]
+	public async Task CreateAsync_TodoListExists_AddsEntityToDb()
+	{
+		// Arrange: initialize a DTO
+		string todoListId = "ID";
+		string callerId = "CallerId";
+		TodoItemCreateDto dto = new("Name", "Description", DateTime.UtcNow);
+		WebApplicationFactory.EntityExistenceChecker
+			.ExistsAsync<TodoList, string>(todoListId)
+			.Returns(true);
+		WebApplicationFactory.TodoItemsRepository
+			.AddAsync(Arg.Any<TodoItem>())
+			.Returns(Task.FromResult);
+
+		// Act: call the method
+		var result = await _service.CreateAsync(todoListId, dto, callerId);
+
+		// Assert
+		Assert.That(result, Is.Not.Null);
+		await WebApplicationFactory.TodoItemsRepository
+			.Received()
+			.AddAsync(Arg.Is<TodoItem>(x =>
+			x.Name == dto.Name && x.Description == dto.Description && x.OwnerId == callerId));
+	}
+
+	[Test]
+	public async Task CreateAsync_TodoListDoesNotExist_ReturnsNull()
+	{
+		// Arrange: initialize a DTO
+		string todoListId = "ID";
+		string callerId = "CallerId";
+		TodoItemCreateDto dto = new("Name", "Description", DateTime.UtcNow);
+		WebApplicationFactory.EntityExistenceChecker
+			.ExistsAsync<TodoList, string>(todoListId)
+			.Returns(false);
+
+		// Act: call the method
+		var result = await _service.CreateAsync(todoListId, dto, callerId);
+
+		// Assert
+		Assert.That(result, Is.Null);
+	}
+
 	// Tests for other methods are useless, because they are just wrappers.
 }

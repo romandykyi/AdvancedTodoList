@@ -1,17 +1,26 @@
 ﻿using AdvancedTodoList.Core.Dtos;
+using AdvancedTodoList.Core.Models;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Pagination;
+using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Infrastructure.Specifications;
+using Mapster;
 
 namespace AdvancedTodoList.Infrastructure.Services;
 
 /// <summary>
 /// A service that manages to-do lists items.
 /// </summary>
-public class TodoItemsService(ITodoListDependantEntitiesService<TodoItem, int> helperService) : ITodoItemsService
+public class TodoItemsService(
+	ITodoListDependantEntitiesService<TodoItem, int> helperService,
+	IRepository<TodoItem, int> repository,
+	IEntityExistenceChecker existenceChecker
+	) : ITodoItemsService
 {
 	private readonly ITodoListDependantEntitiesService<TodoItem, int> _helperService = helperService;
+	private readonly IRepository<TodoItem, int> _repository = repository;
+	private readonly IEntityExistenceChecker _existenceChecker = existenceChecker;
 
 	/// <summary>
 	/// Retrieves a page of to-do list items of the list with the specified ID.
@@ -55,9 +64,22 @@ public class TodoItemsService(ITodoListDependantEntitiesService<TodoItem, int> h
 	/// <see cref="TodoItemGetByIdDto"/> or <see langword="null" /> if to-do list with ID
 	/// <paramref name="todoListId"/> does not exist.
 	/// </returns>
-	public Task<TodoItemGetByIdDto?> CreateAsync(string todoListId, TodoItemCreateDto dto)
+	public async Task<TodoItemGetByIdDto?> CreateAsync(string todoListId, TodoItemCreateDto dto, string callerId)
 	{
-		return _helperService.CreateAsync<TodoItemCreateDto, TodoItemGetByIdDto>(todoListId, dto);
+		// Check if to-do list exists
+		if (!await _existenceChecker.ExistsAsync<TodoList, string>(todoListId))
+			return null;
+
+		// Create the item
+		var todoItem = dto.Adapt<TodoItem>();
+		// Set the foreign key
+		todoItem.TodoListId = todoListId;
+		// Set the owner
+		todoItem.OwnerId = callerId;
+		// Save it
+		await _repository.AddAsync(todoItem);
+		// Map it to DTO and return
+		return todoItem.Adapt<TodoItemGetByIdDto>();
 	}
 
 	/// <summary>
