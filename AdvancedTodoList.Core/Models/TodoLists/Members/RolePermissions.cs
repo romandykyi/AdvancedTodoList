@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace AdvancedTodoList.Core.Models.TodoLists.Members;
+﻿namespace AdvancedTodoList.Core.Models.TodoLists.Members;
 
 /// <summary>
 /// Represents permissions which to-do list members can have.
@@ -13,8 +11,7 @@ namespace AdvancedTodoList.Core.Models.TodoLists.Members;
 /// <param name="RemoveMembers">A flag that determines whether user can remove members.</param>
 /// <param name="AssignRoles">A flag that determines whether user can assign a role to other member.</param>
 /// <param name="EditRoles">A flag that determines whether user can edit/delete existing roles and add new roles.</param>
-[Owned]
-public record RolePermissions(
+public record struct RolePermissions(
 	bool SetItemsState = false,
 	bool AddItems = false,
 	bool EditItems = false,

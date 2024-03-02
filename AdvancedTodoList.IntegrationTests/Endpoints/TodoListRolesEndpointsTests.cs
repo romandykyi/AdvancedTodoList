@@ -208,7 +208,7 @@ public class TodoListRolesEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		string listId = "ListId";
-		TodoListRoleCreateDto invalidDto = new(string.Empty, null!);
+		TodoListRoleCreateDto invalidDto = new(string.Empty, new());
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -266,7 +266,7 @@ public class TodoListRolesEndpointsTests : EndpointsFixture
 		// Arrange
 		string testListId = "TestId";
 		int testRoleId = 891349;
-		TodoListRoleCreateDto invalidDto = new(string.Empty, null!);
+		TodoListRoleCreateDto invalidDto = new(string.Empty, new());
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request

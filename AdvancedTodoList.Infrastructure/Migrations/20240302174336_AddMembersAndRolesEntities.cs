@@ -18,14 +18,14 @@ namespace AdvancedTodoList.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     TodoListId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Permissions_SetItemsState = table.Column<bool>(type: "bit", nullable: false),
                     Permissions_AddItems = table.Column<bool>(type: "bit", nullable: false),
-                    Permissions_EditItems = table.Column<bool>(type: "bit", nullable: false),
-                    Permissions_DeleteItems = table.Column<bool>(type: "bit", nullable: false),
                     Permissions_AddMembers = table.Column<bool>(type: "bit", nullable: false),
-                    Permissions_RemoveMembers = table.Column<bool>(type: "bit", nullable: false),
                     Permissions_AssignRoles = table.Column<bool>(type: "bit", nullable: false),
-                    Permissions_EditRoles = table.Column<bool>(type: "bit", nullable: false)
+                    Permissions_DeleteItems = table.Column<bool>(type: "bit", nullable: false),
+                    Permissions_EditItems = table.Column<bool>(type: "bit", nullable: false),
+                    Permissions_EditRoles = table.Column<bool>(type: "bit", nullable: false),
+                    Permissions_RemoveMembers = table.Column<bool>(type: "bit", nullable: false),
+                    Permissions_SetItemsState = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

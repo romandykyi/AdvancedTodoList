@@ -57,6 +57,7 @@ public abstract class BaseRepository<TEntity, TKey>(ApplicationDbContext dbConte
 	public async Task<Page<TItem>> GetPageAsync<TItem>(PaginationParameters paginationParameters, ISpecification<TEntity> specification)
 	{
 		return await DbContext.Set<TEntity>()
+			.AsNoTracking()
 			.ApplySpecification(specification)
 			.ToPageAsync<TEntity, TItem>(paginationParameters);
 	}

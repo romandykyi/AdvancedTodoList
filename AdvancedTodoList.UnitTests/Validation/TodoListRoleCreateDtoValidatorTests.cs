@@ -55,19 +55,4 @@ public class TodoListRoleCreateDtoValidatorTests
 		result.ShouldHaveValidationErrorFor(x => x.Name)
 			.WithErrorCode(ValidationErrorCodes.PropertyTooLong);
 	}
-
-	[Test]
-	public void Permissions_Null_ReturnsPropertyRequiredError()
-	{
-		// Arrange
-		TodoListRoleCreateDtoValidator validator = new();
-		TodoListRoleCreateDto dto = new(ValidName, null!);
-
-		// Act
-		var result = validator.TestValidate(dto);
-
-		// Assert
-		result.ShouldHaveValidationErrorFor(x => x.Permissions)
-			.WithErrorCode(ValidationErrorCodes.PropertyRequired);
-	}
 }

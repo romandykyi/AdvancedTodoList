@@ -14,4 +14,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 	public DbSet<TodoListMember> TodoListsMembers { get; set; }
 	public DbSet<TodoListRole> TodoListRoles { get; set; }
 	public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
+
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
+	{
+		base.OnModelCreating(modelBuilder);
+
+		modelBuilder.Entity<TodoListRole>()
+			.ComplexProperty(x => x.Permissions);
+	}
 }
