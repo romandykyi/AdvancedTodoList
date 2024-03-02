@@ -107,6 +107,8 @@ builder.Services.AddSingleton<IAccessTokensService, AccessTokensService>();
 builder.Services.AddScoped<IRefreshTokensService, RefreshTokensService>();
 builder.Services.AddScoped(typeof(ITodoListDependantEntitiesService<,>),
 	typeof(TodoListDependantEntitiesService<,>));
+// Register unit of work
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // Register application repositories
 builder.Services.AddScoped<IRepository<TodoList, string>, TodoListRepository>();
 builder.Services.AddScoped<IRepository<TodoItem, int>, TodoItemsRepository>();
