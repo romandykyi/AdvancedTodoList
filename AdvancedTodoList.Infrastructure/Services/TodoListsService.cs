@@ -34,15 +34,18 @@ public class TodoListsService(IRepository<TodoList, string> repository) : ITodoL
 	/// Creates a new to-do list asynchronously.
 	/// </summary>
 	/// <param name="dto">The DTO containing information for creating the to-do list.</param>
+	/// <param name="callerId">ID of the user who creates the to-do list.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. 
 	/// The task result contains the created <see cref="TodoList"/> mapped to 
 	/// <see cref="TodoListGetByIdDto"/>.
 	/// </returns>
-	public async Task<TodoListGetByIdDto> CreateAsync(TodoListCreateDto dto)
+	public async Task<TodoListGetByIdDto> CreateAsync(TodoListCreateDto dto, string callerId)
 	{
 		// Map DTO to model
 		var todoList = dto.Adapt<TodoList>();
+		// Set owner
+		todoList.OwnerId = callerId;
 		// Add model to the database
 		await _repository.AddAsync(todoList);
 		// Return DTO of created model

@@ -55,18 +55,20 @@ public class TodoListsServiceTests : BusinessLogicFixture
 	public async Task CreateAsync_AddsEntityToDb()
 	{
 		// Arrange: initialize a DTO
+		string callerId = "CallerId";
 		TodoListCreateDto dto = new("Test entity", "...");
 		WebApplicationFactory.TodoListsRepository
 			.AddAsync(Arg.Any<TodoList>())
 			.Returns(Task.FromResult);
 
 		// Act: call the method
-		var result = await _service.CreateAsync(dto);
+		var result = await _service.CreateAsync(dto, callerId);
 
 		// Assert that method was called
 		await WebApplicationFactory.TodoListsRepository
 			.Received()
-			.AddAsync(Arg.Is<TodoList>(x => x.Name == dto.Name && x.Description == dto.Description));
+			.AddAsync(Arg.Is<TodoList>(x => x.Name == dto.Name && 
+			x.Description == dto.Description && x.OwnerId == callerId));
 	}
 
 	[Test]

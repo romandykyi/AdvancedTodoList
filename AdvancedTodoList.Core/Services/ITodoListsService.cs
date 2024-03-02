@@ -23,12 +23,13 @@ public interface ITodoListsService
 	/// Creates a new to-do list asynchronously.
 	/// </summary>
 	/// <param name="dto">The DTO containing information for creating the to-do list.</param>
+	/// <param name="callerId">ID of the user who creates the to-do list.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. 
 	/// The task result contains the created <see cref="TodoList"/> mapped to 
 	/// <see cref="TodoListGetByIdDto"/>.
 	/// </returns>
-	public Task<TodoListGetByIdDto> CreateAsync(TodoListCreateDto dto);
+	public Task<TodoListGetByIdDto> CreateAsync(TodoListCreateDto dto, string callerId);
 
 	/// <summary>
 	/// Edits a to-do list asynchronously.
