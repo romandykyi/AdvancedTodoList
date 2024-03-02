@@ -18,6 +18,14 @@ public class TodoListRole : IEntity<int>, ITodoListDependant
 	/// </summary>
 	[MaxLength(NameMaxLength)]
 	public required string Name { get; set; }
+	/// <summary>
+	/// Priority of the role.
+	/// </summary>
+	/// <remarks>
+	/// The lower value, the higher role is. 0 is reserved for the 'Owner' role which is created
+	/// together with a to-do list. Roles with negative priorities should not be possible.
+	/// </remarks>
+	public required int Priority { get; set; }
 
 	/// <summary>
 	/// A foreign key of the to-do list which has this role.

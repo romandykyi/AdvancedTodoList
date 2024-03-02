@@ -65,6 +65,7 @@ public static class TestModels
 	public static TodoListRole CreateTestRole(string todoListId) => new()
 	{
 		Name = "Role1",
+		Priority = 5,
 		TodoListId = todoListId
 	};
 }

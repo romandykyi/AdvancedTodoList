@@ -15,7 +15,7 @@ public class TodoListRoleCreateDtoValidatorTests
 	{
 		// Arrange
 		TodoListRoleCreateDtoValidator validator = new();
-		TodoListRoleCreateDto dto = new(ValidName, ValidPermissions);
+		TodoListRoleCreateDto dto = new(ValidName, 5, ValidPermissions);
 
 		// Act
 		var result = validator.TestValidate(dto);
@@ -30,7 +30,7 @@ public class TodoListRoleCreateDtoValidatorTests
 	{
 		// Arrange
 		TodoListRoleCreateDtoValidator validator = new();
-		TodoListRoleCreateDto dto = new(testCase, ValidPermissions);
+		TodoListRoleCreateDto dto = new(testCase, 5, ValidPermissions);
 
 		// Act
 		var result = validator.TestValidate(dto);
@@ -46,7 +46,7 @@ public class TodoListRoleCreateDtoValidatorTests
 		// Arrange
 		TodoListRoleCreateDtoValidator validator = new();
 		string longName = new('X', TodoListRole.NameMaxLength + 1);
-		TodoListRoleCreateDto dto = new(longName, ValidPermissions);
+		TodoListRoleCreateDto dto = new(longName, 5, ValidPermissions);
 
 		// Act
 		var result = validator.TestValidate(dto);

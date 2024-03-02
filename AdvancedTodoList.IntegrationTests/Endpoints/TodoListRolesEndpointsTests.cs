@@ -98,7 +98,7 @@ public class TodoListRolesEndpointsTests : EndpointsFixture
 		// Arrange
 		string testListId = "TestId";
 		int testRoleId = 777;
-		TodoListRoleViewDto testDto = new(testRoleId, "Name", new(true));
+		TodoListRoleViewDto testDto = new(testRoleId, "Name", 5, new(true));
 
 		WebApplicationFactory.TodoListRolesService
 			.GetByIdAsync(testListId, testRoleId)
@@ -153,10 +153,10 @@ public class TodoListRolesEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		string listId = "ListId";
-		TodoListRoleCreateDto dto = new("Name", new(true));
+		TodoListRoleCreateDto dto = new("Name", 5, new(true));
 		WebApplicationFactory.TodoListRolesService
 			.CreateAsync(listId, dto)
-			.Returns(new TodoListRoleViewDto(777, dto.Name, dto.Permissions));
+			.Returns(new TodoListRoleViewDto(777, dto.Name, 5, dto.Permissions));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -175,7 +175,7 @@ public class TodoListRolesEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		string listId = "ListId";
-		TodoListRoleCreateDto dto = new("Joker", new(true));
+		TodoListRoleCreateDto dto = new("Joker", 5, new(true));
 		WebApplicationFactory.TodoListRolesService
 			.CreateAsync(listId, dto)
 			.ReturnsNull();
@@ -193,7 +193,7 @@ public class TodoListRolesEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		string listId = "ListId";
-		TodoListRoleCreateDto dto = new("Joker", new(true));
+		TodoListRoleCreateDto dto = new("Joker", 5, new(true));
 		using HttpClient client = WebApplicationFactory.CreateClient();
 
 		// Act: send the request
@@ -208,7 +208,7 @@ public class TodoListRolesEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		string listId = "ListId";
-		TodoListRoleCreateDto invalidDto = new(string.Empty, new());
+		TodoListRoleCreateDto invalidDto = new(string.Empty, 5, new());
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -224,7 +224,7 @@ public class TodoListRolesEndpointsTests : EndpointsFixture
 		// Arrange
 		string testListId = "TestId";
 		int testRoleId = 891349;
-		TodoListRoleCreateDto dto = new("New name", new(true, true, true));
+		TodoListRoleCreateDto dto = new("New name", 5, new(true, true, true));
 		WebApplicationFactory.TodoListRolesService
 			.EditAsync(testListId, testRoleId, dto)
 			.Returns(true);
@@ -247,7 +247,7 @@ public class TodoListRolesEndpointsTests : EndpointsFixture
 		// Arrange
 		string testListId = "TestId";
 		int testRoleId = 12412;
-		TodoListRoleCreateDto dto = new("New name", new(true, true, true));
+		TodoListRoleCreateDto dto = new("New name", 5, new(true, true, true));
 		WebApplicationFactory.TodoListRolesService
 			.EditAsync(testListId, testRoleId, dto)
 			.Returns(false);
@@ -266,7 +266,7 @@ public class TodoListRolesEndpointsTests : EndpointsFixture
 		// Arrange
 		string testListId = "TestId";
 		int testRoleId = 891349;
-		TodoListRoleCreateDto invalidDto = new(string.Empty, new());
+		TodoListRoleCreateDto invalidDto = new(string.Empty, 5, new());
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -281,7 +281,7 @@ public class TodoListRolesEndpointsTests : EndpointsFixture
 		// Arrange
 		string testListId = "TestId";
 		int testRoleId = 891349;
-		TodoListRoleCreateDto dto = new("New name", new(true, true, true));
+		TodoListRoleCreateDto dto = new("New name", 5, new(true, true, true));
 		using HttpClient client = WebApplicationFactory.CreateClient();
 
 		// Act: send the request
