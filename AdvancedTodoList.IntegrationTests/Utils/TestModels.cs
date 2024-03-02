@@ -1,5 +1,6 @@
 ﻿using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists;
+using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.IntegrationTests.Services;
 
 namespace AdvancedTodoList.IntegrationTests.Utils;
@@ -60,5 +61,11 @@ public static class TestModels
 		UserId = userId,
 		Token = "TestToken",
 		ValidTo = DateTime.UtcNow.AddDays(180)
+	};
+	public static TodoListRole CreateTestRole(string todoListId) => new()
+	{
+		Name = "Role1",
+		Priority = 5,
+		TodoListId = todoListId
 	};
 }

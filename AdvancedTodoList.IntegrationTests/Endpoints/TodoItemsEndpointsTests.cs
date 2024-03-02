@@ -2,6 +2,7 @@
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.IntegrationTests.Fixtures;
+using NUnit.Framework.Interfaces;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -82,9 +83,9 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 		// Arrange
 		string testListId = "TestId";
 
-		WebApplicationFactory.EntityExistenceChecker
-			.ExistsAsync<TodoList, string>(testListId)
-			.Returns(false);
+		WebApplicationFactory.TodoItemsService
+			.GetItemsOfListAsync(testListId, Arg.Any<PaginationParameters>())
+			.ReturnsNull();
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request

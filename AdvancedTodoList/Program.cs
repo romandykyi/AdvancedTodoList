@@ -1,6 +1,7 @@
 using AdvancedTodoList.Core.Mapping;
 using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists;
+using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Options;
 using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
@@ -16,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -48,6 +50,9 @@ builder.Services.AddSwaggerGen(options =>
 	};
 
 	options.AddSecurityRequirement(new OpenApiSecurityRequirement { { scheme, Array.Empty<string>() } });
+	
+	var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+	options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 // Configure antiforgery
@@ -95,6 +100,8 @@ builder.Services.Configure<RefreshTokenOptions>(
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITodoListsService, TodoListsService>();
 builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
+builder.Services.AddScoped<ITodoListMembersService, TodoListMembersService>();
+builder.Services.AddScoped<ITodoListRolesService, TodoListRolesService>();
 builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
 builder.Services.AddSingleton<IAccessTokensService, AccessTokensService>();
 builder.Services.AddScoped<IRefreshTokensService, RefreshTokensService>();
@@ -103,6 +110,9 @@ builder.Services.AddScoped(typeof(ITodoListDependantEntitiesService<,>),
 // Register application repositories
 builder.Services.AddScoped<IRepository<TodoList, string>, TodoListRepository>();
 builder.Services.AddScoped<IRepository<TodoItem, int>, TodoItemsRepository>();
+builder.Services.AddScoped<ITodoListMembersRepository, TodoListMembersRepository>();
+builder.Services.AddScoped<IRepository<TodoListMember, int>, TodoListMembersRepository>();
+builder.Services.AddScoped<IRepository<TodoListRole, int>, TodoListRolesRepository>();
 builder.Services.AddScoped<IRepository<UserRefreshToken, int>, UserRefreshTokensRepository>();
 builder.Services.AddScoped<IUserRefreshTokensRepository, UserRefreshTokensRepository>();
 

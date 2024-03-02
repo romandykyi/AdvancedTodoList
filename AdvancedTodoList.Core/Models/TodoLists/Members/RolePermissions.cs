@@ -1,0 +1,23 @@
+﻿namespace AdvancedTodoList.Core.Models.TodoLists.Members;
+
+/// <summary>
+/// Represents permissions which to-do list members can have.
+/// </summary>
+/// <param name="SetItemsState">A flag that determines whether user can change a state of to-do list items (active/completed/skipped).</param>
+/// <param name="AddItems">A flag that determines whether user can add to-do list items.</param>
+/// <param name="EditItems">A flag that determines whether user can edit to-do list items of other users and the to-do list itself.</param>
+/// <param name="DeleteItems"> A flag that determines whether user can delete to-do list items of other users.</param>
+/// <param name="AddMembers">A flag that determines whether user can add members.</param>
+/// <param name="RemoveMembers">A flag that determines whether user can remove members.</param>
+/// <param name="AssignRoles">A flag that determines whether user can assign a role to other member.</param>
+/// <param name="EditRoles">A flag that determines whether user can edit/delete existing roles and add new roles.</param>
+public record struct RolePermissions(
+	bool SetItemsState = false,
+	bool AddItems = false,
+	bool EditItems = false,
+	bool DeleteItems = false,
+	bool AddMembers = false,
+	bool RemoveMembers = false,
+	bool AssignRoles = false,
+	bool EditRoles = false
+	);

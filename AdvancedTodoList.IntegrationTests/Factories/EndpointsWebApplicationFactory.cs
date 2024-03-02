@@ -1,5 +1,6 @@
 ﻿using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Services.Auth;
+using AdvancedTodoList.Infrastructure.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -14,6 +15,8 @@ public class EndpointsWebApplicationFactory : WebApplicationFactory<Program>
 	public IAuthService AuthService { get; private set; } = null!;
 	public ITodoListsService TodoListsService { get; private set; } = null!;
 	public ITodoItemsService TodoItemsService { get; private set; } = null!;
+	public ITodoListRolesService TodoListRolesService { get; private set; } = null!;
+	public ITodoListMembersService TodoListMembersService { get; private set; } = null!;
 	public IEntityExistenceChecker EntityExistenceChecker { get; private set; } = null!;
 
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -22,6 +25,8 @@ public class EndpointsWebApplicationFactory : WebApplicationFactory<Program>
 		AuthService = Substitute.For<IAuthService>();
 		TodoListsService = Substitute.For<ITodoListsService>();
 		TodoItemsService = Substitute.For<ITodoItemsService>();
+		TodoListRolesService = Substitute.For<ITodoListRolesService>();
+		TodoListMembersService = Substitute.For<ITodoListMembersService>();
 		EntityExistenceChecker = Substitute.For<IEntityExistenceChecker>();
 
 		builder.ConfigureTestServices(services =>
@@ -29,6 +34,9 @@ public class EndpointsWebApplicationFactory : WebApplicationFactory<Program>
 			services.AddScoped(_ => AuthService);
 			services.AddScoped(_ => TodoListsService);
 			services.AddScoped(_ => TodoItemsService);
+			services.AddScoped(_ => TodoItemsService);
+			services.AddScoped(_ => TodoListRolesService);
+			services.AddScoped(_ => TodoListMembersService);
 			services.AddScoped(_ => EntityExistenceChecker);
 		});
 	}

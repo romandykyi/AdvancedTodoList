@@ -20,7 +20,7 @@ public abstract class BaseRepositoryTests<TEntity, TKey> : DataAccessFixture
 	{
 		public Expression<Func<TEntity, bool>> Criteria { get; set; } = _ => true;
 
-		public List<Expression<Func<TEntity, object>>> Includes { get; set; } = [];
+		public List<Expression<Func<TEntity, object?>>> Includes { get; set; } = [];
 
 		public List<string> IncludeStrings { get; set; } = [];
 	}

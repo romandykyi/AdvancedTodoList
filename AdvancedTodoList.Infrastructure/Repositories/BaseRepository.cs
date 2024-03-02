@@ -5,6 +5,7 @@ using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Data;
 using AdvancedTodoList.Infrastructure.Pagination;
 using AdvancedTodoList.Infrastructure.Specifications;
+using Microsoft.EntityFrameworkCore;
 
 namespace AdvancedTodoList.Infrastructure.Repositories;
 
@@ -56,6 +57,7 @@ public abstract class BaseRepository<TEntity, TKey>(ApplicationDbContext dbConte
 	public async Task<Page<TItem>> GetPageAsync<TItem>(PaginationParameters paginationParameters, ISpecification<TEntity> specification)
 	{
 		return await DbContext.Set<TEntity>()
+			.AsNoTracking()
 			.ApplySpecification(specification)
 			.ToPageAsync<TEntity, TItem>(paginationParameters);
 	}
@@ -66,7 +68,7 @@ public abstract class BaseRepository<TEntity, TKey>(ApplicationDbContext dbConte
 	/// <param name="entity">The entity to update.</param>
 	public async Task UpdateAsync(TEntity entity)
 	{
-		DbContext.Update(entity);
+		DbContext.Entry(entity).State = EntityState.Modified;
 		await DbContext.SaveChangesAsync();
 	}
 
@@ -76,7 +78,7 @@ public abstract class BaseRepository<TEntity, TKey>(ApplicationDbContext dbConte
 	/// <param name="entity">The entity to delete.</param>
 	public async Task DeleteAsync(TEntity entity)
 	{
-		DbContext.Remove(entity);
+		DbContext.Entry(entity).State = EntityState.Deleted;
 		await DbContext.SaveChangesAsync();
 	}
 }
