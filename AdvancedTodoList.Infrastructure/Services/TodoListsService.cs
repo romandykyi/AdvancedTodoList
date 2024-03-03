@@ -2,6 +2,7 @@
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Infrastructure.Specifications;
 using Mapster;
 
 namespace AdvancedTodoList.Infrastructure.Services;
@@ -22,12 +23,10 @@ public class TodoListsService(IRepository<TodoList, string> repository) : ITodoL
 	/// a <see cref="TodoListGetByIdDto"/> object if the specified ID is found;
 	/// otherwise, returns <see langword="null"/>.
 	/// </returns>
-	public async Task<TodoListGetByIdDto?> GetByIdAsync(string id)
+	public Task<TodoListGetByIdDto?> GetByIdAsync(string id)
 	{
-		var todoList = await _repository.GetByIdAsync(id);
-		if (todoList == null) return null;
-
-		return todoList.Adapt<TodoListGetByIdDto>();
+		TodoListAggregateSpecification specification = new(id);
+		return _repository.GetAggregateAsync<TodoListGetByIdDto>(specification);
 	}
 
 	/// <summary>

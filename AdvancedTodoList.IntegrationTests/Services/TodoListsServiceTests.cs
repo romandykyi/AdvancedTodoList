@@ -1,9 +1,10 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Core.Specifications;
+using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
-using Mapster;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 
@@ -19,20 +20,23 @@ public class TodoListsServiceTests : BusinessLogicFixture
 	}
 
 	[Test]
-	public async Task GetByIdAsync_EntityExists_ReturnsCorrectEntity()
+	public async Task GetByIdAsync_EntityExists_AppliesTodoListAggregateSpecification()
 	{
 		// Arrange
-		TodoList todoList = TestModels.CreateTestTodoList();
+		string todoListId = "TodoListId";
+		TodoListGetByIdDto dto = new("Id", "name", "", new("Id", "User"));
 		WebApplicationFactory.TodoListsRepository
-			.GetByIdAsync(todoList.Id)
-			.Returns(todoList);
+			.GetAggregateAsync<TodoListGetByIdDto>(Arg.Any<ISpecification<TodoList>>())
+			.Returns(dto);
 
 		// Act
-		var result = await _service.GetByIdAsync(todoList.Id);
+		var result = await _service.GetByIdAsync(todoListId);
 
-		// Assert that returned DTO matches
-		var expectedResult = todoList.Adapt<TodoListGetByIdDto>();
-		Assert.That(result, Is.EqualTo(expectedResult));
+		// Assert that valid specification was applied
+		await WebApplicationFactory.TodoListsRepository
+			.Received()
+			.GetAggregateAsync<TodoListGetByIdDto>(
+			Arg.Is<TodoListAggregateSpecification>(x => x.Id == todoListId));
 	}
 
 	[Test]
@@ -41,7 +45,7 @@ public class TodoListsServiceTests : BusinessLogicFixture
 		// Arrange
 		string todoListId = "ID";
 		WebApplicationFactory.TodoListsRepository
-			.GetByIdAsync(todoListId)
+			.GetAggregateAsync<TodoListGetByIdDto>(Arg.Any<ISpecification<TodoList>>())
 			.ReturnsNull();
 
 		// Act
@@ -67,7 +71,7 @@ public class TodoListsServiceTests : BusinessLogicFixture
 		// Assert that method was called
 		await WebApplicationFactory.TodoListsRepository
 			.Received()
-			.AddAsync(Arg.Is<TodoList>(x => x.Name == dto.Name && 
+			.AddAsync(Arg.Is<TodoList>(x => x.Name == dto.Name &&
 			x.Description == dto.Description && x.OwnerId == callerId));
 	}
 
