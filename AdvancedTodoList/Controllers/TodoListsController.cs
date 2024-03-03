@@ -1,5 +1,6 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,9 +9,12 @@ namespace AdvancedTodoList.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/todo")]
-public class TodoListsController(ITodoListsService todoListsService) : ControllerBase
+public class TodoListsController(
+	ITodoListsService todoListsService, 
+	ILogger<TodoListsController> logger) : ControllerBase
 {
 	private readonly ITodoListsService _todoListsService = todoListsService;
+	private readonly ILogger<TodoListsController> _logger = logger;
 
 	/// <summary>
 	/// Gets a to-do list by its ID.
@@ -41,7 +45,7 @@ public class TodoListsController(ITodoListsService todoListsService) : Controlle
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> PostTodoListAsync([FromBody] TodoListCreateDto dto)
 	{
-		var list = await _todoListsService.CreateAsync(dto);
+		var list = await _todoListsService.CreateAsync(dto, User.GetUserId()!);
 		var routeValues = new { listId = list.Id };
 		return CreatedAtRoute(nameof(GetTodoListByIdAsync), routeValues, list);
 	}

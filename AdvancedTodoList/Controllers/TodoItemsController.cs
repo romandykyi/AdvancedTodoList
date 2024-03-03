@@ -1,6 +1,7 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Extensions;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -73,7 +74,7 @@ public class TodoItemsController(ITodoItemsService todoItemsService) : Controlle
 	public async Task<IActionResult> PostTodoItemAsync(
 		[FromRoute] string listId, [FromBody] TodoItemCreateDto dto)
 	{
-		var item = await _rolesService.CreateAsync(listId, dto);
+		var item = await _rolesService.CreateAsync(listId, dto, User.GetUserId()!);
 		if (item == null) return NotFound();
 
 		var routeValues = new { listId, itemId = item.Id };

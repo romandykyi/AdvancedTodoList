@@ -1,4 +1,6 @@
-﻿using AdvancedTodoList.Core.Models.TodoLists;
+﻿using AdvancedTodoList.Core.Dtos;
+using AdvancedTodoList.Core.Models.TodoLists;
+using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Utils;
 
 namespace AdvancedTodoList.IntegrationTests.Repositories;
@@ -37,5 +39,29 @@ public class TodoItemsRepositoryTests : BaseRepositoryTests<TodoItem, int>
 		DbContext.Add(todoList);
 		await DbContext.SaveChangesAsync();
 		return TestModels.CreateTestTodoItem(todoList.Id);
+	}
+
+	[Test]
+	public async Task GetAggregateAsync_TodoListAggregateSpecification_IncludesOwner()
+	{
+		// Arrange
+		var owner = TestModels.CreateTestUser();
+		DbContext.Add(owner);
+		await DbContext.SaveChangesAsync();
+		var todoList = TestModels.CreateTestTodoList();
+		DbContext.Add(todoList);
+		await DbContext.SaveChangesAsync();
+		var todoItem = TestModels.CreateTestTodoItem(todoList.Id, owner.Id);
+		DbContext.Add(todoItem);
+		await DbContext.SaveChangesAsync();
+		TodoItemAggregateSpecification specification = new(todoItem.Id);
+
+		// Act
+		var aggregate = await Repository.GetAggregateAsync<TodoItemGetByIdDto>(specification);
+
+		// Assert
+		Assert.That(aggregate, Is.Not.Null);
+		Assert.That(aggregate.Owner, Is.Not.Null);
+		Assert.That(aggregate.Owner.Id, Is.EqualTo(owner.Id));
 	}
 }

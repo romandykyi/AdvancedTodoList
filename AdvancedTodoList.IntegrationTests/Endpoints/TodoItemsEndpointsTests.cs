@@ -101,7 +101,8 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 		// Arrange
 		string testListId = "TestId";
 		int testItemId = 777;
-		TodoItemGetByIdDto testDto = new(testItemId, testListId, "Test todo item", "...", null, TodoItemState.Active);
+		TodoItemGetByIdDto testDto = new(testItemId, testListId, "Test todo item",
+			"...", null, TodoItemState.Active, new("Id", "User"));
 
 		WebApplicationFactory.TodoItemsService
 			.GetByIdAsync(testListId, testItemId)
@@ -158,8 +159,9 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 		string listId = "ListId";
 		TodoItemCreateDto dto = new("Item", "...", DateTime.MaxValue);
 		WebApplicationFactory.TodoItemsService
-			.CreateAsync(listId, dto)
-			.Returns(new TodoItemGetByIdDto(500, "TodoListId", "", "", DateTime.UtcNow, TodoItemState.Active));
+			.CreateAsync(listId, dto, TestUserId)
+			.Returns(new TodoItemGetByIdDto(500, "TodoListId", "", "", DateTime.UtcNow, 
+			TodoItemState.Active, new("Id", "User")));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -170,7 +172,7 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 		// Assert that create method was called
 		await WebApplicationFactory.TodoItemsService
 			.Received()
-			.CreateAsync(listId, dto);
+			.CreateAsync(listId, dto, TestUserId);
 	}
 
 	[Test]
@@ -180,7 +182,7 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 		string listId = "ListId";
 		TodoItemCreateDto dto = new("Item", "...", DateTime.MaxValue);
 		WebApplicationFactory.TodoItemsService
-			.CreateAsync(listId, dto)
+			.CreateAsync(listId, dto, TestUserId)
 			.ReturnsNull();
 		using HttpClient client = CreateAuthorizedHttpClient();
 
