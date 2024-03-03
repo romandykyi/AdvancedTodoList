@@ -1,10 +1,12 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
+using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
+using NSubstitute.ExceptionExtensions;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 
@@ -58,21 +60,65 @@ public class TodoListsServiceTests : BusinessLogicFixture
 	[Test]
 	public async Task CreateAsync_AddsEntityToDb()
 	{
-		// Arrange: initialize a DTO
+		// Arrange
 		string callerId = "CallerId";
+		string listId = "ListId";
+		int ownerRoleId = 777;
 		TodoListCreateDto dto = new("Test entity", "...");
 		WebApplicationFactory.TodoListsRepository
 			.AddAsync(Arg.Any<TodoList>())
+			.Returns(Task.FromResult)
+			.AndDoes(x => ((TodoList)x[0]).Id = listId);
+		WebApplicationFactory.TodoListRolesRepository
+			.AddAsync(Arg.Any<TodoListRole>())
+			.Returns(Task.FromResult)
+			.AndDoes(x => ((TodoListRole)x[0]).Id = ownerRoleId);
+		WebApplicationFactory.TodoListMembersRepository
+			.AddAsync(Arg.Any<TodoListMember>())
 			.Returns(Task.FromResult);
 
-		// Act: call the method
+		// Act
 		var result = await _service.CreateAsync(dto, callerId);
 
-		// Assert that method was called
+		// Assert that list was created
 		await WebApplicationFactory.TodoListsRepository
 			.Received()
 			.AddAsync(Arg.Is<TodoList>(x => x.Name == dto.Name &&
 			x.Description == dto.Description && x.OwnerId == callerId));
+		// Assert that "Owner" role was created
+		await WebApplicationFactory.TodoListRolesRepository
+			.Received()
+			.AddAsync(Arg.Is<TodoListRole>(x => x.Priority == 0 && 
+			x.TodoListId == listId && x.Permissions == RolePermissions.All));
+		// Assert that the caller was assigned to the "Owner" role
+		await WebApplicationFactory.TodoListMembersRepository
+			.Received()
+			.AddAsync(Arg.Is<TodoListMember>(x => x.TodoListId == listId &&
+			x.UserId == callerId && x.RoleId == ownerRoleId));
+		// Assert that changes were commited
+		await WebApplicationFactory.UnitOfWork
+			.Received()
+			.CommitAsync();
+	}
+
+	[Test]
+	public async Task CreateAsync_OnException_RethrowsAndRollbacksChanges()
+	{
+		// Arrange
+		string callerId = "CallerId";
+		TodoListCreateDto dto = new("Test entity", "...");
+		WebApplicationFactory.TodoListsRepository
+			.AddAsync(Arg.Any<TodoList>())
+			.Throws<Exception>();
+
+		// Act/Assert
+		Assert.ThrowsAsync<Exception>(() => _service.CreateAsync(dto, callerId));
+
+		// Assert
+		await WebApplicationFactory.UnitOfWork
+			.Received()
+			.RollbackAsync();
+
 	}
 
 	[Test]

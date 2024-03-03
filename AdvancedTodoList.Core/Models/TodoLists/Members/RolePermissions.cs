@@ -20,4 +20,10 @@ public record struct RolePermissions(
 	bool RemoveMembers = false,
 	bool AssignRoles = false,
 	bool EditRoles = false
-	);
+	)
+{
+	/// <summary>
+	/// Instance of a structure with all permissions.
+	/// </summary>
+	public static readonly RolePermissions All = new(true, true, true, true, true, true, true, true);
+}
