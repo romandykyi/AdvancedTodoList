@@ -74,9 +74,6 @@ public class TodoListDependantEntitiesServiceTests : BusinessLogicFixture
 		string todoListId = "ID";
 		TestTodoListDependantEntity entity = TestModels.CreateTestTodoListDependantEntity(todoListId);
 		entity.Id = 500;
-		WebApplicationFactory.EntityExistenceChecker
-			.ExistsAsync<TodoList, string>(todoListId)
-			.Returns(true);
 		WebApplicationFactory.TestTodoListDependantEntitiesRepository
 			.GetByIdAsync(entity.Id)
 			.Returns(entity);
@@ -90,17 +87,18 @@ public class TodoListDependantEntitiesServiceTests : BusinessLogicFixture
 	}
 
 	[Test]
-	public async Task GetByIdAsync_TodoListDoesNotExist_ReturnsNull()
+	public async Task GetByIdAsync_WrongTodoList_ReturnsNull()
 	{
 		// Arrange
 		string todoListId = "ID";
-		int entityId = 500;
-		WebApplicationFactory.EntityExistenceChecker
-			.ExistsAsync<TodoList, string>(todoListId)
-			.Returns(false);
+		TestTodoListDependantEntity entity = TestModels.CreateTestTodoListDependantEntity("WrongTodoListId");
+		entity.Id = 500;
+		WebApplicationFactory.TestTodoListDependantEntitiesRepository
+			.GetByIdAsync(entity.Id)
+			.Returns(entity);
 
 		// Act
-		var result = await _service.GetByIdAsync<TestTodoListDependantViewDto>(todoListId, entityId);
+		var result = await _service.GetByIdAsync<TestTodoListDependantViewDto>(todoListId, entity.Id);
 
 		// Assert
 		Assert.That(result, Is.Null);
@@ -112,9 +110,6 @@ public class TodoListDependantEntitiesServiceTests : BusinessLogicFixture
 		// Arrange
 		string todoListId = "ID";
 		int entityId = 500;
-		WebApplicationFactory.EntityExistenceChecker
-			.ExistsAsync<TodoList, string>(todoListId)
-			.Returns(true);
 		WebApplicationFactory.TestTodoListDependantEntitiesRepository
 			.GetByIdAsync(entityId)
 			.ReturnsNull();

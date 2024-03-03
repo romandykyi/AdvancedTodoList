@@ -63,14 +63,10 @@ public sealed class TodoListDependantEntitiesService<TEntity, TKey>(
 	public async Task<TDto?> GetByIdAsync<TDto>(string todoListId, TKey entityId)
 		where TDto : class
 	{
-		// Check if to-do list exists
-		if (!await _existenceChecker.ExistsAsync<TodoList, string>(todoListId))
-			return null;
-
 		// Get the model
 		var entity = await _repository.GetByIdAsync(entityId);
-		// Return null if model is null
-		if (entity == null) return null;
+		// Return null if model is null or has wrong to-do list ID
+		if (entity == null || entity.TodoListId != todoListId) return null;
 		// Map it to DTO and return
 		return entity.Adapt<TDto>();
 	}
