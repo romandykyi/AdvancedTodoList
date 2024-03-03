@@ -1,5 +1,4 @@
-﻿using AdvancedTodoList.Core.Models.Auth;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AdvancedTodoList.Core.Models.TodoLists;
@@ -26,16 +25,6 @@ public class TodoList : IEntity<string>
 	/// </summary>
 	[MaxLength(DescriptionMaxLength)]
 	public required string Description { get; set; } = null!;
-
-	/// <summary>
-	/// Foreign key referencing the user who created this to-do list.
-	/// </summary>
-	[ForeignKey(nameof(Owner))]
-	public required string? OwnerId { get; set; } = null!;
-	/// <summary>
-	/// Navigation property to the user who created this to-do list.
-	/// </summary>
-	public ApplicationUser? Owner { get; set; }
 
 	/// <summary>
 	/// Maximum allowed length of <see cref="Name"/>.

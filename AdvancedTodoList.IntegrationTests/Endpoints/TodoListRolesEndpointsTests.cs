@@ -1,10 +1,8 @@
 ﻿using AdvancedTodoList.Core.Dtos;
-using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.IntegrationTests.Fixtures;
-using NSubstitute;
-using System.Net.Http.Json;
 using System.Net;
+using System.Net.Http.Json;
 
 namespace AdvancedTodoList.IntegrationTests.Endpoints;
 
@@ -330,7 +328,7 @@ public class TodoListRolesEndpointsTests : EndpointsFixture
 		// Assert that response code is 404
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
 	}
-	
+
 	[Test]
 	public async Task DeleteTodoListRole_NoAuthHeaderProvided_Returns401()
 	{

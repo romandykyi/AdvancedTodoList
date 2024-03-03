@@ -17,7 +17,7 @@ public class GetByIdSpecification<TEntity, TKey>(TKey id) : ISpecification<TEnti
 	/// <summary>
 	/// The unique identifier to filter by.
 	/// </summary>
-	public TKey Id { get; } = id;
+	protected TKey Id { get; } = id;
 
 	/// <summary>
 	/// Gets the criteria expression that defines the filtering conditions.

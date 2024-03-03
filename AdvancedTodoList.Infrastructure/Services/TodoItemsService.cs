@@ -1,25 +1,17 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Pagination;
-using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Infrastructure.Specifications;
-using Mapster;
 
 namespace AdvancedTodoList.Infrastructure.Services;
 
 /// <summary>
 /// A service that manages to-do lists items.
 /// </summary>
-public class TodoItemsService(
-	ITodoListDependantEntitiesService<TodoItem, int> helperService,
-	IRepository<TodoItem, int> repository,
-	IEntityExistenceChecker existenceChecker
-	) : ITodoItemsService
+public class TodoItemsService(ITodoListDependantEntitiesService<TodoItem, int> helperService) : ITodoItemsService
 {
 	private readonly ITodoListDependantEntitiesService<TodoItem, int> _helperService = helperService;
-	private readonly IRepository<TodoItem, int> _repository = repository;
-	private readonly IEntityExistenceChecker _existenceChecker = existenceChecker;
 
 	/// <summary>
 	/// Retrieves a page of to-do list items of the list with the specified ID.
@@ -47,15 +39,9 @@ public class TodoItemsService(
 	/// a <see cref="TodoItemGetByIdDto"/> object if the specified ID is found;
 	/// otherwise, returns <see langword="null"/>.
 	/// </returns>
-	public async Task<TodoItemGetByIdDto?> GetByIdAsync(string todoListId, int itemId)
+	public Task<TodoItemGetByIdDto?> GetByIdAsync(string todoListId, int itemId)
 	{
-		TodoItemAggregateSpecification specification = new(itemId);
-		// Get the aggregate
-		var dto = await _repository.GetAggregateAsync<TodoItemGetByIdDto>(specification);
-		// Check if it's valid
-		if (dto == null || dto.TodoListId != todoListId) return null;
-
-		return dto;
+		return _helperService.GetByIdAsync<TodoItemGetByIdDto>(todoListId, itemId);
 	}
 
 	/// <summary>
@@ -69,22 +55,9 @@ public class TodoItemsService(
 	/// <see cref="TodoItemGetByIdDto"/> or <see langword="null" /> if to-do list with ID
 	/// <paramref name="todoListId"/> does not exist.
 	/// </returns>
-	public async Task<TodoItemGetByIdDto?> CreateAsync(string todoListId, TodoItemCreateDto dto, string callerId)
+	public Task<TodoItemGetByIdDto?> CreateAsync(string todoListId, TodoItemCreateDto dto)
 	{
-		// Check if to-do list exists
-		if (!await _existenceChecker.ExistsAsync<TodoList, string>(todoListId))
-			return null;
-
-		// Create the item
-		var todoItem = dto.Adapt<TodoItem>();
-		// Set the foreign key
-		todoItem.TodoListId = todoListId;
-		// Set the owner
-		todoItem.OwnerId = callerId;
-		// Save it
-		await _repository.AddAsync(todoItem);
-		// Map it to DTO and return
-		return todoItem.Adapt<TodoItemGetByIdDto>();
+		return _helperService.CreateAsync<TodoItemCreateDto, TodoItemGetByIdDto>(todoListId, dto);
 	}
 
 	/// <summary>

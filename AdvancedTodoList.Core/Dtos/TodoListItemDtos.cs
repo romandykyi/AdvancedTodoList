@@ -18,7 +18,7 @@ public record TodoItemUpdateStateDto(TodoItemState State);
 public record TodoItemGetByIdDto(
 	int Id, string TodoListId, string Name,
 	string Description, DateTime? DeadlineDate,
-	TodoItemState State, ApplicationUserPreviewDto Owner
+	TodoItemState State
 	);
 
 /// <summary>

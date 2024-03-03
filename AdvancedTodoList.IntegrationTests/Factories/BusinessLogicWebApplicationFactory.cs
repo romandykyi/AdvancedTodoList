@@ -22,9 +22,7 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 	public ITodoListDependantEntitiesService<TodoListRole, int> TodoRolesHelperService { get; set; } = null!;
 	public ITodoListDependantEntitiesService<TodoListMember, int> TodoMembersHelperService { get; set; } = null!;
 	public IUserRefreshTokensRepository RefreshTokensRepository { get; private set; } = null!;
-	public IRepository<TodoListRole, int> TodoListRolesRepository { get; private set; } = null!;
 	public ITodoListMembersRepository TodoListMembersRepository { get; private set; } = null!;
-	public IUnitOfWork UnitOfWork { get; private set; } = null!;
 
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
@@ -37,13 +35,7 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 		TodoRolesHelperService = Substitute.For<ITodoListDependantEntitiesService<TodoListRole, int>>();
 		TodoMembersHelperService = Substitute.For<ITodoListDependantEntitiesService<TodoListMember, int>>();
 		RefreshTokensRepository = Substitute.For<IUserRefreshTokensRepository>();
-		TodoListRolesRepository = Substitute.For<IRepository<TodoListRole, int>>();
 		TodoListMembersRepository = Substitute.For<ITodoListMembersRepository>();
-
-		UnitOfWork = Substitute.For<IUnitOfWork>();
-		UnitOfWork.BeginTransactionAsync().Returns(Task.CompletedTask);
-		UnitOfWork.CommitAsync().Returns(Task.CompletedTask);
-		UnitOfWork.RollbackAsync().Returns(Task.CompletedTask);
 
 		builder.ConfigureTestServices(services =>
 		{
@@ -55,9 +47,7 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 			services.AddScoped(_ => TodoRolesHelperService);
 			services.AddScoped(_ => TodoMembersHelperService);
 			services.AddScoped(_ => RefreshTokensRepository);
-			services.AddScoped(_ => TodoListRolesRepository);
 			services.AddScoped(_ => TodoListMembersRepository);
-			services.AddScoped(_ => UnitOfWork);
 		});
 	}
 }
