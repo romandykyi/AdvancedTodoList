@@ -1,5 +1,4 @@
 ﻿using AdvancedTodoList.Core.Dtos;
-using AdvancedTodoList.Core.Models;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Repositories;
@@ -48,9 +47,15 @@ public class TodoItemsService(
 	/// a <see cref="TodoItemGetByIdDto"/> object if the specified ID is found;
 	/// otherwise, returns <see langword="null"/>.
 	/// </returns>
-	public Task<TodoItemGetByIdDto?> GetByIdAsync(string todoListId, int itemId)
+	public async Task<TodoItemGetByIdDto?> GetByIdAsync(string todoListId, int itemId)
 	{
-		return _helperService.GetByIdAsync<TodoItemGetByIdDto>(todoListId, itemId);
+		TodoItemAggregateSpecification specification = new(itemId);
+		// Get the aggregate
+		var dto = await _repository.GetAggregateAsync<TodoItemGetByIdDto>(specification);
+		// Check if it's valid
+		if (dto == null || dto.TodoListId != todoListId) return null;
+
+		return dto;
 	}
 
 	/// <summary>

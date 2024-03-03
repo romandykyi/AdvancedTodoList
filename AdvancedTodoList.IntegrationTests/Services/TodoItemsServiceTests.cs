@@ -19,6 +19,64 @@ public class TodoItemsServiceTests : BusinessLogicFixture
 	}
 
 	[Test]
+	public async Task GetByIdAsync_EntityExists_AppliesTodoListAggregateSpecification()
+	{
+		// Arrange
+		int todoItemId = 123;
+		string todoListId = "TodoListId";
+		TodoItemGetByIdDto dto = new(todoItemId, todoListId, "Name", "Description", null,
+			TodoItemState.Active, new("User", "Name"));
+		WebApplicationFactory.TodoItemsRepository
+			.GetAggregateAsync<TodoItemGetByIdDto>(Arg.Any<ISpecification<TodoItem>>())
+			.Returns(dto);
+
+		// Act
+		var result = await _service.GetByIdAsync(todoListId, todoItemId);
+
+		// Assert that valid specification was applied
+		await WebApplicationFactory.TodoItemsRepository
+			.Received()
+			.GetAggregateAsync<TodoItemGetByIdDto>(
+			Arg.Is<TodoItemAggregateSpecification>(x => x.Id == todoItemId));
+	}
+
+	[Test]
+	public async Task GetByIdAsync_InvalidTodoListId_ReturnsNull()
+	{
+		// Arrange
+		int todoItemId = 123;
+		string todoListId = "TodoListId";
+		TodoItemGetByIdDto dto = new(todoItemId, todoListId, "Name", "Description", null,
+			TodoItemState.Active, new("User", "Name"));
+		WebApplicationFactory.TodoItemsRepository
+			.GetAggregateAsync<TodoItemGetByIdDto>(Arg.Any<ISpecification<TodoItem>>())
+			.Returns(dto);
+
+		// Act
+		var result = await _service.GetByIdAsync("Wrong list ID", todoItemId);
+
+		// Assert
+		Assert.That(result, Is.Null);
+	}
+
+	[Test]
+	public async Task GetByIdAsync_EntityDoesNotExist_ReturnsNull()
+	{
+		// Arrange
+		string todoListId = "ID";
+		int itemId = 123;
+		WebApplicationFactory.TodoItemsRepository
+			.GetAggregateAsync<TodoItemGetByIdDto>(Arg.Any<ISpecification<TodoItem>>())
+			.ReturnsNull();
+
+		// Act
+		var result = await _service.GetByIdAsync(todoListId, itemId);
+
+		// Assert
+		Assert.That(result, Is.Null);
+	}
+
+	[Test]
 	public async Task GetItemsOfListAsync_ListExists_AppliesTodoItemsSpecification()
 	{
 		// Arrange
