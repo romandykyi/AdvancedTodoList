@@ -1,5 +1,7 @@
 ﻿using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AdvancedTodoList.Infrastructure.Repositories;
 

@@ -5,6 +5,7 @@ using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Data;
 using AdvancedTodoList.Infrastructure.Pagination;
 using AdvancedTodoList.Infrastructure.Specifications;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 
 namespace AdvancedTodoList.Infrastructure.Repositories;
@@ -42,6 +43,27 @@ public abstract class BaseRepository<TEntity, TKey>(ApplicationDbContext dbConte
 	public async Task<TEntity?> GetByIdAsync(TKey id)
 	{
 		return await DbContext.Set<TEntity>().FindAsync(id);
+	}
+
+	/// <summary>
+	/// Asynchronously retrieves an aggregate by applying a specification.
+	/// </summary>
+	/// <typeparam name="TDto">Type of the aggregate to retrieve.</typeparam>
+	/// <param name="specification">Specification to apply.</param>
+	/// <returns>
+	/// A task that represents an asynchronous operation and the aggregate if found; 
+	/// otherwise, <see langword="null"/>.
+	/// </returns>
+	public async Task<TDto?> GetAggregateAsync<TDto>(ISpecification<TEntity> specification)
+		where TDto : class
+	{
+		var entity = await DbContext.Set<TEntity>()
+			.ApplySpecification(specification)
+			.FirstOrDefaultAsync();
+		if (entity == null)
+			return null;
+
+		return entity.Adapt<TDto>();
 	}
 
 	/// <summary>
