@@ -12,7 +12,7 @@ namespace AdvancedTodoList.Infrastructure.Services;
 /// </summary>
 public class TodoListMembersService(
 	ITodoListDependantEntitiesService<TodoListMember, int> helperService,
-	ITodoListMembersRepository repository) :
+	ITodoListMembersRepository repository) : 
 	ITodoListMembersService
 {
 	private readonly ITodoListDependantEntitiesService<TodoListMember, int> _helperService = helperService;

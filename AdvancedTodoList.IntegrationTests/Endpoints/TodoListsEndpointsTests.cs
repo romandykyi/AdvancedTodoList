@@ -13,7 +13,7 @@ public class TodoListsEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		string testId = "TestId";
-		TodoListGetByIdDto testDto = new(testId, "Test todo list", "");
+		TodoListGetByIdDto testDto = new(testId, "Test todo list", "", new("Id", "User"));
 		WebApplicationFactory.TodoListsService
 			.GetByIdAsync(testId)
 			.Returns(testDto);
@@ -66,8 +66,8 @@ public class TodoListsEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		WebApplicationFactory.TodoListsService
-			.CreateAsync(Arg.Any<TodoListCreateDto>())
-			.Returns(new TodoListGetByIdDto("Id", "", ""));
+			.CreateAsync(Arg.Any<TodoListCreateDto>(), Arg.Any<string>())
+			.Returns(new TodoListGetByIdDto("Id", "", "", new("Id", "User")));
 		TodoListCreateDto dto = new("Test", string.Empty);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
@@ -79,7 +79,7 @@ public class TodoListsEndpointsTests : EndpointsFixture
 		// Assert that create method was called
 		await WebApplicationFactory.TodoListsService
 			.Received()
-			.CreateAsync(dto);
+			.CreateAsync(dto, TestUserId);
 	}
 
 	[Test]

@@ -1,4 +1,5 @@
-﻿using AdvancedTodoList.Core.Models.TodoLists;
+﻿using AdvancedTodoList.Core.Models;
+using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;

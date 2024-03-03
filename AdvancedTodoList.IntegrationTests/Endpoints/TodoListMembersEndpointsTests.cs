@@ -1,11 +1,13 @@
 ﻿using AdvancedTodoList.Core.Dtos;
-using AdvancedTodoList.Core.Models.Auth;
-using AdvancedTodoList.Core.Models.TodoLists.Members;
+using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Pagination;
-using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.IntegrationTests.Fixtures;
-using System.Net;
+using NSubstitute;
 using System.Net.Http.Json;
+using System.Net;
+using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Core.Models.TodoLists.Members;
+using AdvancedTodoList.Core.Models.Auth;
 
 namespace AdvancedTodoList.IntegrationTests.Endpoints;
 
@@ -328,7 +330,7 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 		// Assert that response code is 404
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
 	}
-
+	
 	[Test]
 	public async Task RemoveMember_NoAuthHeaderProvided_Returns401()
 	{

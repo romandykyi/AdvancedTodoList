@@ -38,13 +38,14 @@ public interface ITodoItemsService
 	/// </summary>
 	/// <param name="todoListId">The ID of the to-do list to associate the item with.</param>
 	/// <param name="dto">The DTO containing information for creating the to-do list item.</param>
+	/// <param name="callerId">ID of the user who creates the to-do list item.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. 
 	/// The task result contains the created <see cref="TodoItem"/> mapped to 
 	/// <see cref="TodoItemGetByIdDto"/> or <see langword="null" /> if to-do list with ID
 	/// <paramref name="todoListId"/> does not exist.
 	/// </returns>
-	public Task<TodoItemGetByIdDto?> CreateAsync(string todoListId, TodoItemCreateDto dto);
+	public Task<TodoItemGetByIdDto?> CreateAsync(string todoListId, TodoItemCreateDto dto, string callerId);
 
 	/// <summary>
 	/// Edits a to-do list item asynchronously.

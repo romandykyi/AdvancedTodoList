@@ -1,4 +1,5 @@
 ﻿using AdvancedTodoList.Core.Dtos;
+using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
