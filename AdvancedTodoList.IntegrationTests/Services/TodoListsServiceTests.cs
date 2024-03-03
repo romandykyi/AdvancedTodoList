@@ -88,7 +88,7 @@ public class TodoListsServiceTests : BusinessLogicFixture
 		// Assert that "Owner" role was created
 		await WebApplicationFactory.TodoListRolesRepository
 			.Received()
-			.AddAsync(Arg.Is<TodoListRole>(x => x.Priority == 0 && 
+			.AddAsync(Arg.Is<TodoListRole>(x => x.Priority == 0 &&
 			x.TodoListId == listId && x.Permissions == RolePermissions.All));
 		// Assert that the caller was assigned to the "Owner" role
 		await WebApplicationFactory.TodoListMembersRepository

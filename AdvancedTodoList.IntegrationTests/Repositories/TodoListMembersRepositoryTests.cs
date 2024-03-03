@@ -1,5 +1,4 @@
 ﻿using AdvancedTodoList.Core.Dtos;
-using AdvancedTodoList.Core.Models;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Infrastructure.Specifications;

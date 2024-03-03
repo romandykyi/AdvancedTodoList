@@ -1,7 +1,6 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
-using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +10,7 @@ namespace AdvancedTodoList.Controllers;
 [ApiController]
 [Route("api/todo/{listId}/members")]
 public class TodoListMembersController(
-	ITodoListMembersService membersService, 
+	ITodoListMembersService membersService,
 	ILogger<TodoListMembersController> logger) : ControllerBase
 {
 	private readonly ITodoListMembersService _membersService = membersService;

@@ -10,7 +10,7 @@ namespace AdvancedTodoList.Controllers;
 [ApiController]
 [Route("api/todo")]
 public class TodoListsController(
-	ITodoListsService todoListsService, 
+	ITodoListsService todoListsService,
 	ILogger<TodoListsController> logger) : ControllerBase
 {
 	private readonly ITodoListsService _todoListsService = todoListsService;

@@ -2,7 +2,6 @@
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.IntegrationTests.Fixtures;
-using NUnit.Framework.Interfaces;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -160,7 +159,7 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 		TodoItemCreateDto dto = new("Item", "...", DateTime.MaxValue);
 		WebApplicationFactory.TodoItemsService
 			.CreateAsync(listId, dto, TestUserId)
-			.Returns(new TodoItemGetByIdDto(500, "TodoListId", "", "", DateTime.UtcNow, 
+			.Returns(new TodoItemGetByIdDto(500, "TodoListId", "", "", DateTime.UtcNow,
 			TodoItemState.Active, new("Id", "User")));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
