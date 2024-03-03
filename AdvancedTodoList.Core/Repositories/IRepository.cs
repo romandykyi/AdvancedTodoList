@@ -30,6 +30,17 @@ public interface IRepository<TEntity, TKey>
 	Task<TEntity?> GetByIdAsync(TKey id);
 
 	/// <summary>
+	/// Asynchronously retrieves an aggregate by applying a specification.
+	/// </summary>
+	/// <typeparam name="TDto">Type of the aggregate to retrieve.</typeparam>
+	/// <param name="specification">Specification to apply.</param>
+	/// <returns>
+	/// A task that represents an asynchronous operation and the aggregate if found; 
+	/// otherwise, <see langword="null"/>.
+	/// </returns>
+	Task<TDto?> GetAggregateAsync<TDto>(ISpecification<TEntity> specification) where TDto : class;
+
+	/// <summary>
 	/// Gets a page with entities mapped to type <typeparamref name="TItem"/> asynchronously.
 	/// </summary>
 	/// <typeparam name="TItem">Returned type of items on the page.</typeparam>

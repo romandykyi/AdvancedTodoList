@@ -25,6 +25,8 @@ public abstract class BaseRepositoryTests<TEntity, TKey> : DataAccessFixture
 		public List<string> IncludeStrings { get; set; } = [];
 	}
 
+	protected record TestDto(TKey Id);
+
 	/// <summary>
 	/// When implemented, gets an ID of non-existing entity.
 	/// </summary>
@@ -112,6 +114,40 @@ public abstract class BaseRepositoryTests<TEntity, TKey> : DataAccessFixture
 		// Assert
 		Assert.That(result, Is.Not.Null);
 		Assert.That(result.Id, Is.EqualTo(entity.Id));
+	}
+
+	[Test]
+	public async Task GetAggregateAsync_TestGetByIdSpecification_ReturnsValidDto()
+	{
+		// Arrange
+		var entity = await AddTestEntityToDbAsync();
+		TestSpecification specification = new()
+		{
+			Criteria = x => x.Id.Equals(entity.Id)
+		};
+
+		// Act
+		var aggregate = await Repository.GetAggregateAsync<TestDto>(specification);
+
+		// Assert
+		Assert.That(aggregate, Is.Not.Null);
+		Assert.That(aggregate.Id, Is.EqualTo(entity.Id));
+	}
+
+	[Test]
+	public async Task GetAggregateAsync_TestNoCriteriaSpecification_ReturnsNull()
+	{
+		// Arrange
+		TestSpecification specification = new()
+		{
+			Criteria = _ => false
+		};
+
+		// Act
+		var aggregate = await Repository.GetAggregateAsync<TestDto>(specification);
+
+		// Assert
+		Assert.That(aggregate, Is.Null);
 	}
 
 	[Test]
