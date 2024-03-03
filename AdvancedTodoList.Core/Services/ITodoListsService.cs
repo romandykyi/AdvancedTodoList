@@ -22,6 +22,9 @@ public interface ITodoListsService
 	/// <summary>
 	/// Creates a new to-do list asynchronously.
 	/// </summary>
+	/// <remarks>
+	/// This method should also create an "Owner" role with all permissions and assign the caller to it.
+	/// </remarks>
 	/// <param name="dto">The DTO containing information for creating the to-do list.</param>
 	/// <param name="callerId">ID of the user who creates the to-do list.</param>
 	/// <returns>
