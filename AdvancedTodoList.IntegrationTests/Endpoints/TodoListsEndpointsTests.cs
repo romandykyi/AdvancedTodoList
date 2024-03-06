@@ -1,4 +1,5 @@
 ﻿using AdvancedTodoList.Core.Dtos;
+using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using System.Net;
 using System.Net.Http.Json;
@@ -15,8 +16,8 @@ public class TodoListsEndpointsTests : EndpointsFixture
 		string testId = "TestId";
 		TodoListGetByIdDto testDto = new(testId, "Test todo list", "", new("Id", "User"));
 		WebApplicationFactory.TodoListsService
-			.GetByIdAsync(testId)
-			.Returns(testDto);
+			.GetByIdAsync(testId, TestUserId)
+			.Returns(new ServiceResponse<TodoListGetByIdDto>(ServiceResponseStatus.Success, testDto));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -26,7 +27,6 @@ public class TodoListsEndpointsTests : EndpointsFixture
 		result.EnsureSuccessStatusCode();
 		// Assert that valid object was returned
 		var returnedDto = await result.Content.ReadFromJsonAsync<TodoListGetByIdDto>();
-		Assert.That(returnedDto, Is.Not.Null);
 		Assert.That(returnedDto, Is.EqualTo(testDto));
 	}
 
@@ -50,8 +50,8 @@ public class TodoListsEndpointsTests : EndpointsFixture
 		// Arrange
 		string testId = "TestId";
 		WebApplicationFactory.TodoListsService
-			.GetByIdAsync(testId)
-			.ReturnsNull();
+			.GetByIdAsync(testId, TestUserId)
+			.Returns(new ServiceResponse<TodoListGetByIdDto>(ServiceResponseStatus.NotFound));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -59,6 +59,23 @@ public class TodoListsEndpointsTests : EndpointsFixture
 
 		// Assert that response code is 404
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+	}
+
+	[Test]
+	public async Task GetTodoListById_UserHasNoPermission_Returns401()
+	{
+		// Arrange
+		string testId = "TestId";
+		WebApplicationFactory.TodoListsService
+			.GetByIdAsync(testId, TestUserId)
+			.Returns(new ServiceResponse<TodoListGetByIdDto>(ServiceResponseStatus.Forbidden));
+		using HttpClient client = CreateAuthorizedHttpClient();
+
+		// Act: send the request
+		var result = await client.GetAsync($"api/todo/{testId}");
+
+		// Assert that response code is 404
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
 	}
 
 	[Test]
@@ -118,8 +135,8 @@ public class TodoListsEndpointsTests : EndpointsFixture
 		TodoListCreateDto dto = new("New name", "New description");
 
 		WebApplicationFactory.TodoListsService
-			.EditAsync(testId, dto)
-			.Returns(true);
+			.EditAsync(testId, dto, TestUserId)
+			.Returns(ServiceResponseStatus.Success);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -130,7 +147,7 @@ public class TodoListsEndpointsTests : EndpointsFixture
 		// Assert that edit was called
 		await WebApplicationFactory.TodoListsService
 			.Received()
-			.EditAsync(testId, dto);
+			.EditAsync(testId, dto, TestUserId);
 	}
 
 	[Test]
@@ -171,8 +188,8 @@ public class TodoListsEndpointsTests : EndpointsFixture
 		TodoListCreateDto dto = new("New name", "New description");
 
 		WebApplicationFactory.TodoListsService
-			.EditAsync(testId, dto)
-			.Returns(false);
+			.EditAsync(testId, dto, TestUserId)
+			.Returns(ServiceResponseStatus.NotFound);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -183,14 +200,33 @@ public class TodoListsEndpointsTests : EndpointsFixture
 	}
 
 	[Test]
+	public async Task PutTodoList_UserHasNoPermission_Returns403()
+	{
+		// Arrange
+		string testId = "TestId";
+		TodoListCreateDto dto = new("New name", "New description");
+
+		WebApplicationFactory.TodoListsService
+			.EditAsync(testId, dto, TestUserId)
+			.Returns(ServiceResponseStatus.Forbidden);
+		using HttpClient client = CreateAuthorizedHttpClient();
+
+		// Act: send the request
+		var result = await client.PutAsJsonAsync($"api/todo/{testId}", dto);
+
+		// Assert that response code is 404
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+	}
+
+	[Test]
 	public async Task DeleteTodoList_ElementExists_Succeeds()
 	{
 		// Arrange
 		string testId = "TestId";
 
 		WebApplicationFactory.TodoListsService
-			.DeleteAsync(testId)
-			.Returns(true);
+			.DeleteAsync(testId, TestUserId)
+			.Returns(ServiceResponseStatus.Success);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -201,7 +237,7 @@ public class TodoListsEndpointsTests : EndpointsFixture
 		// Assert that delete was called
 		await WebApplicationFactory.TodoListsService
 			.Received()
-			.DeleteAsync(testId);
+			.DeleteAsync(testId, TestUserId);
 	}
 
 	[Test]
@@ -226,8 +262,8 @@ public class TodoListsEndpointsTests : EndpointsFixture
 		string testId = "TestId";
 
 		WebApplicationFactory.TodoListsService
-			.DeleteAsync(testId)
-			.Returns(false);
+			.DeleteAsync(testId, TestUserId)
+			.Returns(ServiceResponseStatus.NotFound);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -235,5 +271,23 @@ public class TodoListsEndpointsTests : EndpointsFixture
 
 		// Assert that response code is 404
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+	}
+
+	[Test]
+	public async Task DeleteTodoList_UserHasNoPermission_Returns401()
+	{
+		// Arrange
+		string testId = "TestId";
+
+		WebApplicationFactory.TodoListsService
+			.DeleteAsync(testId, TestUserId)
+			.Returns(ServiceResponseStatus.Forbidden);
+		using HttpClient client = CreateAuthorizedHttpClient();
+
+		// Act: send the request
+		var result = await client.DeleteAsync($"api/todo/{testId}");
+
+		// Assert that response code is 404
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
 	}
 }

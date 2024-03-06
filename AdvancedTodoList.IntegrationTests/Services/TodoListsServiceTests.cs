@@ -7,6 +7,8 @@ using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
 using NSubstitute.ExceptionExtensions;
+using NUnit.Framework.Interfaces;
+using System;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 
@@ -14,6 +16,7 @@ namespace AdvancedTodoList.IntegrationTests.Services;
 public class TodoListsServiceTests : BusinessLogicFixture
 {
 	private ITodoListsService _service;
+	private const string TestUserId = "UserId";
 
 	[SetUp]
 	public void SetUp()
@@ -27,12 +30,15 @@ public class TodoListsServiceTests : BusinessLogicFixture
 		// Arrange
 		string todoListId = "TodoListId";
 		TodoListGetByIdDto dto = new("Id", "name", "", new("Id", "User"));
+		WebApplicationFactory.PermissionsChecker
+			.IsMemberOfListAsync(TestUserId, todoListId)
+			.Returns(true);
 		WebApplicationFactory.TodoListsRepository
 			.GetAggregateAsync<TodoListGetByIdDto>(Arg.Any<ISpecification<TodoList>>())
 			.Returns(dto);
 
 		// Act
-		var result = await _service.GetByIdAsync(todoListId);
+		var result = await _service.GetByIdAsync(todoListId, TestUserId);
 
 		// Assert that valid specification was applied
 		await WebApplicationFactory.TodoListsRepository
@@ -42,19 +48,38 @@ public class TodoListsServiceTests : BusinessLogicFixture
 	}
 
 	[Test]
-	public async Task GetByIdAsync_EntityDoesNotExist_ReturnsNull()
+	public async Task GetByIdAsync_UserHasNoPermission_ReturnsForbidden()
 	{
 		// Arrange
 		string todoListId = "ID";
+		WebApplicationFactory.PermissionsChecker
+			.IsMemberOfListAsync(TestUserId, todoListId)
+			.Returns(false);
+
+		// Act
+		var result = await _service.GetByIdAsync(todoListId, TestUserId);
+
+		// Assert
+		Assert.That(result.Status, Is.EqualTo(ServiceResponseStatus.Forbidden));
+	}
+
+	[Test]
+	public async Task GetByIdAsync_EntityDoesNotExist_ReturnsNotFound()
+	{
+		// Arrange
+		string todoListId = "ID";
+		WebApplicationFactory.PermissionsChecker
+			.IsMemberOfListAsync(TestUserId, todoListId)
+			.Returns(true);
 		WebApplicationFactory.TodoListsRepository
 			.GetAggregateAsync<TodoListGetByIdDto>(Arg.Any<ISpecification<TodoList>>())
 			.ReturnsNull();
 
 		// Act
-		var result = await _service.GetByIdAsync(todoListId);
+		var result = await _service.GetByIdAsync(todoListId, TestUserId);
 
 		// Assert
-		Assert.That(result, Is.Null);
+		Assert.That(result.Status, Is.EqualTo(ServiceResponseStatus.NotFound));
 	}
 
 	[Test]
@@ -126,7 +151,12 @@ public class TodoListsServiceTests : BusinessLogicFixture
 	{
 		// Arrange
 		var todoList = TestModels.CreateTestTodoList();
+		RolePermissions validPermissions = new(EditItems: true);
 		TodoListCreateDto updateDto = new("NewName", "NewDescription");
+		WebApplicationFactory.PermissionsChecker
+			.CanTouchEntityAsync<TodoList, string>(TestUserId, todoList.Id,
+			Arg.Any<TodoList>(), Arg.Any<Func<RolePermissions, bool>>())
+			.Returns(x => ((Func<RolePermissions, bool>)x[3])(validPermissions));
 		WebApplicationFactory.TodoListsRepository
 			.GetByIdAsync(todoList.Id)
 			.Returns(todoList);
@@ -135,10 +165,10 @@ public class TodoListsServiceTests : BusinessLogicFixture
 			.Returns(Task.FromResult);
 
 		// Act
-		bool result = await _service.EditAsync(todoList.Id, updateDto);
+		var result = await _service.EditAsync(todoList.Id, updateDto, TestUserId);
 
-		// Assert that result is true
-		Assert.That(result, Is.True);
+		// Assert that result indicates success
+		Assert.That(result, Is.EqualTo(ServiceResponseStatus.Success));
 		// Assert that update was called
 		await WebApplicationFactory.TodoListsRepository
 			.Received()
@@ -148,7 +178,28 @@ public class TodoListsServiceTests : BusinessLogicFixture
 	}
 
 	[Test]
-	public async Task EditAsync_EntityDoesNotExist_ReturnsFalse()
+	public async Task EditAsync_UserHasNoPermission_ReturnsForbidden()
+	{
+		// Arrange
+		var todoList = TestModels.CreateTestTodoList();
+		TodoListCreateDto updateDto = new("Name", "Description");
+		WebApplicationFactory.TodoListsRepository
+			.GetByIdAsync(todoList.Id)
+			.Returns(todoList);
+		WebApplicationFactory.PermissionsChecker
+			.CanTouchEntityAsync<TodoList, string>(TestUserId, todoList.Id, 
+			Arg.Any<TodoList>(), Arg.Any<Func<RolePermissions, bool>>())
+			.Returns(false);
+
+		// Act
+		var result = await _service.EditAsync(todoList.Id, updateDto, TestUserId);
+
+		// Assert
+		Assert.That(result, Is.EqualTo(ServiceResponseStatus.Forbidden));
+	}
+
+	[Test]
+	public async Task EditAsync_EntityDoesNotExist_ReturnsNotFound()
 	{
 		// Arrange
 		string id = "ID";
@@ -158,17 +209,17 @@ public class TodoListsServiceTests : BusinessLogicFixture
 			.ReturnsNull();
 
 		// Act
-		bool result = await _service.EditAsync(id, updateDto);
+		var result = await _service.EditAsync(id, updateDto, TestUserId);
 
-		// Assert that result is false
-		Assert.That(result, Is.False);
+		// Assert
+		Assert.That(result, Is.EqualTo(ServiceResponseStatus.NotFound));
 	}
 
 	[Test]
 	public async Task DeleteAsync_EntityExists_Succeeds()
 	{
 		// Arrange
-		var todoList = TestModels.CreateTestTodoList();
+		var todoList = TestModels.CreateTestTodoList(TestUserId);
 		WebApplicationFactory.TodoListsRepository
 			.GetByIdAsync(todoList.Id)
 			.Returns(todoList);
@@ -177,10 +228,10 @@ public class TodoListsServiceTests : BusinessLogicFixture
 			.Returns(Task.FromResult);
 
 		// Act
-		bool result = await _service.DeleteAsync(todoList.Id);
+		var result = await _service.DeleteAsync(todoList.Id, TestUserId);
 
-		// Assert that result is true
-		Assert.That(result, Is.True);
+		// Assert that result indicates success
+		Assert.That(result, Is.EqualTo(ServiceResponseStatus.Success));
 		// Assert that delete was called
 		await WebApplicationFactory.TodoListsRepository
 			.Received()
@@ -188,7 +239,7 @@ public class TodoListsServiceTests : BusinessLogicFixture
 	}
 
 	[Test]
-	public async Task DeleteAsync_EntityDoesNotExist_ReturnsFalse()
+	public async Task DeleteAsync_EntityDoesNotExist_ReturnsNotFound()
 	{
 		// Arrange
 		string id = "ID";
@@ -197,9 +248,29 @@ public class TodoListsServiceTests : BusinessLogicFixture
 			.ReturnsNull();
 
 		// Act
-		bool result = await _service.DeleteAsync(id);
+		var result = await _service.DeleteAsync(id, TestUserId);
 
-		// Assert that result is false
-		Assert.That(result, Is.False);
+		// Assert
+		Assert.That(result, Is.EqualTo(ServiceResponseStatus.NotFound));
+	}
+
+	[Test]
+	public async Task DeleteAsync_UserIsNotOwner_ReturnsForbidden()
+	{
+		// Arrange
+		var todoList = TestModels.CreateTestTodoList("invalid user ID");
+		WebApplicationFactory.TodoListsRepository
+			.GetByIdAsync(todoList.Id)
+			.Returns(todoList);
+
+		// Act
+		var result = await _service.DeleteAsync(todoList.Id, TestUserId);
+
+		// Assert
+		Assert.That(result, Is.EqualTo(ServiceResponseStatus.Forbidden));
+		// Assert that delete was not called
+		await WebApplicationFactory.TodoListsRepository
+			.DidNotReceive()
+			.DeleteAsync(Arg.Any<TodoList>());
 	}
 }

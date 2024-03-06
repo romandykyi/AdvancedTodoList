@@ -2,6 +2,8 @@
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Core.Services.Auth;
+using AdvancedTodoList.Infrastructure.Services.Auth;
 using AdvancedTodoList.IntegrationTests.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -22,6 +24,7 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 	public ITodoListDependantEntitiesService<TodoListRole, int> TodoRolesHelperService { get; set; } = null!;
 	public ITodoListDependantEntitiesService<TodoListMember, int> TodoMembersHelperService { get; set; } = null!;
 	public IUserRefreshTokensRepository RefreshTokensRepository { get; private set; } = null!;
+	public IPermissionsChecker PermissionsChecker { get; private set; } = null!;
 	public IRepository<TodoListRole, int> TodoListRolesRepository { get; private set; } = null!;
 	public ITodoListMembersRepository TodoListMembersRepository { get; private set; } = null!;
 	public IUnitOfWork UnitOfWork { get; private set; } = null!;
@@ -37,6 +40,7 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 		TodoRolesHelperService = Substitute.For<ITodoListDependantEntitiesService<TodoListRole, int>>();
 		TodoMembersHelperService = Substitute.For<ITodoListDependantEntitiesService<TodoListMember, int>>();
 		RefreshTokensRepository = Substitute.For<IUserRefreshTokensRepository>();
+		PermissionsChecker = Substitute.For<IPermissionsChecker>();
 		TodoListRolesRepository = Substitute.For<IRepository<TodoListRole, int>>();
 		TodoListMembersRepository = Substitute.For<ITodoListMembersRepository>();
 
@@ -55,6 +59,7 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 			services.AddScoped(_ => TodoRolesHelperService);
 			services.AddScoped(_ => TodoMembersHelperService);
 			services.AddScoped(_ => RefreshTokensRepository);
+			services.AddScoped(_ => PermissionsChecker);
 			services.AddScoped(_ => TodoListRolesRepository);
 			services.AddScoped(_ => TodoListMembersRepository);
 			services.AddScoped(_ => UnitOfWork);
