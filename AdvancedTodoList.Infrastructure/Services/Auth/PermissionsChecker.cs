@@ -1,12 +1,9 @@
-﻿using AdvancedTodoList.Core.Models;
+﻿using AdvancedTodoList.Core.Dtos;
+using AdvancedTodoList.Core.Models;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services.Auth;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AdvancedTodoList.Infrastructure.Specifications;
 
 namespace AdvancedTodoList.Infrastructure.Services.Auth;
 
@@ -47,15 +44,12 @@ public class PermissionsChecker(
 	/// </returns>
 	public async Task<bool> HasPermissionAsync(string userId, string todoListId, Func<RolePermissions, bool> permission)
 	{
-		var member = await _membersRepository.FindAsync(todoListId, userId);
+		MemberPermissionsSpecification specification = new(todoListId, userId);
+		var member = await _membersRepository.GetAggregateAsync<PermissionsAggregate>(specification);
 		// User is not a member or has no role - return false
-		if (member == null || member.RoleId == null) return false;
+		if (member == null || member.Role == null) return false;
 
-		// Check user's permissions
-		var role = await _rolesRepository.GetByIdAsync(member.RoleId.Value);
-		if (role == null) return false;
-
-		return permission(role.Permissions);
+		return permission(member.Role.Permissions);
 	}
 
 	/// <summary>
@@ -100,19 +94,18 @@ public class PermissionsChecker(
 	/// </returns>
 	public async Task<bool> HasPermissionOverRoleAsync(string userId, string todoListId, int roleId, Func<RolePermissions, bool> permission)
 	{
-		var member = await _membersRepository.FindAsync(todoListId, userId);
-		// User is not a member or has no role - return false
-		if (member == null || member.RoleId == null) return false;
+		MemberPermissionsSpecification specification = new(todoListId, userId);
+		var member = await _membersRepository.GetAggregateAsync<PermissionsAggregate>(specification);
 
-		// Check if user has a permission
-		var userRole = await _rolesRepository.GetByIdAsync(member.RoleId.Value);
-		if (userRole == null || !permission(userRole.Permissions)) return false;
+		// User is not a member, has no role or permission - return false
+		if (member == null || member.Role == null || !permission(member.Role.Permissions)) 
+			return false;
 
 		// Get other role
-		var role = await _rolesRepository.GetByIdAsync(roleId) ?? 
+		var role = await _rolesRepository.GetByIdAsync(roleId) ??
 			throw new ArgumentException("Role with 'roleId' was not found", nameof(roleId));
 
 		// Check if user has a higher priority
-		return userRole.Priority < role.Priority;
+		return member.Role.Priority < role.Priority;
 	}
 }
