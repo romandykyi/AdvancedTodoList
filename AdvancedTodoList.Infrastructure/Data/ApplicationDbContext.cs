@@ -21,5 +21,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
 		modelBuilder.Entity<TodoListRole>()
 			.ComplexProperty(x => x.Permissions);
+		modelBuilder.Entity<TodoListMember>()
+			.HasIndex(x => new { x.UserId, x.TodoListId })
+			.IsUnique(true);
 	}
 }
