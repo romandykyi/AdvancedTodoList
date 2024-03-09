@@ -37,14 +37,14 @@ public class TodoListsService(
 	/// </returns>
 	public async Task<ServiceResponse<TodoListGetByIdDto>> GetByIdAsync(TodoListContext context)
 	{
-		// Check if the user has a permission to view the to-do list
-		if (!await _permissionsChecker.IsMemberOfListAsync(context))
-			return new(ServiceResponseStatus.Forbidden);
-
 		TodoListAggregateSpecification specification = new(context.TodoListId);
 		var result = await _todoListsRepository.GetAggregateAsync<TodoListGetByIdDto>(specification);
 		// Check if to-do list exists
 		if (result == null) return new(ServiceResponseStatus.NotFound);
+
+		// Check if the user has a permission to view the to-do list
+		if (!await _permissionsChecker.IsMemberOfListAsync(context))
+			return new(ServiceResponseStatus.Forbidden);
 
 		return new(ServiceResponseStatus.Success, result);
 	}

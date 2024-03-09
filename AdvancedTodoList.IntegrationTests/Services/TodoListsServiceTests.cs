@@ -53,9 +53,13 @@ public class TodoListsServiceTests : BusinessLogicFixture
 	{
 		// Arrange
 		string todoListId = "ID";
+		TodoListGetByIdDto dto = new("Id", "name", "", new("Id", "User"));
 		WebApplicationFactory.PermissionsChecker
 			.IsMemberOfListAsync(new(todoListId, TestUserId))
 			.Returns(false);
+		WebApplicationFactory.TodoListsRepository
+			.GetAggregateAsync<TodoListGetByIdDto>(Arg.Any<ISpecification<TodoList>>())
+			.Returns(dto);
 		TodoListContext context = new(todoListId, TestUserId);
 
 		// Act
