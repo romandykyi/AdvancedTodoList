@@ -22,6 +22,7 @@ public class TodoListsController(
 	/// <param name="listId">ID of the to-do list to obtain.</param>
 	/// <response code="200">Returns requested to-do list.</response>
 	/// <response code="401">Authentication failed.</response>
+	/// <response code="403">User has no permission to perform this action.</response>
 	/// <response code="404">To-do list was not found.</response>
 	[HttpGet("{listId}", Name = nameof(GetTodoListByIdAsync))]
 	[ProducesResponseType(typeof(TodoListGetByIdDto), StatusCodes.Status200OK)]
@@ -39,6 +40,7 @@ public class TodoListsController(
 	/// <response code="201">Successfully created.</response>
 	/// <response code="400">Validation failed.</response>
 	/// <response code="401">Authentication failed.</response>
+	/// <response code="403">User has no permission to perform this action.</response>
 	[HttpPost]
 	[ProducesResponseType(typeof(TodoListGetByIdDto), StatusCodes.Status201Created)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -56,6 +58,7 @@ public class TodoListsController(
 	/// <response code="204">Success.</response>
 	/// <response code="400">Validation failed.</response>
 	/// <response code="401">Authentication failed.</response>
+	/// <response code="403">User has no permission to perform this action.</response>
 	/// <response code="404">To-do list was not found.</response>
 	[HttpPut("{listId}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -74,6 +77,7 @@ public class TodoListsController(
 	/// </summary>
 	/// <response code="204">Success.</response>
 	/// <response code="401">Authentication failed.</response>
+	/// <response code="403">User has no permission to perform this action.</response>
 	/// <response code="404">To-do list was not found.</response>
 	[HttpDelete("{listId}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
