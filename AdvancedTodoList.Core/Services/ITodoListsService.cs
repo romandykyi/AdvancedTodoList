@@ -10,13 +10,12 @@ public interface ITodoListsService
 	/// <summary>
 	/// Retrieves a to-do list by its ID asynchronously.
 	/// </summary>
-	/// <param name="id">The ID of the to-do list to retrieve.</param>
-	/// <param name="callerId">ID of the user who calls the operation.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. The task contains
 	/// a result of the operation.
 	/// </returns>
-	public Task<ServiceResponse<TodoListGetByIdDto>> GetByIdAsync(string id, string callerId);
+	public Task<ServiceResponse<TodoListGetByIdDto>> GetByIdAsync(TodoListContext context);
 
 	/// <summary>
 	/// Creates a new to-do list asynchronously.
@@ -35,23 +34,21 @@ public interface ITodoListsService
 	/// <summary>
 	/// Edits a to-do list asynchronously.
 	/// </summary>
-	/// <param name="id">The ID of the to-do list to edit.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <param name="dto">The DTO containing information for editing the to-do list.</param>
-	/// <param name="callerId">ID of the user who calls the operation.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. The task contains
 	/// a result of the operation.
 	/// </returns>
-	public Task<ServiceResponseStatus> EditAsync(string id, TodoListCreateDto dto, string callerId);
+	public Task<ServiceResponseStatus> EditAsync(TodoListContext context, TodoListCreateDto dto);
 
 	/// <summary>
 	/// Deletes a to-do list asynchronously.
 	/// </summary>
-	/// <param name="id">The ID of the to-do list to edit.</param>
-	/// <param name="callerId">ID of the user who calls the operation.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. The task contains
 	/// a result of the operation.
 	/// </returns>
-	public Task<ServiceResponseStatus> DeleteAsync(string id, string callerId);
+	public Task<ServiceResponseStatus> DeleteAsync(TodoListContext context);
 }

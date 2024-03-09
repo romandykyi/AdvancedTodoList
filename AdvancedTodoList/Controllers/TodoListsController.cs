@@ -30,7 +30,8 @@ public class TodoListsController(
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetTodoListByIdAsync([FromRoute] string listId)
 	{
-		var result = await _todoListsService.GetByIdAsync(listId, User.GetUserId()!);
+		TodoListContext context = new(listId, User.GetUserId()!);
+		var result = await _todoListsService.GetByIdAsync(context);
 		return result.ToActionResult();
 	}
 
@@ -68,7 +69,8 @@ public class TodoListsController(
 	public async Task<IActionResult> PutTodoListAsync(
 		[FromRoute] string listId, [FromBody] TodoListCreateDto dto)
 	{
-		var result = await _todoListsService.EditAsync(listId, dto, User.GetUserId()!);
+		TodoListContext context = new(listId, User.GetUserId()!);
+		var result = await _todoListsService.EditAsync(context, dto);
 		return result.ToActionResult();
 	}
 
@@ -85,7 +87,8 @@ public class TodoListsController(
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> DeleteTodoListAsync([FromRoute] string listId)
 	{
-		var result = await _todoListsService.DeleteAsync(listId, User.GetUserId()!);
+		TodoListContext context = new(listId, User.GetUserId()!);
+		var result = await _todoListsService.DeleteAsync(context);
 		return result.ToActionResult();
 	}
 }

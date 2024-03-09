@@ -6,6 +6,7 @@ using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Services.Auth;
 using AdvancedTodoList.Infrastructure.Specifications;
 using Mapster;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace AdvancedTodoList.Infrastructure.Services;
 
@@ -29,19 +30,18 @@ public class TodoListsService(
 	/// <summary>
 	/// Retrieves a to-do list by its ID asynchronously.
 	/// </summary>
-	/// <param name="id">The ID of the to-do list to retrieve.</param>
-	/// <param name="callerId">ID of the user who calls the operation.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. The task contains
 	/// a result of the operation.
 	/// </returns>
-	public async Task<ServiceResponse<TodoListGetByIdDto>> GetByIdAsync(string id, string callerId)
+	public async Task<ServiceResponse<TodoListGetByIdDto>> GetByIdAsync(TodoListContext context)
 	{
 		// Check if the user has a permission to view the to-do list
-		if (!await _permissionsChecker.IsMemberOfListAsync(callerId, id))
+		if (!await _permissionsChecker.IsMemberOfListAsync(context))
 			return new(ServiceResponseStatus.Forbidden);
 
-		TodoListAggregateSpecification specification = new(id);
+		TodoListAggregateSpecification specification = new(context.TodoListId);
 		var result = await _todoListsRepository.GetAggregateAsync<TodoListGetByIdDto>(specification);
 		// Check if to-do list exists
 		if (result == null) return new(ServiceResponseStatus.NotFound);
@@ -112,22 +112,21 @@ public class TodoListsService(
 	/// <summary>
 	/// Edits a to-do list asynchronously.
 	/// </summary>
-	/// <param name="id">The ID of the to-do list to edit.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <param name="dto">The DTO containing information for editing the to-do list.</param>
-	/// <param name="callerId">ID of the user who calls the operation.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. The task contains
 	/// a result of the operation.
 	/// </returns>
-	public async Task<ServiceResponseStatus> EditAsync(string id, TodoListCreateDto dto, string callerId)
+	public async Task<ServiceResponseStatus> EditAsync(TodoListContext context, TodoListCreateDto dto)
 	{
 		// Get the model
-		var todoList = await _todoListsRepository.GetByIdAsync(id);
+		var todoList = await _todoListsRepository.GetByIdAsync(context.TodoListId);
 		// Return NotFound if the model doesn't exist
 		if (todoList == null) return ServiceResponseStatus.NotFound;
 		// Check if the user has a permission to edit the list
 		if (!await _permissionsChecker.CanTouchEntityAsync<TodoList, string>(
-			callerId, id, todoList, x => x.EditItems))
+			context, todoList, x => x.EditItems))
 		{
 			return ServiceResponseStatus.Forbidden;
 		}
@@ -142,20 +141,19 @@ public class TodoListsService(
 	/// <summary>
 	/// Deletes a to-do list asynchronously.
 	/// </summary>
-	/// <param name="id">The ID of the to-do list to edit.</param>
-	/// <param name="callerId">ID of the user who calls the operation.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. The task contains
 	/// a result of the operation.
 	/// </returns>
-	public async Task<ServiceResponseStatus> DeleteAsync(string id, string callerId)
+	public async Task<ServiceResponseStatus> DeleteAsync(TodoListContext context)
 	{
 		// Get the model
-		var todoList = await _todoListsRepository.GetByIdAsync(id);
+		var todoList = await _todoListsRepository.GetByIdAsync(context.TodoListId);
 		// Return NotFound if the model doesn't exist
 		if (todoList == null) return ServiceResponseStatus.NotFound;
 		// Check if the user is an owner of the list
-		if (todoList.OwnerId != callerId) return ServiceResponseStatus.Forbidden;
+		if (todoList.OwnerId != context.CallerId) return ServiceResponseStatus.Forbidden;
 
 		// Delete the model
 		await _todoListsRepository.DeleteAsync(todoList);
