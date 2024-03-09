@@ -80,14 +80,15 @@ public class PermissionsChecker(
 	}
 
 	/// <summary>
-	/// Asynchronously checks whether the user is a member of the to-do list and
-	/// has a permission defined by the funciton <paramref name="permission"/>.
+	/// Asynchronously checks whether the user has a permission to change the role
+	/// defined by <paramref name="roleId"/>.
 	/// </summary>
 	/// <param name="context">To-do list context.</param>
+	/// <param name="roleId">ID of the role.</param>
 	/// <param name="permission">Function that should return <see langword="true"/> if user has required permission.</param>
 	/// <returns>
-	/// <see langword="true" /> if user is a member of the list and has required permission; 
-	/// otherwise <see langword="false" />.
+	/// <see langword="true"/> if user has <paramref name="permission"/> and highest role priority than
+	/// the role defined by <paramref name="roleId"/>; otherwise <see langword="false" />.
 	/// </returns>
 	public async Task<bool> HasPermissionOverRoleAsync(TodoListContext context, int roleId, Func<RolePermissions, bool> permission)
 	{

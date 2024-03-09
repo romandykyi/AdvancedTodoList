@@ -16,78 +16,68 @@ public class TodoListRolesService(ITodoListDependantEntitiesService<TodoListRole
 	/// <summary>
 	/// Retrieves a page of to-do list roles of the list with the specified ID.
 	/// </summary>
-	/// <param name="todoListId">The ID of the to-do list which roles will be retrieved.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <param name="paginationParameters">Pagination parameters to use.</param>
 	/// <returns>
-	/// A task representing the asynchronous operation. 
-	/// The task result contains a page of <see cref="TodoListRolePreviewDto"/> objects or
-	/// <see langword="null" /> if the to-do list does not exist.
+	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<Page<TodoListRolePreviewDto>?> GetRolesOfListAsync(string todoListId, PaginationParameters paginationParameters)
+	public Task<ServiceResponse<Page<TodoListRolePreviewDto>>> GetRolesOfListAsync(TodoListContext context, PaginationParameters paginationParameters)
 	{
-		TodoListDependantEntitiesSpecification<TodoListRole> specification = new(todoListId);
-		return _helperService.GetPageAsync<TodoListRolePreviewDto>(todoListId, specification, paginationParameters);
+		TodoListDependantEntitiesSpecification<TodoListRole> specification = new(context.TodoListId);
+		return _helperService.GetPageAsync<TodoListRolePreviewDto>(context, specification, paginationParameters);
 	}
 
 	/// <summary>
 	/// Retrieves a to-do list role by its ID asynchronously.
 	/// </summary>
-	/// <param name="todoListId">The ID of the to-do list which contains the role.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <param name="roleId">The ID of the to-do list role to retrieve.</param>
 	/// <returns>
-	/// A task representing the asynchronous operation. The task result contains
-	/// a <see cref="TodoListRoleViewDto"/> object if the specified ID is found;
-	/// otherwise, returns <see langword="null"/>.
+	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<TodoListRoleViewDto?> GetByIdAsync(string todoListId, int roleId)
+	public Task<ServiceResponse<TodoListRoleViewDto>> GetByIdAsync(TodoListContext context, int roleId)
 	{
-		return _helperService.GetByIdAsync<TodoListRoleViewDto>(todoListId, roleId);
+		return _helperService.GetByIdAsync<TodoListRoleViewDto>(context, roleId);
 	}
 
 	/// <summary>
 	/// Creates a new to-do list role asynchronously.
 	/// </summary>
-	/// <param name="todoListId">The ID of the to-do list to associate the role with.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <param name="dto">The DTO containing information for creating the to-do list role.</param>
 	/// <returns>
-	/// A task representing the asynchronous operation. 
-	/// The task result contains the created <see cref="TodoListRole"/> mapped to 
-	/// <see cref="TodoListRoleViewDto"/> or <see langword="null" /> if to-do list with ID
-	/// <paramref name="todoListId"/> does not exist.
+	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<TodoListRoleViewDto?> CreateAsync(string todoListId, TodoListRoleCreateDto dto)
+	public Task<ServiceResponse<TodoListRoleViewDto>> CreateAsync(TodoListContext context, TodoListRoleCreateDto dto)
 	{
-		return _helperService.CreateAsync<TodoListRoleCreateDto, TodoListRoleViewDto>(todoListId, dto);
+		return _helperService.CreateAsync<TodoListRoleCreateDto, TodoListRoleViewDto>(
+			context, dto, x => x.EditRoles);
 	}
 
 	/// <summary>
 	/// Edits a to-do list role asynchronously.
 	/// </summary>
-	/// <param name="todoListId">The ID of the to-do list which contains the role.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <param name="roleId">The ID of the to-do list role to edit.</param>
 	/// <param name="dto">The DTO containing information for editing the to-do list role.</param>
 	/// <returns>
-	/// A task representing the asynchronous operation. 
-	/// The task result contains <see langword="true"/> on success;
-	/// otherwise <see langword="false"/> if the entity was not found.
+	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<bool> EditAsync(string todoListId, int roleId, TodoListRoleCreateDto dto)
+	public Task<ServiceResponseStatus> EditAsync(TodoListContext context, int roleId, TodoListRoleCreateDto dto)
 	{
-		return _helperService.UpdateAsync(todoListId, roleId, dto);
+		return _helperService.UpdateAsync(context, roleId, dto, x => x.EditRoles);
 	}
 
 	/// <summary>
 	/// Deletes a to-do list role asynchronously.
 	/// </summary>
-	/// <param name="todoListId">The ID of the to-do list which contains the role.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <param name="roleId">The ID of the to-do list role to delete.</param>
 	/// <returns>
-	/// A task representing the asynchronous operation. 
-	/// The task result contains <see langword="true"/> on success;
-	/// otherwise <see langword="false"/> if the entity was not found.
+	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<bool> DeleteAsync(string todoListId, int roleId)
+	public Task<ServiceResponseStatus> DeleteAsync(TodoListContext context, int roleId)
 	{
-		return _helperService.DeleteAsync(todoListId, roleId);
+		return _helperService.DeleteAsync(context, roleId, x => x.EditRoles);
 	}
 }

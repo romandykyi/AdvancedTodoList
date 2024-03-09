@@ -3,9 +3,9 @@
 namespace AdvancedTodoList.Core.Services;
 
 /// <summary>
-/// Class that represents possible results of the method <see cref="ITodoListMembersService.AddMemberAsync(string, AdvancedTodoList.Core.Dtos.TodoListMemberAddDto)"/>.
+/// Class that represents possible results of the method <see cref="ITodoListMembersService.AddMemberAsync"/>.
 /// </summary>
-public class TodoListMemberServiceResult(
+public class AddTodoListMemberServiceResult(
 	TodoListMemberServiceResultStatus status, TodoListMemberMinimalViewDto? dto = null)
 {
 	/// <summary>
@@ -20,7 +20,7 @@ public class TodoListMemberServiceResult(
 }
 
 /// <summary>
-/// Enum that represents possible result types of the method<see cref="ITodoListMembersService.AddMemberAsync(string, AdvancedTodoList.Core.Dtos.TodoListMemberAddDto)"/>.
+/// Enum that represents possible result statuses of the to-do list members service.
 /// </summary>
 public enum TodoListMemberServiceResultStatus
 {
@@ -39,5 +39,9 @@ public enum TodoListMemberServiceResultStatus
 	/// <summary>
 	/// Role either doesn't exist or it's invalid for the current to-do list.
 	/// </summary>
-	InvalidRoleId
+	InvalidRoleId,
+	/// <summary>
+	/// User has no permission to perform the operation.
+	/// </summary>
+	Forbidden
 }

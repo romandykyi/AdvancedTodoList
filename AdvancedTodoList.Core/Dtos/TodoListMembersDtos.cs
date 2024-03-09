@@ -13,7 +13,7 @@ public record TodoListMemberPreviewDto(int Id, ApplicationUserPreviewDto User, T
 /// <summary>
 /// DTO for adding a member to a to-do list.
 /// </summary>
-public record TodoListMemberAddDto(string UserId, int? RoleId = null);
+public record TodoListMemberAddDto(string UserId);
 
 /// <summary>
 /// DTO for updating to-do list member's role.

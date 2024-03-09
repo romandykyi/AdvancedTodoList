@@ -28,7 +28,7 @@ public class TodoListMemberAddDtoValidatorTests
 	public async Task ValidDto_Succeeds()
 	{
 		// Arrange
-		TodoListMemberAddDto dto = new(ValidUserId, ValidRoleId);
+		TodoListMemberAddDto dto = new(ValidUserId);
 
 		// Act
 		var result = await _validator.TestValidateAsync(dto);
@@ -42,7 +42,7 @@ public class TodoListMemberAddDtoValidatorTests
 	public async Task UserId_Empty_ReturnsPropertyRequiresError(string testCase)
 	{
 		// Arrange
-		TodoListMemberAddDto dto = new(testCase, ValidRoleId);
+		TodoListMemberAddDto dto = new(testCase);
 
 		// Act
 		var result = await _validator.TestValidateAsync(dto);
@@ -56,7 +56,7 @@ public class TodoListMemberAddDtoValidatorTests
 	public async Task UserId_Invalid_ReturnsInvalidForeignKeyError()
 	{
 		// Arrange
-		TodoListMemberAddDto dto = new("Invalid", ValidRoleId);
+		TodoListMemberAddDto dto = new("Invalid");
 
 		// Act
 		var result = await _validator.TestValidateAsync(dto);
@@ -64,18 +64,5 @@ public class TodoListMemberAddDtoValidatorTests
 		// Assert
 		result.ShouldHaveValidationErrorFor(x => x.UserId)
 			.WithErrorCode(ValidationErrorCodes.InvalidForeignKey);
-	}
-
-	[Test]
-	public async Task RoleId_Null_IsAccepted()
-	{
-		// Arrange
-		TodoListMemberAddDto dto = new(ValidUserId, null);
-
-		// Act
-		var result = await _validator.TestValidateAsync(dto);
-
-		// Assert
-		result.ShouldNotHaveAnyValidationErrors();
 	}
 }

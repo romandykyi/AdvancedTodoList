@@ -1,6 +1,7 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,17 +24,19 @@ public class TodoListMembersController(
 	/// <param name="paginationParameters">Paginations parameters to apply.</param>
 	/// <response code="200">Returns members of the to-do list.</response>
 	/// <response code="401">Authentication failed.</response>
+	/// <response code="403">User has no permission to perform this action.</response>
 	/// <response code="404">To-do list was not found.</response>
 	[HttpGet(Name = nameof(GetTodoListMembersAsync))]
 	[ProducesResponseType(typeof(Page<TodoListMemberPreviewDto>), StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetTodoListMembersAsync(
 		[FromRoute] string listId, [FromQuery] PaginationParameters paginationParameters)
 	{
-		var page = await _membersService.GetMembersAsync(listId, paginationParameters);
-		if (page == null) return NotFound();
-		return Ok(page);
+		TodoListContext context = new(listId, User.GetUserId()!);
+		var response = await _membersService.GetMembersAsync(context, paginationParameters);
+		return response.ToActionResult();
 	}
 
 	/// <summary>
@@ -44,26 +47,30 @@ public class TodoListMembersController(
 	/// <response code="201">Successfully created.</response>
 	/// <response code="400">Validation failed.</response>
 	/// <response code="401">Authentication failed.</response>
+	/// <response code="403">User has no permission to perform this action.</response>
 	/// <response code="404">To-do list was not found.</response>
 	[HttpPost]
 	[ProducesResponseType(typeof(TodoListMemberMinimalViewDto), StatusCodes.Status201Created)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> AddMemberAsync(
 		[FromRoute] string listId, [FromBody] TodoListMemberAddDto dto)
 	{
-		var result = await _membersService.AddMemberAsync(listId, dto);
+		TodoListContext context = new(listId, User.GetUserId()!);
+		var result = await _membersService.AddMemberAsync(context, dto);
 		switch (result.Status)
 		{
 			case TodoListMemberServiceResultStatus.Success:
-				var routeValues = new { listId };
-				return CreatedAtRoute(nameof(GetTodoListMembersAsync), routeValues, result.Dto!);
+				return NoContent();
 			case TodoListMemberServiceResultStatus.NotFound:
 				return NotFound();
 			case TodoListMemberServiceResultStatus.UserAlreadyAdded:
-				ModelState.AddModelError("UserId", "User is already a member of the to-do list.");
+				ModelState.AddModelError("UserId", "The user is already a member of the to-do list.");
 				return BadRequest(ModelState);
+			case TodoListMemberServiceResultStatus.Forbidden:
+				return Forbid();
 		}
 		_logger.LogError("Unexpected result status from to-do list members service when trying to add a member.");
 		return StatusCode(StatusCodes.Status500InternalServerError);
@@ -75,24 +82,30 @@ public class TodoListMembersController(
 	/// <response code="204">Success.</response>
 	/// <response code="400">Validation failed.</response>
 	/// <response code="401">Authentication failed.</response>
+	/// <response code="403">User has no permission to perform this action.</response>
 	/// <response code="404">To-do list member was not found.</response>
 	[HttpPut("{memberId}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> UpdateMemberRoleAsync(
 		[FromRoute] string listId, [FromRoute] int memberId,
 		[FromBody] TodoListMemberUpdateRoleDto dto)
 	{
-		var result = await _membersService.UpdateMemberRoleAsync(listId, memberId, dto);
-		switch (result.Status)
+		TodoListContext context = new(listId, User.GetUserId()!);
+		var result = await _membersService.UpdateMemberRoleAsync(context, memberId, dto);
+		switch (result)
 		{
 			case TodoListMemberServiceResultStatus.Success:
 				return NoContent();
 			case TodoListMemberServiceResultStatus.NotFound:
 				return NotFound();
 			case TodoListMemberServiceResultStatus.InvalidRoleId:
+				ModelState.AddModelError("RoleId", "The role ID is invalid for the current to-do list.");
+				return BadRequest(ModelState);
+			case TodoListMemberServiceResultStatus.Forbidden:
 				return Forbid();
 		}
 		_logger.LogError("Unexpected result status from to-do list members service when trying to update member's role.");
@@ -108,11 +121,13 @@ public class TodoListMembersController(
 	[HttpDelete("{memberId}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> RemoveMemberAsync(
 		[FromRoute] string listId, [FromRoute] int memberId)
 	{
-		bool result = await _membersService.RemoveMemberAsync(listId, memberId);
-		return result ? NoContent() : NotFound();
+		TodoListContext context = new(listId, User.GetUserId()!);
+		var result = await _membersService.RemoveMemberAsync(context, memberId);
+		return result.ToActionResult();
 	}
 }

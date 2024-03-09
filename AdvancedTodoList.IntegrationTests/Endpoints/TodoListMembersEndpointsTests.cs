@@ -12,6 +12,8 @@ namespace AdvancedTodoList.IntegrationTests.Endpoints;
 [TestFixture]
 public class TodoListMembersEndpointsTests : EndpointsFixture
 {
+	private readonly TodoListContext TestContext = new("TodoListId", TestUserId);
+
 	[SetUp]
 	public void SetUp()
 	{
@@ -28,7 +30,6 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 	public async Task GetTodoListMembersAsync_ListExists_SucceedsAndReturnsItems()
 	{
 		// Arrange
-		string testListId = "TestId";
 		PaginationParameters parameters = new(Page: 2, PageSize: 20);
 		TodoListMemberPreviewDto[] members =
 		[
@@ -36,13 +37,13 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 			new(512, new ApplicationUserPreviewDto("Rooster", "Inspector"), new TodoListRolePreviewDto(701, "Reviewer")),
 		];
 		WebApplicationFactory.TodoListMembersService
-			.GetMembersAsync(testListId, parameters)
-			.Returns(x => new(members, ((PaginationParameters)x[1]).Page,
-			((PaginationParameters)x[1]).PageSize, 22));
+			.GetMembersAsync(TestContext, parameters)
+			.Returns(x => new ServiceResponse<Page<TodoListMemberPreviewDto>>(ServiceResponseStatus.Success,
+			new (members, ((PaginationParameters)x[1]).Page, ((PaginationParameters)x[1]).PageSize, 22)));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
-		var result = await client.GetAsync($"api/todo/{testListId}/members?page={parameters.Page}&pageSize={parameters.PageSize}");
+		var result = await client.GetAsync($"api/todo/{TestContext.TodoListId}/members?page={parameters.Page}&pageSize={parameters.PageSize}");
 
 		// Assert that response indicates success
 		result.EnsureSuccessStatusCode();
@@ -61,13 +62,12 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 	public async Task GetTodoListMembersAsync_WrongPaginationParams_Returns400()
 	{
 		// Arrange
-		string testListId = "TestId";
 		using HttpClient client = CreateAuthorizedHttpClient();
 		int page = -1;
 		int pageSize = 0;
 
 		// Act: send the request
-		var result = await client.GetAsync($"api/todo/{testListId}/members?page={page}&pageSize={pageSize}");
+		var result = await client.GetAsync($"api/todo/{TestContext.TodoListId}/members?page={page}&pageSize={pageSize}");
 
 		// Assert that response code is 400
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
@@ -77,121 +77,129 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 	public async Task GetTodoListMembersAsync_NoAuthHeaderProvided_Returns401()
 	{
 		// Arrange
-		string testListId = "TestId";
 		using HttpClient client = WebApplicationFactory.CreateClient();
 
 		// Act: send the request
-		var result = await client.GetAsync($"api/todo/{testListId}/members?page=1&pageSize=20");
+		var result = await client.GetAsync($"api/todo/{TestContext.TodoListId}/members?page=1&pageSize=20");
 
 		// Assert that response code is 401
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 	}
 
 	[Test]
-	public async Task GetTodoListMembersAsync_ListDoesNotExist_Returns404()
+	public async Task GetTodoListMembersAsync_NotFoundStatus_Returns404()
 	{
 		// Arrange
-		string testListId = "TestId";
-
 		WebApplicationFactory.TodoListMembersService
-			.GetMembersAsync(testListId, Arg.Any<PaginationParameters>())
-			.ReturnsNull();
+			.GetMembersAsync(TestContext, Arg.Any<PaginationParameters>())
+			.Returns(new ServiceResponse<Page<TodoListMemberPreviewDto>>(ServiceResponseStatus.NotFound));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
-		var result = await client.GetAsync($"api/todo/{testListId}/members?page=1&pageSize=20");
+		var result = await client.GetAsync($"api/todo/{TestContext.TodoListId}/members?page=1&pageSize=20");
 
 		// Assert that response code is 404
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+	}
+
+	[Test]
+	public async Task GetTodoListMembersAsync_ForbiddenStatus_Returns403()
+	{
+		// Arrange
+		WebApplicationFactory.TodoListMembersService
+			.GetMembersAsync(TestContext, Arg.Any<PaginationParameters>())
+			.Returns(new ServiceResponse<Page<TodoListMemberPreviewDto>>(ServiceResponseStatus.Forbidden));
+		using HttpClient client = CreateAuthorizedHttpClient();
+
+		// Act: send the request
+		var result = await client.GetAsync($"api/todo/{TestContext.TodoListId}/members?page=1&pageSize=20");
+
+		// Assert that response code is 403
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
 	}
 
 	[Test]
 	public async Task AddMember_ValidCall_Succeeds()
 	{
 		// Arrange
-		string listId = "ListId";
-		TodoListMemberAddDto dto = new("Name", 123);
-		TodoListMemberMinimalViewDto outputDto = new(4124, dto.UserId, listId, dto.RoleId);
+		TodoListMemberAddDto dto = new("Name");
+		TodoListMemberMinimalViewDto outputDto = new(4124, dto.UserId, TestContext.TodoListId, null);
 		WebApplicationFactory.TodoListMembersService
-			.AddMemberAsync(listId, dto)
-			.Returns(new TodoListMemberServiceResult(TodoListMemberServiceResultStatus.Success, outputDto));
+			.AddMemberAsync(TestContext, dto)
+			.Returns(new AddTodoListMemberServiceResult(TodoListMemberServiceResultStatus.Success, outputDto));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
-		var result = await client.PostAsJsonAsync($"api/todo/{listId}/members", dto);
+		var result = await client.PostAsJsonAsync($"api/todo/{TestContext.TodoListId}/members", dto);
 
 		// Assert that response indicates success
 		result.EnsureSuccessStatusCode();
 		// Assert that create method was called
 		await WebApplicationFactory.TodoListMembersService
 			.Received()
-			.AddMemberAsync(listId, dto);
+			.AddMemberAsync(TestContext, dto);
 	}
 
 	[Test]
 	public async Task AddMember_MemberAlreadyAdded_Fails()
 	{
 		// Arrange
-		string listId = "ListId";
-		TodoListMemberAddDto dto = new("Name", 123);
+		TodoListMemberAddDto dto = new("Name");
 		WebApplicationFactory.TodoListMembersService
-			.AddMemberAsync(listId, dto)
-			.Returns(new TodoListMemberServiceResult(TodoListMemberServiceResultStatus.UserAlreadyAdded));
+			.AddMemberAsync(TestContext, dto)
+			.Returns(new AddTodoListMemberServiceResult(TodoListMemberServiceResultStatus.UserAlreadyAdded));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
-		var result = await client.PostAsJsonAsync($"api/todo/{listId}/members", dto);
+		var result = await client.PostAsJsonAsync($"api/todo/{TestContext.TodoListId}/members", dto);
 
 		// Assert that response code doesn't indicate success
 		Assert.That(result.IsSuccessStatusCode, Is.False, "Unsuccessfull status code was expected.");
 	}
 
 	[Test]
-	public async Task AddMember_InvalidRoleId_Fails()
+	public async Task AddMember_NotFoundStatus_Returns404()
 	{
 		// Arrange
-		string listId = "ListId";
-		TodoListMemberAddDto dto = new("Name", 123);
+		TodoListMemberAddDto dto = new("Name");
 		WebApplicationFactory.TodoListMembersService
-			.AddMemberAsync(listId, dto)
-			.Returns(new TodoListMemberServiceResult(TodoListMemberServiceResultStatus.InvalidRoleId));
+			.AddMemberAsync(TestContext, dto)
+			.Returns(new AddTodoListMemberServiceResult(TodoListMemberServiceResultStatus.NotFound));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
-		var result = await client.PostAsJsonAsync($"api/todo/{listId}/members", dto);
-
-		// Assert that response code doesn't indicate success
-		Assert.That(result.IsSuccessStatusCode, Is.False, "Unsuccessfull status code was expected.");
-	}
-
-	[Test]
-	public async Task AddMember_TodoListDoesNotExist_Returns404()
-	{
-		// Arrange
-		string listId = "ListId";
-		TodoListMemberAddDto dto = new("Name", 123);
-		WebApplicationFactory.TodoListMembersService
-			.AddMemberAsync(listId, dto)
-			.Returns(new TodoListMemberServiceResult(TodoListMemberServiceResultStatus.NotFound));
-		using HttpClient client = CreateAuthorizedHttpClient();
-
-		// Act: send the request
-		var result = await client.PostAsJsonAsync($"api/todo/{listId}/members", dto);
+		var result = await client.PostAsJsonAsync($"api/todo/{TestContext.TodoListId}/members", dto);
 
 		// Assert that response code is 404
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
 	}
 
 	[Test]
+	public async Task AddMember_ForbiddenStatus_Returns403()
+	{
+		// Arrange
+		TodoListMemberAddDto dto = new("Name");
+		WebApplicationFactory.TodoListMembersService
+			.AddMemberAsync(TestContext, dto)
+			.Returns(new AddTodoListMemberServiceResult(TodoListMemberServiceResultStatus.Forbidden));
+		using HttpClient client = CreateAuthorizedHttpClient();
+
+		// Act: send the request
+		var result = await client.PostAsJsonAsync($"api/todo/{TestContext.TodoListId}/members", dto);
+
+		// Assert that response code is 403
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+	}
+
+	[Test]
 	public async Task AddMember_NoAuthHeaderProvided_Returns401()
 	{
 		// Arrange
-		string listId = "ListId";
-		TodoListMemberAddDto dto = new("Name", 123);
+		TodoListMemberAddDto dto = new("Name");
 		using HttpClient client = WebApplicationFactory.CreateClient();
 
 		// Act: send the request
-		var result = await client.PostAsJsonAsync($"api/todo/{listId}/members", dto);
+		var result = await client.PostAsJsonAsync($"api/todo/{TestContext.TodoListId}/members", dto);
 
 		// Assert that response code is 401
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
@@ -201,144 +209,171 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 	public async Task AddMember_InvalidDto_Returns400()
 	{
 		// Arrange
-		string listId = "ListId";
-		TodoListMemberAddDto invalidDto = new(string.Empty, -1);
+		TodoListMemberAddDto invalidDto = new(string.Empty);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
-		var result = await client.PostAsJsonAsync($"api/todo/{listId}/members", invalidDto);
+		var result = await client.PostAsJsonAsync($"api/todo/{TestContext.TodoListId}/members", invalidDto);
 
 		// Assert that response code is 400
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
 	}
 
 	[Test]
-	public async Task UpdateMemberRole_ElementExists_Succeeds()
+	public async Task UpdateMemberRole_ValidCall_Succeeds()
 	{
 		// Arrange
-		string testListId = "TestId";
 		int testMemberId = 891349;
 		TodoListMemberUpdateRoleDto dto = new(777);
 		WebApplicationFactory.TodoListMembersService
-			.UpdateMemberRoleAsync(testListId, testMemberId, dto)
-			.Returns(new TodoListMemberServiceResult(TodoListMemberServiceResultStatus.Success));
+			.UpdateMemberRoleAsync(TestContext, testMemberId, dto)
+			.Returns(TodoListMemberServiceResultStatus.Success);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
-		var result = await client.PutAsJsonAsync($"api/todo/{testListId}/members/{testMemberId}", dto);
+		var result = await client.PutAsJsonAsync($"api/todo/{TestContext.TodoListId}/members/{testMemberId}", dto);
 
 		// Assert that response indicates success
 		result.EnsureSuccessStatusCode();
 		// Assert that edit was called
 		await WebApplicationFactory.TodoListMembersService
 			.Received()
-			.UpdateMemberRoleAsync(testListId, testMemberId, dto);
+			.UpdateMemberRoleAsync(TestContext, testMemberId, dto);
 	}
 
 	[Test]
 	public async Task UpdateMemberRole_ElementDoesNotExist_Returns404()
 	{
 		// Arrange
-		string testListId = "TestId";
 		int testMemberId = 12412;
 		TodoListMemberUpdateRoleDto dto = new(777);
 		WebApplicationFactory.TodoListMembersService
-			.UpdateMemberRoleAsync(testListId, testMemberId, dto)
-			.Returns(new TodoListMemberServiceResult(TodoListMemberServiceResultStatus.NotFound));
+			.UpdateMemberRoleAsync(TestContext, testMemberId, dto)
+			.Returns(TodoListMemberServiceResultStatus.NotFound);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
-		var result = await client.PutAsJsonAsync($"api/todo/{testListId}/members/{testMemberId}", dto);
+		var result = await client.PutAsJsonAsync($"api/todo/{TestContext.TodoListId}/members/{testMemberId}", dto);
 
 		// Assert that response code is 404
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
 	}
 
 	[Test]
-	public async Task UpdateMemberRole_InvalidRoleId_Fails()
+	public async Task UpdateMemberRole_InvalidRoleStatus_Fails()
 	{
 		// Arrange
-		string testListId = "TestId";
 		int testMemberId = 12412;
 		TodoListMemberUpdateRoleDto dto = new(777);
 		WebApplicationFactory.TodoListMembersService
-			.UpdateMemberRoleAsync(testListId, testMemberId, dto)
-			.Returns(new TodoListMemberServiceResult(TodoListMemberServiceResultStatus.InvalidRoleId));
+			.UpdateMemberRoleAsync(TestContext, testMemberId, dto)
+			.Returns(TodoListMemberServiceResultStatus.InvalidRoleId);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
-		var result = await client.PutAsJsonAsync($"api/todo/{testListId}/members/{testMemberId}", dto);
+		var result = await client.PutAsJsonAsync($"api/todo/{TestContext.TodoListId}/members/{testMemberId}", dto);
 
 		// Assert that response code indicates failure
 		Assert.That(result.IsSuccessStatusCode, Is.False, "Unsuccessfull status code was expected.");
 	}
 
 	[Test]
+	public async Task UpdateMemberRole_ForbiddenStatus_Returns403()
+	{
+		// Arrange
+		int testMemberId = 12412;
+		TodoListMemberUpdateRoleDto dto = new(777);
+		WebApplicationFactory.TodoListMembersService
+			.UpdateMemberRoleAsync(TestContext, testMemberId, dto)
+			.Returns(TodoListMemberServiceResultStatus.Forbidden);
+		using HttpClient client = CreateAuthorizedHttpClient();
+
+		// Act: send the request
+		var result = await client.PutAsJsonAsync($"api/todo/{TestContext.TodoListId}/members/{testMemberId}", dto);
+
+		// Assert
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+	}
+
+	[Test]
 	public async Task UpdateMemberRole_NoAuthHeaderProvided_Returns401()
 	{
 		// Arrange
-		string testListId = "TestId";
 		int testMemberId = 891349;
-		TodoListMemberAddDto dto = new("New name", 123);
+		TodoListMemberAddDto dto = new("New name");
 		using HttpClient client = WebApplicationFactory.CreateClient();
 
 		// Act: send the request
-		var result = await client.PutAsJsonAsync($"api/todo/{testListId}/members/{testMemberId}", dto);
+		var result = await client.PutAsJsonAsync($"api/todo/{TestContext.TodoListId}/members/{testMemberId}", dto);
 
 		// Assert that response code is 401
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 	}
 
 	[Test]
-	public async Task RemoveMember_ElementExists_Succeeds()
+	public async Task RemoveMember_ValidCall_Succeeds()
 	{
 		// Arrange
-		string testListId = "TestId";
 		int testMemberId = 504030;
 		WebApplicationFactory.TodoListMembersService
-			.RemoveMemberAsync(testListId, testMemberId)
-			.Returns(true);
+			.RemoveMemberAsync(TestContext, testMemberId)
+			.Returns(ServiceResponseStatus.Success);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
-		var result = await client.DeleteAsync($"api/todo/{testListId}/members/{testMemberId}");
+		var result = await client.DeleteAsync($"api/todo/{TestContext.TodoListId}/members/{testMemberId}");
 
 		// Assert that response indicates success
 		result.EnsureSuccessStatusCode();
 		// Assert that delete was called
 		await WebApplicationFactory.TodoListMembersService
 			.Received()
-			.RemoveMemberAsync(testListId, testMemberId);
+			.RemoveMemberAsync(TestContext, testMemberId);
 	}
 
 	[Test]
-	public async Task RemoveMember_ElementDoesNotExist_Returns404()
+	public async Task RemoveMember_NotFoundStatus_Returns404()
 	{
 		// Arrange
-		string testListId = "TestId";
 		int testMemberId = 504030;
 		WebApplicationFactory.TodoListMembersService
-			.RemoveMemberAsync(testListId, testMemberId)
-			.Returns(false);
+			.RemoveMemberAsync(TestContext, testMemberId)
+			.Returns(ServiceResponseStatus.NotFound);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
-		var result = await client.DeleteAsync($"api/todo/{testListId}/members/{testMemberId}");
+		var result = await client.DeleteAsync($"api/todo/{TestContext.TodoListId}/members/{testMemberId}");
 
 		// Assert that response code is 404
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
 	}
 
 	[Test]
+	public async Task RemoveMember_ForbiddenStatus_Returns403()
+	{
+		// Arrange
+		int testMemberId = 504030;
+		WebApplicationFactory.TodoListMembersService
+			.RemoveMemberAsync(TestContext, testMemberId)
+			.Returns(ServiceResponseStatus.Forbidden);
+		using HttpClient client = CreateAuthorizedHttpClient();
+
+		// Act: send the request
+		var result = await client.DeleteAsync($"api/todo/{TestContext.TodoListId}/members/{testMemberId}");
+
+		// Assert that response code is 403
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+	}
+
+	[Test]
 	public async Task RemoveMember_NoAuthHeaderProvided_Returns401()
 	{
 		// Arrange
-		string testListId = "TestId";
 		int testMemberId = 504030;
 		using HttpClient client = WebApplicationFactory.CreateClient();
 
 		// Act: send the request
-		var result = await client.DeleteAsync($"api/todo/{testListId}/members/{testMemberId}");
+		var result = await client.DeleteAsync($"api/todo/{TestContext.TodoListId}/members/{testMemberId}");
 
 		// Assert that response code is 401
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
