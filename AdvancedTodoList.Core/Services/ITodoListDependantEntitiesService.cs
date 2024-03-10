@@ -54,7 +54,7 @@ public interface ITodoListDependantEntitiesService<TEntity, TKey>
 	/// </remarks>
 	/// <param name="context">To-do list context.</param>
 	/// <param name="dto">The DTO containing information for creating the entity.</param>
-	/// <param name="permission">Accessor for the permission required for the user to perform the action.</param>
+	/// <param name="permission">Optional accessor for the permission required for the user to perform the action.</param>
 	/// <returns>
 	/// <returns>
 	/// A task representing the asynchronous operation. The task contains
@@ -62,7 +62,7 @@ public interface ITodoListDependantEntitiesService<TEntity, TKey>
 	/// <typeparamref name="TOutputDto"/> on success.
 	/// </returns>
 	public Task<ServiceResponse<TOutputDto>> CreateAsync<TInputDto, TOutputDto>(
-		TodoListContext context, TInputDto dto, Func<RolePermissions, bool> permission)
+		TodoListContext context, TInputDto dto, Func<RolePermissions, bool>? permission = null)
 		where TOutputDto : class;
 
 	/// <summary>
@@ -71,24 +71,24 @@ public interface ITodoListDependantEntitiesService<TEntity, TKey>
 	/// <param name="context">To-do list context.</param>
 	/// <param name="entityId">The ID of the entity to edit.</param>
 	/// <param name="dto">The DTO containing information for editing the entity.</param>
-	/// <param name="permission">Accessor for the permission required for the user to perform the action.</param>
+	/// <param name="permission">Optional accessor for the permission required for the user to perform the action.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. The task contains
 	/// a result of the operation.
 	/// </returns>
 	public Task<ServiceResponseStatus> UpdateAsync<TDto>(TodoListContext context, TKey entityId, 
-		TDto dto, Func<RolePermissions, bool> permission);
+		TDto dto, Func<RolePermissions, bool>? permission = null);
 
 	/// <summary>
 	/// Deletes a to-do list dependant entity asynchronously.
 	/// </summary>
 	/// <param name="context">To-do list context.</param>
 	/// <param name="entityId">The ID of the entity to delete.</param>
-	/// <param name="permission">Accessor for the permission required for the user to perform the action.</param>
+	/// <param name="permission">Optional accessor for the permission required for the user to perform the action.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. The task contains
 	/// a result of the operation.
 	/// </returns>
 	public Task<ServiceResponseStatus> DeleteAsync(TodoListContext context,
-		TKey entityId, Func<RolePermissions, bool> permission);
+		TKey entityId, Func<RolePermissions, bool>? permission = null);
 }

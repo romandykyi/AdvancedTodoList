@@ -95,7 +95,7 @@ public sealed class TodoListDependantEntitiesService<TEntity, TKey>(
 	/// </remarks>
 	/// <param name="context">To-do list context.</param>
 	/// <param name="dto">The DTO containing information for creating the entity.</param>
-	/// <param name="permission">Accessor for the permission required for the user to perform the action.</param>
+	/// <param name="permission">Optional accessor for the permission required for the user to perform the action.</param>
 	/// <returns>
 	/// <returns>
 	/// A task representing the asynchronous operation. The task contains
@@ -103,14 +103,14 @@ public sealed class TodoListDependantEntitiesService<TEntity, TKey>(
 	/// <typeparamref name="TOutputDto"/> on success.
 	/// </returns>
 	public async Task<ServiceResponse<TOutputDto>> CreateAsync<TInputDto, TOutputDto>(
-		TodoListContext context, TInputDto dto, Func<RolePermissions, bool> permission)
+		TodoListContext context, TInputDto dto, Func<RolePermissions, bool>? permission = null)
 		where TOutputDto : class
 	{
 		// Check if to-do list exists
 		if (!await _existenceChecker.ExistsAsync<TodoList, string>(context.TodoListId))
 			return new(ServiceResponseStatus.NotFound);
 		// Check if the user has the permission
-		if (!await _permissionsChecker.HasPermissionAsync(context, permission))
+		if (permission != null && !await _permissionsChecker.HasPermissionAsync(context, permission))
 			return new(ServiceResponseStatus.Forbidden);
 
 		// Create the model
@@ -133,13 +133,13 @@ public sealed class TodoListDependantEntitiesService<TEntity, TKey>(
 	/// <param name="context">To-do list context.</param>
 	/// <param name="entityId">The ID of the entity to edit.</param>
 	/// <param name="dto">The DTO containing information for editing the entity.</param>
-	/// <param name="permission">Accessor for the permission required for the user to perform the action.</param>
+	/// <param name="permission">Optional accessor for the permission required for the user to perform the action.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. The task contains
 	/// a result of the operation.
 	/// </returns>
 	public async Task<ServiceResponseStatus> UpdateAsync<TDto>(
-		TodoListContext context, TKey entityId, TDto dto, Func<RolePermissions, bool> permission)
+		TodoListContext context, TKey entityId, TDto dto, Func<RolePermissions, bool>? permission = null)
 	{
 		// Get the model of a to-do list item
 		var entity = await _repository.GetByIdAsync(entityId);
@@ -148,7 +148,7 @@ public sealed class TodoListDependantEntitiesService<TEntity, TKey>(
 			return ServiceResponseStatus.NotFound;
 
 		// Check if user has the permission
-		if (!await _permissionsChecker.CanTouchEntityAsync<TEntity, TKey>(context, entity, permission))
+		if (permission != null && !await _permissionsChecker.CanTouchEntityAsync<TEntity, TKey>(context, entity, permission))
 			return ServiceResponseStatus.Forbidden;
 
 		// Update the model
@@ -164,13 +164,13 @@ public sealed class TodoListDependantEntitiesService<TEntity, TKey>(
 	/// </summary>
 	/// <param name="context">To-do list context.</param>
 	/// <param name="entityId">The ID of the entity to delete.</param>
-	/// <param name="permission">Accessor for the permission required for the user to perform the action.</param>
+	/// <param name="permission">Optional accessor for the permission required for the user to perform the action.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation. The task contains
 	/// a result of the operation.
 	/// </returns>
 	public async Task<ServiceResponseStatus> DeleteAsync(
-		TodoListContext context, TKey entityId, Func<RolePermissions, bool> permission)
+		TodoListContext context, TKey entityId, Func<RolePermissions, bool>? permission = null)
 	{
 		// Get the model of a to-do list item
 		var todoItem = await _repository.GetByIdAsync(entityId);
@@ -178,7 +178,7 @@ public sealed class TodoListDependantEntitiesService<TEntity, TKey>(
 		if (todoItem == null || todoItem.TodoListId != context.TodoListId)
 			return ServiceResponseStatus.NotFound;
 		// Check if user has the permission
-		if (!await _permissionsChecker.CanTouchEntityAsync<TEntity, TKey>(context, todoItem, permission))
+		if (permission != null && !await _permissionsChecker.CanTouchEntityAsync<TEntity, TKey>(context, todoItem, permission))
 			return ServiceResponseStatus.Forbidden;
 
 		// Delete the model
