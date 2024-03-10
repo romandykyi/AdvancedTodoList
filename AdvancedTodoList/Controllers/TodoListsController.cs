@@ -22,6 +22,7 @@ public class TodoListsController(
 	/// <param name="listId">ID of the to-do list to obtain.</param>
 	/// <response code="200">Returns requested to-do list.</response>
 	/// <response code="401">Authentication failed.</response>
+	/// <response code="403">User has no permission to perform this action.</response>
 	/// <response code="404">To-do list was not found.</response>
 	[HttpGet("{listId}", Name = nameof(GetTodoListByIdAsync))]
 	[ProducesResponseType(typeof(TodoListGetByIdDto), StatusCodes.Status200OK)]
@@ -29,8 +30,9 @@ public class TodoListsController(
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetTodoListByIdAsync([FromRoute] string listId)
 	{
-		var list = await _todoListsService.GetByIdAsync(listId);
-		return list != null ? Ok(list) : NotFound();
+		TodoListContext context = new(listId, User.GetUserId()!);
+		var result = await _todoListsService.GetByIdAsync(context);
+		return result.ToActionResult();
 	}
 
 	/// <summary>
@@ -39,6 +41,7 @@ public class TodoListsController(
 	/// <response code="201">Successfully created.</response>
 	/// <response code="400">Validation failed.</response>
 	/// <response code="401">Authentication failed.</response>
+	/// <response code="403">User has no permission to perform this action.</response>
 	[HttpPost]
 	[ProducesResponseType(typeof(TodoListGetByIdDto), StatusCodes.Status201Created)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -56,6 +59,7 @@ public class TodoListsController(
 	/// <response code="204">Success.</response>
 	/// <response code="400">Validation failed.</response>
 	/// <response code="401">Authentication failed.</response>
+	/// <response code="403">User has no permission to perform this action.</response>
 	/// <response code="404">To-do list was not found.</response>
 	[HttpPut("{listId}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -65,8 +69,9 @@ public class TodoListsController(
 	public async Task<IActionResult> PutTodoListAsync(
 		[FromRoute] string listId, [FromBody] TodoListCreateDto dto)
 	{
-		bool result = await _todoListsService.EditAsync(listId, dto);
-		return result ? NoContent() : NotFound();
+		TodoListContext context = new(listId, User.GetUserId()!);
+		var result = await _todoListsService.EditAsync(context, dto);
+		return result.ToActionResult();
 	}
 
 	/// <summary>
@@ -74,6 +79,7 @@ public class TodoListsController(
 	/// </summary>
 	/// <response code="204">Success.</response>
 	/// <response code="401">Authentication failed.</response>
+	/// <response code="403">User has no permission to perform this action.</response>
 	/// <response code="404">To-do list was not found.</response>
 	[HttpDelete("{listId}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -81,7 +87,8 @@ public class TodoListsController(
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> DeleteTodoListAsync([FromRoute] string listId)
 	{
-		bool result = await _todoListsService.DeleteAsync(listId);
-		return result ? NoContent() : NotFound();
+		TodoListContext context = new(listId, User.GetUserId()!);
+		var result = await _todoListsService.DeleteAsync(context);
+		return result.ToActionResult();
 	}
 }

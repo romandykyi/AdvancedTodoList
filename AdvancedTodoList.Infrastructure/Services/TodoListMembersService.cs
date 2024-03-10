@@ -1,9 +1,13 @@
 ﻿using AdvancedTodoList.Core.Dtos;
+using AdvancedTodoList.Core.Models;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Core.Services.Auth;
 using AdvancedTodoList.Infrastructure.Specifications;
+using Mapster;
+using System.Security;
 
 namespace AdvancedTodoList.Infrastructure.Services;
 
@@ -12,88 +16,126 @@ namespace AdvancedTodoList.Infrastructure.Services;
 /// </summary>
 public class TodoListMembersService(
 	ITodoListDependantEntitiesService<TodoListMember, int> helperService,
-	ITodoListMembersRepository repository) :
+	ITodoListMembersRepository membersRepository,
+	IRepository<TodoListRole, int> rolesRepository,
+	IPermissionsChecker permissionsChecker) :
 	ITodoListMembersService
 {
 	private readonly ITodoListDependantEntitiesService<TodoListMember, int> _helperService = helperService;
-	private readonly ITodoListMembersRepository _repository = repository;
+	private readonly ITodoListMembersRepository _membersRepository = membersRepository;
+	private readonly IRepository<TodoListRole, int> _rolesRepository = rolesRepository;
+	private readonly IPermissionsChecker _permissionsChecker = permissionsChecker;
 
 	/// <summary>
 	/// Gets a page with members of a to-do list asynchronously.
 	/// </summary>
-	/// <param name="todoListId">ID of the to-do list to add member to.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <param name="paginationParameters">Pagination parameters to use.</param>
 	/// <returns>
-	/// A task representing the asynchronous operation. 
-	/// The task result contains a page of <see cref="TodoListMemberPreviewDto"/> objects or
-	/// <see langword="null" /> if the to-do list does not exist.
+	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<Page<TodoListMemberPreviewDto>?> GetMembersAsync(string todoListId, PaginationParameters paginationParameters)
+	public Task<ServiceResponse<Page<TodoListMemberPreviewDto>>> GetMembersAsync(TodoListContext context, PaginationParameters paginationParameters)
 	{
-		TodoListMembersSpecification specification = new(todoListId);
+		TodoListMembersSpecification specification = new(context.TodoListId);
 		return _helperService.GetPageAsync<TodoListMemberPreviewDto>(
-			todoListId, specification, paginationParameters
+			context, specification, paginationParameters
 			);
 	}
 
 	/// <summary>
 	/// Adds a member to a to-do list asynchronously.
 	/// </summary>
-	/// <remarks>
-	/// Parameter <paramref name="dto"/> is not validated in this method.
-	/// </remarks>
-	/// <param name="todoListId">ID of the to-do list to add member to.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <param name="dto">DTO that contains information needed for adding a member. Supossed to be valid.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public async Task<TodoListMemberServiceResult> AddMemberAsync(string todoListId, TodoListMemberAddDto dto)
+	public async Task<AddTodoListMemberServiceResult> AddMemberAsync(TodoListContext context, TodoListMemberAddDto dto)
 	{
 		// Try to find already existing member
-		var member = await _repository.FindAsync(todoListId, dto.UserId);
+		var member = await _membersRepository.FindAsync(context.TodoListId, dto.UserId);
 		// Return error if it exists
 		if (member != null) return new(TodoListMemberServiceResultStatus.UserAlreadyAdded);
 
 		// Add member
-		var outputDto = await _helperService
-			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalViewDto>(todoListId, dto);
-		if (outputDto == null) return new(TodoListMemberServiceResultStatus.NotFound);
+		var response = await _helperService
+			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalViewDto>(context, dto, x => x.AddMembers);
 
-		return new(TodoListMemberServiceResultStatus.Success, outputDto);
+		return response.Status switch
+		{
+			ServiceResponseStatus.Success => new(TodoListMemberServiceResultStatus.Success, response.Result),
+			ServiceResponseStatus.NotFound => new(TodoListMemberServiceResultStatus.NotFound),
+			ServiceResponseStatus.Forbidden => new(TodoListMemberServiceResultStatus.Forbidden),
+			_ => throw new InvalidOperationException("Invalid to-do lists dependant entities (members) service response.")
+		};
 	}
 
 	/// <summary>
 	/// Updates a role of the member of a to-do list asynchronously.
 	/// </summary>
-	/// <param name="todoListId">ID of the to-do list.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <param name="memberId">ID of the member.</param>
 	/// <param name="dto">DTO that contains information needed for updating a role.</param>
 	/// <returns>
-	/// A task representing the asynchronous operation.
-	/// If user's role was updated successfully than <see langword="true"/> is returned;
-	/// otherwise <see langword="false" /> if the user or the to-do list was not found
+	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public async Task<TodoListMemberServiceResult> UpdateMemberRoleAsync(string todoListId, int memberId, TodoListMemberUpdateRoleDto dto)
+	public async Task<TodoListMemberServiceResultStatus> UpdateMemberRoleAsync(TodoListContext context, int memberId, TodoListMemberUpdateRoleDto dto)
 	{
-		// Checks if role is valid for the action should be implemented here
+		// I think that this method does too much and has many test cases, probably needs refactoring
 
-		bool updated = await _helperService.UpdateAsync(todoListId, memberId, dto);
-		return new(updated ? TodoListMemberServiceResultStatus.Success :
-			TodoListMemberServiceResultStatus.NotFound);
+		// Check if the caller has the permission to assign roles
+		MemberPermissionsSpecification specification = new(context.TodoListId, context.CallerId);
+		var caller = await _membersRepository.GetAggregateAsync<PermissionsAggregate>(specification);
+		if (caller == null || caller.Role == null || !caller.Role.Permissions.AssignRoles)
+			return TodoListMemberServiceResultStatus.Forbidden;
+
+		// Check if user has the permission to assign the role
+		if (dto.RoleId != null)
+		{
+			var role = await _rolesRepository.GetByIdAsync(dto.RoleId.Value);
+			// Validate RoleId
+			if (role == null || role.TodoListId != context.TodoListId)
+				return TodoListMemberServiceResultStatus.InvalidRoleId;
+			// Check priority
+			if (role.Priority <= caller.Role.Priority)
+				return TodoListMemberServiceResultStatus.Forbidden;
+		}
+
+		// Get the model of a member
+		var member = await _membersRepository.GetByIdAsync(memberId);
+		// Check if it's valid
+		if (member == null || member.TodoListId != context.TodoListId)
+			return TodoListMemberServiceResultStatus.NotFound;
+
+		// Check if user has a permission to assign roles to the member
+		if (member.RoleId != null)
+		{
+			// Get the member's role
+			var role = await _rolesRepository.GetByIdAsync(member.RoleId.Value) ??
+				throw new InvalidOperationException("Member's role is not found");
+
+			if (role.Priority <= caller.Role.Priority)
+				return TodoListMemberServiceResultStatus.Forbidden;
+		}
+
+		// Update the model
+		dto.Adapt(member);
+		// Save changes
+		await _membersRepository.UpdateAsync(member);
+
+		return TodoListMemberServiceResultStatus.Success;
 	}
 
 	/// <summary>
 	/// Removes a member from a to-do list asynchronously.
 	/// </summary>
-	/// <param name="todoListId">ID of the to-do list to remove member from.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <param name="memberId">ID of the member.</param>
 	/// <returns>
-	/// A task representing the asynchronous operation.
-	/// If user was removed successfully than <see langword="true"/> is returned;
-	/// otherwise <see langword="false" /> if the user or the to-do list was not found
+	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<bool> RemoveMemberAsync(string todoListId, int memberId)
+	public Task<ServiceResponseStatus> RemoveMemberAsync(TodoListContext context, int memberId)
 	{
-		return _helperService.DeleteAsync(todoListId, memberId);
+		return _helperService.DeleteAsync(context, memberId, x => x.RemoveMembers);
 	}
 }

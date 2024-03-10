@@ -11,45 +11,42 @@ public interface ITodoListMembersService
 	/// <summary>
 	/// Gets a page with members of a to-do list asynchronously.
 	/// </summary>
-	/// <param name="todoListId">ID of the to-do list to add member to.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <param name="paginationParameters">Pagination parameters to use.</param>
 	/// <returns>
-	/// A task representing the asynchronous operation. 
-	/// The task result contains a page of <see cref="TodoListMemberPreviewDto"/> objects or
-	/// <see langword="null" /> if the to-do list does not exist.
+	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	Task<Page<TodoListMemberPreviewDto>?> GetMembersAsync(string todoListId, PaginationParameters paginationParameters);
+	Task<ServiceResponse<Page<TodoListMemberPreviewDto>>> GetMembersAsync(TodoListContext context, PaginationParameters paginationParameters);
 
 	/// <summary>
 	/// Adds a member to a to-do list asynchronously.
 	/// </summary>
-	/// <param name="todoListId">ID of the to-do list to add member to.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <param name="dto">DTO that contains information needed for adding a member. Supossed to be valid.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	Task<TodoListMemberServiceResult> AddMemberAsync(string todoListId, TodoListMemberAddDto dto);
+	Task<AddTodoListMemberServiceResult> AddMemberAsync(TodoListContext context, TodoListMemberAddDto dto);
 
 	/// <summary>
 	/// Updates a role of the member of a to-do list asynchronously.
 	/// </summary>
-	/// <param name="todoListId">ID of the to-do list.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <param name="memberId">ID of the member.</param>
 	/// <param name="dto">DTO that contains information needed for updating a role.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	Task<TodoListMemberServiceResult> UpdateMemberRoleAsync(string todoListId, int memberId, TodoListMemberUpdateRoleDto dto);
+	Task<TodoListMemberServiceResultStatus> UpdateMemberRoleAsync(TodoListContext context,
+		int memberId, TodoListMemberUpdateRoleDto dto);
 
 	/// <summary>
 	/// Removes a member from a to-do list asynchronously.
 	/// </summary>
-	/// <param name="todoListId">ID of the to-do list to remove member from.</param>
+	/// <param name="context">To-do list context.</param>
 	/// <param name="memberId">ID of the member.</param>
 	/// <returns>
-	/// A task representing the asynchronous operation.
-	/// If user was removed successfully than <see langword="true"/> is returned;
-	/// otherwise <see langword="false" /> if the user or the to-do list was not found
+	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	Task<bool> RemoveMemberAsync(string todoListId, int memberId);
+	Task<ServiceResponseStatus> RemoveMemberAsync(TodoListContext context, int memberId);
 }

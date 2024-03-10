@@ -1,12 +1,10 @@
-﻿using AdvancedTodoList.Core.Models;
-using AdvancedTodoList.Core.Models.Auth;
+﻿using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
+using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Services.Auth;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
-using NUnit.Framework.Interfaces;
-using System.Data;
 
 namespace AdvancedTodoList.IntegrationTests.Services.Auth;
 
@@ -83,9 +81,10 @@ public class PermissionsCheckerTests : DataAccessFixture
 	{
 		// Arrange
 		var member = await CreateTestMemberAsync();
+		TodoListContext context = new(member.TodoListId, member.UserId);
 
 		// Act
-		bool result = await _permissionsChecker.IsMemberOfListAsync(member.UserId, member.TodoListId);
+		bool result = await _permissionsChecker.IsMemberOfListAsync(context);
 
 		// Assert
 		Assert.That(result, Is.True);
@@ -97,9 +96,10 @@ public class PermissionsCheckerTests : DataAccessFixture
 		// Arrange
 		var user = await CreateTestUserAsync();
 		var list = await CreateTestTodoListAsync();
+		TodoListContext context = new(list.Id, user.Id);
 
 		// Act
-		bool result = await _permissionsChecker.IsMemberOfListAsync(user.Id, list.Id);
+		bool result = await _permissionsChecker.IsMemberOfListAsync(context);
 
 		// Assert
 		Assert.That(result, Is.False);
@@ -113,9 +113,10 @@ public class PermissionsCheckerTests : DataAccessFixture
 		var user = await CreateTestUserAsync();
 		var role = await CreateTestRoleAsync(todoList.Id, 3, new(AddMembers: true));
 		var member = await CreateTestMemberAsync(user.Id, todoList.Id, role.Id);
+		TodoListContext context = new(todoList.Id, user.Id);
 
 		// Act
-		bool result = await _permissionsChecker.HasPermissionAsync(user.Id, todoList.Id, x => x.AddMembers);
+		bool result = await _permissionsChecker.HasPermissionAsync(context, x => x.AddMembers);
 
 		// Assert
 		Assert.That(result, Is.True);
@@ -129,9 +130,10 @@ public class PermissionsCheckerTests : DataAccessFixture
 		var user = await CreateTestUserAsync();
 		var role = await CreateTestRoleAsync(todoList.Id, 3, new(AddMembers: true, AddItems: false));
 		var member = await CreateTestMemberAsync(user.Id, todoList.Id, role.Id);
+		TodoListContext context = new(todoList.Id, user.Id);
 
 		// Act
-		bool result = await _permissionsChecker.HasPermissionAsync(user.Id, todoList.Id, x => x.AddItems);
+		bool result = await _permissionsChecker.HasPermissionAsync(context, x => x.AddItems);
 
 		// Assert
 		Assert.That(result, Is.False);
@@ -142,9 +144,10 @@ public class PermissionsCheckerTests : DataAccessFixture
 	{
 		// Arrange
 		var member = await CreateTestMemberAsync();
+		TodoListContext context = new(member.TodoListId, member.UserId);
 
 		// Act
-		bool result = await _permissionsChecker.HasPermissionAsync(member.UserId, member.TodoListId, x => x.AddItems);
+		bool result = await _permissionsChecker.HasPermissionAsync(context, x => x.AddItems);
 
 		// Assert
 		Assert.That(result, Is.False);
@@ -156,9 +159,10 @@ public class PermissionsCheckerTests : DataAccessFixture
 		// Arrange
 		var user = await CreateTestUserAsync();
 		var list = await CreateTestTodoListAsync();
+		TodoListContext context = new(list.Id, user.Id);
 
 		// Act
-		bool result = await _permissionsChecker.HasPermissionAsync(user.Id, list.Id, x => x.AddItems);
+		bool result = await _permissionsChecker.HasPermissionAsync(context, x => x.AddItems);
 
 		// Assert
 		Assert.That(result, Is.False);
@@ -173,10 +177,11 @@ public class PermissionsCheckerTests : DataAccessFixture
 		var role = await CreateTestRoleAsync(todoList.Id, 3, new(EditItems: true));
 		var member = await CreateTestMemberAsync(user.Id, todoList.Id, role.Id);
 		var testEntity = GetTestEntity("some-random-user-id");
+		TodoListContext context = new(todoList.Id, user.Id);
 
 		// Act
 		bool result = await _permissionsChecker
-			.CanTouchEntityAsync<TodoList, string>(user.Id, todoList.Id, testEntity, x => x.EditItems);
+			.CanTouchEntityAsync<TodoList, string>(context, testEntity, x => x.EditItems);
 
 		// Assert
 		Assert.That(result, Is.True);
@@ -191,10 +196,11 @@ public class PermissionsCheckerTests : DataAccessFixture
 		var role = await CreateTestRoleAsync(todoList.Id, 3, new(EditItems: false));
 		var member = await CreateTestMemberAsync(user.Id, todoList.Id, role.Id);
 		var testEntity = GetTestEntity(user.Id);
+		TodoListContext context = new(todoList.Id, user.Id);
 
 		// Act
 		bool result = await _permissionsChecker
-			.CanTouchEntityAsync<TodoList, string>(user.Id, todoList.Id, testEntity, x => x.EditItems);
+			.CanTouchEntityAsync<TodoList, string>(context, testEntity, x => x.EditItems);
 
 		// Assert
 		Assert.That(result, Is.True);
@@ -209,10 +215,11 @@ public class PermissionsCheckerTests : DataAccessFixture
 		var role = await CreateTestRoleAsync(todoList.Id, 3, new(EditItems: false));
 		var member = await CreateTestMemberAsync(user.Id, todoList.Id, role.Id);
 		var testEntity = GetTestEntity("some-random-user-id");
+		TodoListContext context = new(todoList.Id, user.Id);
 
 		// Act
 		bool result = await _permissionsChecker
-			.CanTouchEntityAsync<TodoList, string>(user.Id, todoList.Id, testEntity, x => x.EditItems);
+			.CanTouchEntityAsync<TodoList, string>(context, testEntity, x => x.EditItems);
 
 		// Assert
 		Assert.That(result, Is.False);
@@ -224,10 +231,11 @@ public class PermissionsCheckerTests : DataAccessFixture
 		// Arrange
 		var member = await CreateTestMemberAsync();
 		var testEntity = GetTestEntity("some-random-user-id");
+		TodoListContext context = new(member.TodoListId, member.UserId);
 
 		// Act
 		bool result = await _permissionsChecker
-			.CanTouchEntityAsync<TodoList, string>(member.UserId, member.TodoListId, testEntity, x => x.EditItems);
+			.CanTouchEntityAsync<TodoList, string>(context, testEntity, x => x.EditItems);
 
 		// Assert
 		Assert.That(result, Is.False);
@@ -240,10 +248,11 @@ public class PermissionsCheckerTests : DataAccessFixture
 		var todoList = await CreateTestTodoListAsync();
 		var user = await CreateTestUserAsync();
 		var testEntity = GetTestEntity("some-random-user-id");
+		TodoListContext context = new(todoList.Id, user.Id);
 
 		// Act
 		bool result = await _permissionsChecker
-			.CanTouchEntityAsync<TodoList, string>(user.Id, todoList.Id, testEntity, x => x.EditItems);
+			.CanTouchEntityAsync<TodoList, string>(context, testEntity, x => x.EditItems);
 
 		// Assert
 		Assert.That(result, Is.False);
@@ -256,10 +265,11 @@ public class PermissionsCheckerTests : DataAccessFixture
 		var todoList = await CreateTestTodoListAsync();
 		var user = await CreateTestUserAsync();
 		var testEntity = GetTestEntity(user.Id);
+		TodoListContext context = new(todoList.Id, user.Id);
 
 		// Act
 		bool result = await _permissionsChecker
-			.CanTouchEntityAsync<TodoList, string>(user.Id, todoList.Id, testEntity, x => x.EditItems);
+			.CanTouchEntityAsync<TodoList, string>(context, testEntity, x => x.EditItems);
 
 		// Assert
 		Assert.That(result, Is.False);
@@ -272,12 +282,13 @@ public class PermissionsCheckerTests : DataAccessFixture
 		var todoList = await CreateTestTodoListAsync();
 		var user = await CreateTestUserAsync();
 		var role = await CreateTestRoleAsync(todoList.Id, 3, new(EditRoles: true));
-		var otherRole = await CreateTestRoleAsync(todoList.Id, 4, RolePermissions.All);
+		const int otherRolePriority = 4;
 		var member = await CreateTestMemberAsync(user.Id, todoList.Id, role.Id);
+		TodoListContext context = new(todoList.Id, user.Id);
 
 		// Act
 		bool result = await _permissionsChecker
-			.HasPermissionOverRoleAsync(user.Id, todoList.Id, otherRole.Id, x => x.EditRoles);
+			.HasPermissionOverRoleAsync(context, otherRolePriority, x => x.EditRoles);
 
 		// Assert
 		Assert.That(result, Is.True);
@@ -290,12 +301,13 @@ public class PermissionsCheckerTests : DataAccessFixture
 		var todoList = await CreateTestTodoListAsync();
 		var user = await CreateTestUserAsync();
 		var role = await CreateTestRoleAsync(todoList.Id, 3, new(EditRoles: false));
-		var otherRole = await CreateTestRoleAsync(todoList.Id, 4, RolePermissions.All);
+		const int otherRolePriority = 4;
 		var member = await CreateTestMemberAsync(user.Id, todoList.Id, role.Id);
+		TodoListContext context = new(todoList.Id, user.Id);
 
 		// Act
 		bool result = await _permissionsChecker
-			.HasPermissionOverRoleAsync(user.Id, todoList.Id, otherRole.Id, x => x.EditRoles);
+			.HasPermissionOverRoleAsync(context, otherRolePriority, x => x.EditRoles);
 
 		// Assert
 		Assert.That(result, Is.False);
@@ -306,11 +318,12 @@ public class PermissionsCheckerTests : DataAccessFixture
 	{
 		// Arrange
 		var member = await CreateTestMemberAsync();
-		var otherRole = await CreateTestRoleAsync(member.TodoListId, 4, RolePermissions.All);
+		const int otherRolePriority = 4;
+		TodoListContext context = new(member.TodoListId, member.UserId);
 
 		// Act
 		bool result = await _permissionsChecker
-			.HasPermissionOverRoleAsync(member.UserId, member.TodoListId, otherRole.Id, x => x.EditItems);
+			.HasPermissionOverRoleAsync(context, otherRolePriority, x => x.EditItems);
 
 		// Assert
 		Assert.That(result, Is.False);
@@ -322,11 +335,12 @@ public class PermissionsCheckerTests : DataAccessFixture
 		// Arrange
 		var todoList = await CreateTestTodoListAsync();
 		var user = await CreateTestUserAsync();
-		var otherRole = await CreateTestRoleAsync(todoList.Id, 4, RolePermissions.All);
+		const int otherRolePriority = 4;
+		TodoListContext context = new(todoList.Id, user.Id);
 
 		// Act
 		bool result = await _permissionsChecker
-			.HasPermissionOverRoleAsync(user.Id, todoList.Id, otherRole.Id, x => x.EditItems);
+			.HasPermissionOverRoleAsync(context, otherRolePriority, x => x.EditItems);
 
 		// Assert
 		Assert.That(result, Is.False);
@@ -339,12 +353,13 @@ public class PermissionsCheckerTests : DataAccessFixture
 		var todoList = await CreateTestTodoListAsync();
 		var user = await CreateTestUserAsync();
 		var role = await CreateTestRoleAsync(todoList.Id, 3, new(EditRoles: true));
-		var otherRole = await CreateTestRoleAsync(todoList.Id, 2, RolePermissions.All);
+		const int otherRolePriority = 2;
 		var member = await CreateTestMemberAsync(user.Id, todoList.Id, role.Id);
+		TodoListContext context = new(todoList.Id, user.Id);
 
 		// Act
 		bool result = await _permissionsChecker
-			.HasPermissionOverRoleAsync(user.Id, todoList.Id, otherRole.Id, x => x.EditRoles);
+			.HasPermissionOverRoleAsync(context, otherRolePriority, x => x.EditRoles);
 
 		// Assert
 		Assert.That(result, Is.False);
