@@ -11,12 +11,9 @@ namespace AdvancedTodoList.Infrastructure.Services.Auth;
 /// <summary>
 /// Service that checks user's permissions.
 /// </summary>
-public class PermissionsChecker(
-	ITodoListMembersRepository membersRepository,
-	IRepository<TodoListRole, int> rolesRepository) : IPermissionsChecker
+public class PermissionsChecker(ITodoListMembersRepository membersRepository) : IPermissionsChecker
 {
 	private readonly ITodoListMembersRepository _membersRepository = membersRepository;
-	private readonly IRepository<TodoListRole, int> _rolesRepository = rolesRepository;
 
 	/// <summary>
 	/// Asynchronously checks whether the user is a member of the to-do list with
@@ -81,16 +78,16 @@ public class PermissionsChecker(
 
 	/// <summary>
 	/// Asynchronously checks whether the user has a permission to change the role
-	/// defined by <paramref name="roleId"/>.
+	/// with the priority of <paramref name="rolePriority"/>.
 	/// </summary>
 	/// <param name="context">To-do list context.</param>
-	/// <param name="roleId">ID of the role.</param>
+	/// <param name="rolePriority">ID of the role.</param>
 	/// <param name="permission">Function that should return <see langword="true"/> if user has required permission.</param>
 	/// <returns>
 	/// <see langword="true"/> if user has <paramref name="permission"/> and highest role priority than
-	/// the role defined by <paramref name="roleId"/>; otherwise <see langword="false" />.
+	/// the <paramref name="rolePriority"/>; otherwise <see langword="false" />.
 	/// </returns>
-	public async Task<bool> HasPermissionOverRoleAsync(TodoListContext context, int roleId, Func<RolePermissions, bool> permission)
+	public async Task<bool> HasPermissionOverRoleAsync(TodoListContext context, int rolePriority, Func<RolePermissions, bool> permission)
 	{
 		MemberPermissionsSpecification specification = new(context.TodoListId, context.CallerId);
 		var member = await _membersRepository.GetAggregateAsync<PermissionsAggregate>(specification);
@@ -99,11 +96,7 @@ public class PermissionsChecker(
 		if (member == null || member.Role == null || !permission(member.Role.Permissions)) 
 			return false;
 
-		// Get other role
-		var role = await _rolesRepository.GetByIdAsync(roleId) ??
-			throw new ArgumentException("Role with 'roleId' was not found", nameof(roleId));
-
 		// Check if user has a higher priority
-		return member.Role.Priority < role.Priority;
+		return member.Role.Priority < rolePriority;
 	}
 }

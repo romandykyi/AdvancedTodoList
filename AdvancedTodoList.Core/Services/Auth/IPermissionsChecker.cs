@@ -54,15 +54,15 @@ public interface IPermissionsChecker
 
 	/// <summary>
 	/// Asynchronously checks whether the user has a permission to change the role
-	/// defined by <paramref name="roleId"/>.
+	/// with the priority of <paramref name="rolePriority"/>.
 	/// </summary>
 	/// <param name="context">To-do list context.</param>
-	/// <param name="roleId">ID of the role.</param>
+	/// <param name="rolePriority">ID of the role.</param>
 	/// <param name="permission">Function that should return <see langword="true"/> if user has required permission.</param>
 	/// <returns>
 	/// <see langword="true"/> if user has <paramref name="permission"/> and highest role priority than
-	/// the role defined by <paramref name="roleId"/>; otherwise <see langword="false" />.
+	/// the <paramref name="rolePriority"/>; otherwise <see langword="false" />.
 	/// </returns>
-	Task<bool> HasPermissionOverRoleAsync(TodoListContext context, int roleId, 
+	Task<bool> HasPermissionOverRoleAsync(TodoListContext context, int rolePriority, 
 		Func<RolePermissions, bool> permission);
 }
