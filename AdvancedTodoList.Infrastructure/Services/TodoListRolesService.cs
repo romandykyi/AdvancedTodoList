@@ -1,17 +1,28 @@
 ﻿using AdvancedTodoList.Core.Dtos;
+using AdvancedTodoList.Core.Models;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Pagination;
+using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Core.Services.Auth;
 using AdvancedTodoList.Infrastructure.Specifications;
+using Mapster;
+using System.Security;
 
 namespace AdvancedTodoList.Infrastructure.Services;
 
 /// <summary>
 /// A service that manages to-do lists roles.
 /// </summary>
-public class TodoListRolesService(ITodoListDependantEntitiesService<TodoListRole, int> helperService) : ITodoListRolesService
+public class TodoListRolesService(
+	ITodoListDependantEntitiesService<TodoListRole, int> helperService,
+	IRepository<TodoListRole, int> rolesRepository,
+	IPermissionsChecker permissionsChecker
+	) : ITodoListRolesService
 {
 	private readonly ITodoListDependantEntitiesService<TodoListRole, int> _helperService = helperService;
+	private readonly IRepository<TodoListRole, int> _rolesRepository = rolesRepository;
+	private readonly IPermissionsChecker _permissionsChecker = permissionsChecker;
 
 	/// <summary>
 	/// Retrieves a page of to-do list roles of the list with the specified ID.
@@ -47,11 +58,18 @@ public class TodoListRolesService(ITodoListDependantEntitiesService<TodoListRole
 	/// <param name="dto">The DTO containing information for creating the to-do list role.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
+	/// It's not practically possible for this implementation to have the result that indicates 
+	/// 'NotFound' status.
 	/// </returns>
-	public Task<ServiceResponse<TodoListRoleViewDto>> CreateAsync(TodoListContext context, TodoListRoleCreateDto dto)
+	public async Task<ServiceResponse<TodoListRoleViewDto>> CreateAsync(TodoListContext context, TodoListRoleCreateDto dto)
 	{
-		return _helperService.CreateAsync<TodoListRoleCreateDto, TodoListRoleViewDto>(
-			context, dto, x => x.EditRoles);
+		// Check if user has a permission to create a role with the given priority
+		if (!await _permissionsChecker.HasPermissionOverRoleAsync(context, dto.Priority, x => x.EditRoles))
+			return new(ServiceResponseStatus.Forbidden);
+
+		// Pass null as the third argument to not check permissions twice
+		return await _helperService.CreateAsync<TodoListRoleCreateDto, TodoListRoleViewDto>(
+			context, dto, null);
 	}
 
 	/// <summary>
@@ -63,9 +81,27 @@ public class TodoListRolesService(ITodoListDependantEntitiesService<TodoListRole
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<ServiceResponseStatus> EditAsync(TodoListContext context, int roleId, TodoListRoleCreateDto dto)
+	public async Task<ServiceResponseStatus> EditAsync(TodoListContext context, int roleId, TodoListRoleCreateDto dto)
 	{
-		return _helperService.UpdateAsync(context, roleId, dto, x => x.EditRoles);
+		// Get the model of a role
+		var role = await _rolesRepository.GetByIdAsync(roleId);
+		// Check if it's valid
+		if (role == null || role.TodoListId != context.TodoListId)
+			return ServiceResponseStatus.NotFound;
+
+		// Check if user has a permission to change it
+		// Checking only the minimal priority is sufficient, because both
+		// values should be greater than caller's role priority.
+		int minPriority = Math.Min(role.Priority, dto.Priority);
+		if (!await _permissionsChecker.HasPermissionOverRoleAsync(context, minPriority, x => x.EditRoles))
+			return ServiceResponseStatus.Forbidden;
+
+		// Update the model
+		dto.Adapt(role);
+		// Save changes
+		await _rolesRepository.UpdateAsync(role);
+
+		return ServiceResponseStatus.Success;
 	}
 
 	/// <summary>
@@ -76,8 +112,21 @@ public class TodoListRolesService(ITodoListDependantEntitiesService<TodoListRole
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<ServiceResponseStatus> DeleteAsync(TodoListContext context, int roleId)
+	public async Task<ServiceResponseStatus> DeleteAsync(TodoListContext context, int roleId)
 	{
-		return _helperService.DeleteAsync(context, roleId, x => x.EditRoles);
+		// Get the model of a role
+		var role = await _rolesRepository.GetByIdAsync(roleId);
+		// Check if it's valid
+		if (role == null || role.TodoListId != context.TodoListId)
+			return ServiceResponseStatus.NotFound;
+
+		// Check if user has the permission to delete the role
+		if (!await _permissionsChecker.HasPermissionOverRoleAsync(context, role.Priority, x => x.EditRoles))
+			return ServiceResponseStatus.Forbidden;
+
+		// Delete the role
+		await _rolesRepository.DeleteAsync(role);
+
+		return ServiceResponseStatus.Success;
 	}
 }
