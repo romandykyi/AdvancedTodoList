@@ -34,7 +34,10 @@ public class TodoItemsService(
 	public Task<ServiceResponse<Page<TodoItemPreviewDto>>> GetItemsOfListAsync(TodoListContext context,
 		PaginationParameters paginationParameters)
 	{
-		TodoListDependantEntitiesSpecification<TodoItem> specification = new(context.TodoListId);
+		TodoListDependantEntitiesSpecification<TodoItem> specification = new(context.TodoListId)
+		{
+			Includes = [x => x.Owner, x => x.Priority]
+		};
 		return _helperService.GetPageAsync<TodoItemPreviewDto>(context, specification, paginationParameters);
 	}
 

@@ -5,6 +5,7 @@ using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
+using Castle.Components.DictionaryAdapter;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 
@@ -48,7 +49,7 @@ public class TodoItemsServiceTests : BusinessLogicFixture
 		// Arrange
 		int todoItemId = 123;
 		TodoItemGetByIdDto dto = new(todoItemId, TestContext.TodoListId, "Name", "Description", null,
-			TodoItemState.Active, new("User", "Name"));
+			TodoItemState.Active, 3, new("User", "Name"), null);
 		WebApplicationFactory.PermissionsChecker
 			.IsMemberOfListAsync(TestContext)
 			.Returns(true);
@@ -77,7 +78,7 @@ public class TodoItemsServiceTests : BusinessLogicFixture
 		// Arrange
 		int todoItemId = 123;
 		TodoItemGetByIdDto dto = new(todoItemId, "WrongTodoListId", "Name", "Description", null,
-			TodoItemState.Active, new("User", "Name"));
+			TodoItemState.Active, 1, new("User", "Name"), null);
 		WebApplicationFactory.PermissionsChecker
 			.IsMemberOfListAsync(TestContext)
 			.Returns(true);
@@ -117,7 +118,7 @@ public class TodoItemsServiceTests : BusinessLogicFixture
 		// Arrange
 		int itemId = 123;
 		TodoItemGetByIdDto dto = new(itemId, TestContext.TodoListId, "Name", "Description", null,
-			TodoItemState.Active, new("User", "Name"));
+			TodoItemState.Active, 1, new("User", "Name"), null);
 		WebApplicationFactory.PermissionsChecker
 			.IsMemberOfListAsync(TestContext)
 			.Returns(false);

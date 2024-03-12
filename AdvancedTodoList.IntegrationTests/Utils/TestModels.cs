@@ -24,13 +24,23 @@ public static class TestModels
 	/// <summary>
 	/// Creates and returns a valid model of a to-do list item which can be added to the DB. 
 	/// </summary>
-	public static TodoItem CreateTestTodoItem(string todoListId, string? ownerId = null) => new()
+	public static TodoItem CreateTestTodoItem(string todoListId, string? ownerId = null, int? categoryId = null) => new()
 	{
 		Name = "Name",
 		Description = "Description",
 		OwnerId = ownerId,
+		CategoryId = categoryId,
+		Priority = 5,
 		State = TodoItemState.Completed,
 		DeadlineDate = DateTime.UtcNow.AddDays(365),
+		TodoListId = todoListId
+	};
+	/// <summary>
+	/// Creates and returns a valid model of a to-do list item category which can be added to the DB. 
+	/// </summary>
+	public static TodoItemCategory CreateTestTodoItemCategory(string todoListId) => new()
+	{
+		Name = "Category",
 		TodoListId = todoListId
 	};
 	/// <summary>

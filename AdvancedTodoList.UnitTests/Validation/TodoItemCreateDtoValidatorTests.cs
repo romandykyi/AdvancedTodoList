@@ -9,6 +9,8 @@ public class TodoItemCreateDtoValidatorTests
 {
 	private const string ValidName = "Valid";
 	private const string ValidDescription = "Valid description";
+	private const int ValidPriority = 4;
+	private const int ValidCategoryId = 3;
 	private static DateTime? ValidDeadline => DateTime.UtcNow + TimeSpan.FromDays(14);
 
 	[Test]
@@ -16,7 +18,7 @@ public class TodoItemCreateDtoValidatorTests
 	{
 		// Arrange
 		TodoItemCreateDtoValidator validator = new();
-		TodoItemCreateDto dto = new(ValidName, ValidDescription, ValidDeadline);
+		TodoItemCreateDto dto = new(ValidName, ValidDescription, ValidDeadline, ValidPriority, ValidCategoryId);
 
 		// Act
 		var result = validator.TestValidate(dto);
@@ -31,7 +33,7 @@ public class TodoItemCreateDtoValidatorTests
 	{
 		// Arrange
 		TodoItemCreateDtoValidator validator = new();
-		TodoItemCreateDto dto = new(testCase, ValidDescription, ValidDeadline);
+		TodoItemCreateDto dto = new(testCase, ValidDescription, ValidDeadline, ValidPriority, ValidCategoryId);
 
 		// Act
 		var result = validator.TestValidate(dto);
@@ -47,7 +49,7 @@ public class TodoItemCreateDtoValidatorTests
 		// Arrange
 		TodoItemCreateDtoValidator validator = new();
 		string longName = new('X', TodoItem.NameMaxLength + 1);
-		TodoItemCreateDto dto = new(longName, ValidDescription, ValidDeadline);
+		TodoItemCreateDto dto = new(longName, ValidDescription, ValidDeadline, ValidPriority, ValidCategoryId);
 
 		// Act
 		var result = validator.TestValidate(dto);
@@ -62,7 +64,7 @@ public class TodoItemCreateDtoValidatorTests
 	{
 		// Arrange
 		TodoItemCreateDtoValidator validator = new();
-		TodoItemCreateDto dto = new(ValidName, null!, ValidDeadline);
+		TodoItemCreateDto dto = new(ValidName, null!, ValidDeadline, ValidPriority, ValidCategoryId);
 
 		// Act
 		var result = validator.TestValidate(dto);
@@ -78,7 +80,7 @@ public class TodoItemCreateDtoValidatorTests
 	{
 		// Arrange
 		TodoItemCreateDtoValidator validator = new();
-		TodoItemCreateDto dto = new(ValidName, testCase, ValidDeadline);
+		TodoItemCreateDto dto = new(ValidName, testCase, ValidDeadline, ValidPriority, ValidCategoryId);
 
 		// Act
 		var result = validator.TestValidate(dto);
@@ -93,7 +95,7 @@ public class TodoItemCreateDtoValidatorTests
 		// Arrange
 		TodoItemCreateDtoValidator validator = new();
 		string longDescription = new('X', TodoItem.DescriptionMaxLength + 1);
-		TodoItemCreateDto dto = new(ValidName, longDescription, ValidDeadline);
+		TodoItemCreateDto dto = new(ValidName, longDescription, ValidDeadline, ValidPriority, ValidCategoryId);
 
 		// Act
 		var result = validator.TestValidate(dto);
@@ -108,7 +110,8 @@ public class TodoItemCreateDtoValidatorTests
 	{
 		// Arrange
 		TodoItemCreateDtoValidator validator = new();
-		TodoItemCreateDto dto = new(ValidName, ValidDescription, DateTime.UtcNow - TimeSpan.FromDays(1));
+		TodoItemCreateDto dto = new(ValidName, ValidDescription,
+			DateTime.UtcNow - TimeSpan.FromDays(1), ValidPriority, ValidCategoryId);
 
 		// Act
 		var result = validator.TestValidate(dto);
@@ -116,5 +119,38 @@ public class TodoItemCreateDtoValidatorTests
 		// Assert
 		result.ShouldHaveValidationErrorFor(x => x.DeadlineDate)
 			.WithErrorCode(ValidationErrorCodes.PropertyOutOfRange);
+	}
+
+	[Test]
+	[TestCase(-1)]
+	[TestCase(11)]
+	public void Priority_OutOfRange_ReturnsPropertyOutOfRangeError(int testCase)
+	{
+		// Arrange
+		TodoItemCreateDtoValidator validator = new();
+		TodoItemCreateDto dto = new(ValidName, ValidDescription,
+			ValidDeadline, testCase, ValidCategoryId);
+
+		// Act
+		var result = validator.TestValidate(dto);
+
+		// Assert
+		result.ShouldHaveValidationErrorFor(x => x.Priority)
+			.WithErrorCode(ValidationErrorCodes.PropertyOutOfRange);
+	}
+
+	[Test]
+	public void CategoryId_Null_Allowed()
+	{
+		// Arrange
+		TodoItemCreateDtoValidator validator = new();
+		TodoItemCreateDto dto = new(ValidName, ValidDescription,
+			ValidDeadline, ValidPriority, null);
+
+		// Act
+		var result = validator.TestValidate(dto);
+
+		// Assert
+		result.ShouldNotHaveValidationErrorFor(x => x.CategoryId);
 	}
 }

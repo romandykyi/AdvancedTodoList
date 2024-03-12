@@ -42,7 +42,7 @@ public class TodoItemsRepositoryTests : BaseRepositoryTests<TodoItem, int>
 	}
 
 	[Test]
-	public async Task GetAggregateAsync_TodoListAggregateSpecification_IncludesOwner()
+	public async Task GetAggregateAsync_TodoListAggregateSpecification_IncludesOwnerAndCategory()
 	{
 		// Arrange
 		var owner = TestModels.CreateTestUser();
@@ -51,7 +51,10 @@ public class TodoItemsRepositoryTests : BaseRepositoryTests<TodoItem, int>
 		var todoList = TestModels.CreateTestTodoList();
 		DbContext.Add(todoList);
 		await DbContext.SaveChangesAsync();
-		var todoItem = TestModels.CreateTestTodoItem(todoList.Id, owner.Id);
+		var category = TestModels.CreateTestTodoItemCategory(todoList.Id);
+		DbContext.Add(category);
+		await DbContext.SaveChangesAsync();
+		var todoItem = TestModels.CreateTestTodoItem(todoList.Id, owner.Id, category.Id);
 		DbContext.Add(todoItem);
 		await DbContext.SaveChangesAsync();
 		TodoItemAggregateSpecification specification = new(todoItem.Id);
@@ -63,5 +66,7 @@ public class TodoItemsRepositoryTests : BaseRepositoryTests<TodoItem, int>
 		Assert.That(aggregate, Is.Not.Null);
 		Assert.That(aggregate.Owner, Is.Not.Null);
 		Assert.That(aggregate.Owner.Id, Is.EqualTo(owner.Id));
+		Assert.That(aggregate.Category, Is.Not.Null);
+		Assert.That(aggregate.Category.Id, Is.EqualTo(category.Id));
 	}
 }
