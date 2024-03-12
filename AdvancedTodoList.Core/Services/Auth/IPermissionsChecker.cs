@@ -47,7 +47,7 @@ public interface IPermissionsChecker
 	/// <see langword="true"/> if user is either an owner of the entity and a member of a to-do list,
 	/// or he/she/they has permission defined by <paramref name="permission"/>; otherwise <see langword="false" />.
 	/// </returns>
-	Task<bool> CanTouchEntityAsync<TEntity, TKey>(TodoListContext context, TEntity entity, 
+	Task<bool> CanTouchEntityAsync<TEntity, TKey>(TodoListContext context, TEntity entity,
 		Func<RolePermissions, bool> permission)
 		where TEntity : class, IEntity<TKey>
 		where TKey : IEquatable<TKey>;
@@ -63,6 +63,6 @@ public interface IPermissionsChecker
 	/// <see langword="true"/> if user has <paramref name="permission"/> and highest role priority than
 	/// the <paramref name="rolePriority"/>; otherwise <see langword="false" />.
 	/// </returns>
-	Task<bool> HasPermissionOverRoleAsync(TodoListContext context, int rolePriority, 
+	Task<bool> HasPermissionOverRoleAsync(TodoListContext context, int rolePriority,
 		Func<RolePermissions, bool> permission);
 }

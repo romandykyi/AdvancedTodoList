@@ -6,7 +6,6 @@ using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
-using System.Data;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 

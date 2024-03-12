@@ -17,7 +17,7 @@ namespace AdvancedTodoList.Infrastructure.Services;
 /// <typeparam name="TEntity">Type of the to-do list dependant entity.</typeparam>
 /// <typeparam name="TKey">Type of the unique identifier used by the entity.</typeparam>
 public sealed class TodoListDependantEntitiesService<TEntity, TKey>(
-	IRepository<TEntity, TKey> repository, 
+	IRepository<TEntity, TKey> repository,
 	IEntityExistenceChecker existenceChecker,
 	IPermissionsChecker permissionsChecker) : ITodoListDependantEntitiesService<TEntity, TKey>
 	where TEntity : class, IEntity<TKey>, ITodoListDependant
@@ -25,7 +25,7 @@ public sealed class TodoListDependantEntitiesService<TEntity, TKey>(
 {
 	private readonly IRepository<TEntity, TKey> _repository = repository;
 	private readonly IEntityExistenceChecker _existenceChecker = existenceChecker;
-	private readonly IPermissionsChecker _permissionsChecker = permissionsChecker;	
+	private readonly IPermissionsChecker _permissionsChecker = permissionsChecker;
 
 	/// <summary>
 	/// Retrieves a page of to-do list dependant entities mapped to <typeparamref name="TDto"/>.
@@ -78,7 +78,7 @@ public sealed class TodoListDependantEntitiesService<TEntity, TKey>(
 		// Get the model
 		var entity = await _repository.GetByIdAsync(entityId);
 		// Return null if model is null or has wrong to-do list ID
-		if (entity == null || entity.TodoListId != context.TodoListId) 
+		if (entity == null || entity.TodoListId != context.TodoListId)
 			return new(ServiceResponseStatus.NotFound);
 
 		// Map it to DTO and return

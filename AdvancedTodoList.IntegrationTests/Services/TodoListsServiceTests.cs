@@ -7,8 +7,6 @@ using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
 using NSubstitute.ExceptionExtensions;
-using NUnit.Framework.Interfaces;
-using System;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 
@@ -196,7 +194,7 @@ public class TodoListsServiceTests : BusinessLogicFixture
 			.GetByIdAsync(todoList.Id)
 			.Returns(todoList);
 		WebApplicationFactory.PermissionsChecker
-			.CanTouchEntityAsync<TodoList, string>(new(todoList.Id, TestUserId), 
+			.CanTouchEntityAsync<TodoList, string>(new(todoList.Id, TestUserId),
 			Arg.Any<TodoList>(), Arg.Any<Func<RolePermissions, bool>>())
 			.Returns(false);
 

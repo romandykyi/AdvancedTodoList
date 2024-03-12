@@ -1,5 +1,4 @@
 ﻿using AdvancedTodoList.Core.Dtos;
-using AdvancedTodoList.Core.Models;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Repositories;
@@ -7,7 +6,6 @@ using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Services.Auth;
 using AdvancedTodoList.Infrastructure.Specifications;
 using Mapster;
-using System.Security;
 
 namespace AdvancedTodoList.Infrastructure.Services;
 

@@ -6,7 +6,6 @@ using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Services.Auth;
 using AdvancedTodoList.Infrastructure.Specifications;
 using Mapster;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace AdvancedTodoList.Infrastructure.Services;
 

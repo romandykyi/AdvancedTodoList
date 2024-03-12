@@ -93,7 +93,7 @@ public class PermissionsChecker(ITodoListMembersRepository membersRepository) : 
 		var member = await _membersRepository.GetAggregateAsync<PermissionsAggregate>(specification);
 
 		// User is not a member, has no role or permission - return false
-		if (member == null || member.Role == null || !permission(member.Role.Permissions)) 
+		if (member == null || member.Role == null || !permission(member.Role.Permissions))
 			return false;
 
 		// Check if user has a higher priority

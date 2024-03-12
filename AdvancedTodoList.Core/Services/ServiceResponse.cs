@@ -11,7 +11,7 @@ public class ServiceResponse<T>(ServiceResponseStatus status, T? result = defaul
 	/// Gets the status of operation.
 	/// </summary>
 	public ServiceResponseStatus Status { get; } = status;
-	
+
 	/// <summary>
 	/// Gets the result of the operation.
 	/// </summary>

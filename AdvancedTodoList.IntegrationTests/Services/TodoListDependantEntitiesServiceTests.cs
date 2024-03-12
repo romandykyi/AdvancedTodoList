@@ -1,5 +1,4 @@
-﻿using AdvancedTodoList.Core.Models;
-using AdvancedTodoList.Core.Models.TodoLists;
+﻿using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
@@ -7,8 +6,6 @@ using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
 using Mapster;
-using NSubstitute;
-using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 
 namespace AdvancedTodoList.IntegrationTests.Services;

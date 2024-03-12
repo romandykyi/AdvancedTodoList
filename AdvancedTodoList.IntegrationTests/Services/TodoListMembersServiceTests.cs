@@ -1,5 +1,4 @@
 ﻿using AdvancedTodoList.Core.Dtos;
-using AdvancedTodoList.Core.Models;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
@@ -8,7 +7,6 @@ using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
 using NUnit.Framework.Internal;
-using Org.BouncyCastle.Asn1.X509;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 

@@ -3,7 +3,6 @@ using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.IntegrationTests.Fixtures;
-using NUnit.Framework.Interfaces;
 using System.Net;
 using System.Net.Http.Json;
 

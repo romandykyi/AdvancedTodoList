@@ -39,7 +39,7 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 		WebApplicationFactory.TodoListMembersService
 			.GetMembersAsync(TestContext, parameters)
 			.Returns(x => new ServiceResponse<Page<TodoListMemberPreviewDto>>(ServiceResponseStatus.Success,
-			new (members, ((PaginationParameters)x[1]).Page, ((PaginationParameters)x[1]).PageSize, 22)));
+			new(members, ((PaginationParameters)x[1]).Page, ((PaginationParameters)x[1]).PageSize, 22)));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request

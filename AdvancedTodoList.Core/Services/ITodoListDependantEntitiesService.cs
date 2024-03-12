@@ -76,7 +76,7 @@ public interface ITodoListDependantEntitiesService<TEntity, TKey>
 	/// A task representing the asynchronous operation. The task contains
 	/// a result of the operation.
 	/// </returns>
-	public Task<ServiceResponseStatus> UpdateAsync<TDto>(TodoListContext context, TKey entityId, 
+	public Task<ServiceResponseStatus> UpdateAsync<TDto>(TodoListContext context, TKey entityId,
 		TDto dto, Func<RolePermissions, bool>? permission = null);
 
 	/// <summary>
