@@ -31,7 +31,21 @@ public class TodoItem : IEntity<int>, ITodoListDependant, IHasOwner
 	/// <summary>
 	/// Deadline date for the todo item. Can be null.
 	/// </summary>
-	public required DateTime? DeadlineDate { get; set; }
+	public DateTime? DeadlineDate { get; set; }
+	/// <summary>
+	/// Priority of the item. 0 means the lowest, 10 means the highest.
+	/// </summary>
+	public int Priority { get; set; } = 0;
+
+	/// <summary>
+	/// Foreign key referencing the associated category.
+	/// </summary>
+	[ForeignKey(nameof(Category))]
+	public int? CategoryId { get; set; }
+	/// <summary>
+	/// Navigation property to the category associated with this to-do item.
+	/// </summary>
+	public TodoItemCategory? Category { get; set; }
 
 	/// <summary>
 	/// Foreign key referencing the associated to-do list.
@@ -61,6 +75,15 @@ public class TodoItem : IEntity<int>, ITodoListDependant, IHasOwner
 	/// Maximum allowed length of <see cref="Description"/>.
 	/// </summary>
 	public const int DescriptionMaxLength = 10_000;
+
+	/// <summary>
+	/// Minimum allowed value of <see cref="Priority" />
+	/// </summary>
+	public const int MinPriority = 0;
+	/// <summary>
+	/// Maximum allowed value of <see cref="Priority" />
+	/// </summary>
+	public const int MaxPriority = 10;
 }
 
 /// <summary>
