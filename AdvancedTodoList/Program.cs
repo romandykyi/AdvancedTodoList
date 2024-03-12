@@ -113,6 +113,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // Register application repositories
 builder.Services.AddScoped<IRepository<TodoList, string>, TodoListRepository>();
 builder.Services.AddScoped<IRepository<TodoItem, int>, TodoItemsRepository>();
+builder.Services.AddScoped<IRepository<TodoItemCategory, int>, TodoItemCategoriesRepository>();
 builder.Services.AddScoped<ITodoListMembersRepository, TodoListMembersRepository>();
 builder.Services.AddScoped<IRepository<TodoListMember, int>, TodoListMembersRepository>();
 builder.Services.AddScoped<IRepository<TodoListRole, int>, TodoListRolesRepository>();
