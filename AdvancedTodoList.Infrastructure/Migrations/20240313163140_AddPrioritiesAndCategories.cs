@@ -10,6 +10,13 @@ namespace AdvancedTodoList.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<bool>(
+                name: "Permissions_EditCategories",
+                table: "TodoListRoles",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
+
             migrationBuilder.AddColumn<int>(
                 name: "CategoryId",
                 table: "TodoItems",
@@ -74,6 +81,10 @@ namespace AdvancedTodoList.Infrastructure.Migrations
             migrationBuilder.DropIndex(
                 name: "IX_TodoItems_CategoryId",
                 table: "TodoItems");
+
+            migrationBuilder.DropColumn(
+                name: "Permissions_EditCategories",
+                table: "TodoListRoles");
 
             migrationBuilder.DropColumn(
                 name: "CategoryId",

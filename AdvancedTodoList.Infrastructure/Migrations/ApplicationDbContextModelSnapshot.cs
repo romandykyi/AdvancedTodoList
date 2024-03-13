@@ -189,6 +189,9 @@ namespace AdvancedTodoList.Infrastructure.Migrations
                             b1.Property<bool>("DeleteItems")
                                 .HasColumnType("bit");
 
+                            b1.Property<bool>("EditCategories")
+                                .HasColumnType("bit");
+
                             b1.Property<bool>("EditItems")
                                 .HasColumnType("bit");
 

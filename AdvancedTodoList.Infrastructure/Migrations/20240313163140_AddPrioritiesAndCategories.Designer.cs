@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdvancedTodoList.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240312181041_AddPrioritiesAndCategories")]
+    [Migration("20240313163140_AddPrioritiesAndCategories")]
     partial class AddPrioritiesAndCategories
     {
         /// <inheritdoc />
@@ -190,6 +190,9 @@ namespace AdvancedTodoList.Infrastructure.Migrations
                                 .HasColumnType("bit");
 
                             b1.Property<bool>("DeleteItems")
+                                .HasColumnType("bit");
+
+                            b1.Property<bool>("EditCategories")
                                 .HasColumnType("bit");
 
                             b1.Property<bool>("EditItems")
