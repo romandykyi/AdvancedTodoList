@@ -14,6 +14,7 @@ public class EndpointsWebApplicationFactory : WebApplicationFactory<Program>
 	public IAuthService AuthService { get; private set; } = null!;
 	public ITodoListsService TodoListsService { get; private set; } = null!;
 	public ITodoItemsService TodoItemsService { get; private set; } = null!;
+	public ITodoItemCategoriesService TodoItemCategoriesService { get; private set; } = null!;
 	public ITodoListRolesService TodoListRolesService { get; private set; } = null!;
 	public ITodoListMembersService TodoListMembersService { get; private set; } = null!;
 	public IEntityExistenceChecker EntityExistenceChecker { get; private set; } = null!;
@@ -24,6 +25,7 @@ public class EndpointsWebApplicationFactory : WebApplicationFactory<Program>
 		AuthService = Substitute.For<IAuthService>();
 		TodoListsService = Substitute.For<ITodoListsService>();
 		TodoItemsService = Substitute.For<ITodoItemsService>();
+		TodoItemCategoriesService = Substitute.For<ITodoItemCategoriesService>();
 		TodoListRolesService = Substitute.For<ITodoListRolesService>();
 		TodoListMembersService = Substitute.For<ITodoListMembersService>();
 		EntityExistenceChecker = Substitute.For<IEntityExistenceChecker>();
@@ -33,7 +35,7 @@ public class EndpointsWebApplicationFactory : WebApplicationFactory<Program>
 			services.AddScoped(_ => AuthService);
 			services.AddScoped(_ => TodoListsService);
 			services.AddScoped(_ => TodoItemsService);
-			services.AddScoped(_ => TodoItemsService);
+			services.AddScoped(_ => TodoItemCategoriesService);
 			services.AddScoped(_ => TodoListRolesService);
 			services.AddScoped(_ => TodoListMembersService);
 			services.AddScoped(_ => EntityExistenceChecker);
