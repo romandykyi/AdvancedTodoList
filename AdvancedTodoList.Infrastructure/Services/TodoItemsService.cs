@@ -14,12 +14,14 @@ namespace AdvancedTodoList.Infrastructure.Services;
 public class TodoItemsService(
 	ITodoListDependantEntitiesService<TodoItem, int> helperService,
 	IRepository<TodoItem, int> repository,
+	ITodoItemCategoriesService categoriesService,
 	IEntityExistenceChecker existenceChecker,
 	IPermissionsChecker permissionsChecker
 	) : ITodoItemsService
 {
 	private readonly ITodoListDependantEntitiesService<TodoItem, int> _helperService = helperService;
 	private readonly IRepository<TodoItem, int> _repository = repository;
+	private readonly ITodoItemCategoriesService _categoriesService = categoriesService;
 	private readonly IEntityExistenceChecker _existenceChecker = existenceChecker;
 	private readonly IPermissionsChecker _permissionsChecker = permissionsChecker;
 
@@ -62,7 +64,7 @@ public class TodoItemsService(
 		if (dto == null || dto.TodoListId != context.TodoListId)
 			return new(ServiceResponseStatus.NotFound);
 
-		// Retyrb requested DTO
+		// Return requested DTO
 		return new(ServiceResponseStatus.Success, dto);
 	}
 
@@ -71,13 +73,19 @@ public class TodoItemsService(
 	/// </summary>
 	/// <param name="context">To-do list context.</param>
 	/// <param name="dto">The DTO containing information for creating the to-do list item.</param>
-	/// <param name="callerId">ID of the user who creates the to-do list item.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<ServiceResponse<TodoItemGetByIdDto>> CreateAsync(TodoListContext context, TodoItemCreateDto dto, string callerId)
+	public async Task<TodoItemsServiceResponse> CreateAsync(TodoListContext context, TodoItemCreateDto dto)
 	{
-		return _helperService.CreateAsync<TodoItemCreateDto, TodoItemGetByIdDto>(context, dto, x => x.AddItems);
+		// Validate the category
+		if (!await _categoriesService.IsCategoryValidForContext(context, dto.CategoryId))
+			return new(TodoItemsServiceStatus.InvalidCategoryId);
+
+		var response = await _helperService.CreateAsync<TodoItemCreateDto, TodoItemGetByIdDto>
+			(context, dto, x => x.AddItems);
+
+		return new(ToTodoItemsServiceStatus(response.Status), response.Result);
 	}
 
 	/// <summary>
@@ -89,9 +97,14 @@ public class TodoItemsService(
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<ServiceResponseStatus> EditAsync(TodoListContext context, int itemId, TodoItemCreateDto dto)
+	public async Task<TodoItemsServiceStatus> EditAsync(TodoListContext context, int itemId, TodoItemCreateDto dto)
 	{
-		return _helperService.UpdateAsync(context, itemId, dto, x => x.EditItems);
+		// Validate the category
+		if (!await _categoriesService.IsCategoryValidForContext(context, dto.CategoryId))
+			return TodoItemsServiceStatus.InvalidCategoryId;
+
+		var response = await _helperService.UpdateAsync(context, itemId, dto, x => x.EditItems);
+		return ToTodoItemsServiceStatus(response);
 	}
 
 	/// <summary>
@@ -119,5 +132,16 @@ public class TodoItemsService(
 	public Task<ServiceResponseStatus> DeleteAsync(TodoListContext context, int itemId)
 	{
 		return _helperService.DeleteAsync(context, itemId, x => x.DeleteItems);
+	}
+
+	private static TodoItemsServiceStatus ToTodoItemsServiceStatus(ServiceResponseStatus status)
+	{
+		return status switch
+		{
+			ServiceResponseStatus.Success => TodoItemsServiceStatus.Success,
+			ServiceResponseStatus.NotFound => TodoItemsServiceStatus.NotFound,
+			ServiceResponseStatus.Forbidden => TodoItemsServiceStatus.Forbidden,
+			_ => throw new ArgumentException("Invalid service response", nameof(status))
+		};
 	}
 }

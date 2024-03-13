@@ -76,7 +76,6 @@ public class TodoItemCategoriesServiceTests : BusinessLogicFixture
 	{
 		// Arrange
 		int categoryId = 1;
-		var category = TestModels.CreateTestTodoItemCategory(TestContext.TodoListId);
 		WebApplicationFactory.TodoItemCategoriesRepository
 			.GetByIdAsync(categoryId)
 			.ReturnsNull();

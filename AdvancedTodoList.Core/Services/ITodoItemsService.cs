@@ -34,11 +34,10 @@ public interface ITodoItemsService
 	/// </summary>
 	/// <param name="context">To-do list context.</param>
 	/// <param name="dto">The DTO containing information for creating the to-do list item.</param>
-	/// <param name="callerId">ID of the user who creates the to-do list item.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<ServiceResponse<TodoItemGetByIdDto>> CreateAsync(TodoListContext context, TodoItemCreateDto dto, string callerId);
+	public Task<TodoItemsServiceResponse> CreateAsync(TodoListContext context, TodoItemCreateDto dto);
 
 	/// <summary>
 	/// Edits a to-do list item asynchronously.
@@ -49,7 +48,7 @@ public interface ITodoItemsService
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<ServiceResponseStatus> EditAsync(TodoListContext context, int itemId, TodoItemCreateDto dto);
+	public Task<TodoItemsServiceStatus> EditAsync(TodoListContext context, int itemId, TodoItemCreateDto dto);
 
 	/// <summary>
 	/// Updates the state of a to-do list item asynchronously.
