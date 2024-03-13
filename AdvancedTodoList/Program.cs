@@ -101,6 +101,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPermissionsChecker, PermissionsChecker>();
 builder.Services.AddScoped<ITodoListsService, TodoListsService>();
 builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
+builder.Services.AddScoped<ITodoItemCategoriesService, TodoItemCategoriesService>();
 builder.Services.AddScoped<ITodoListMembersService, TodoListMembersService>();
 builder.Services.AddScoped<ITodoListRolesService, TodoListRolesService>();
 builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
