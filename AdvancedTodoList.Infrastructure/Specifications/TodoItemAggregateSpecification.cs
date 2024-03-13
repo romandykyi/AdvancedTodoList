@@ -14,6 +14,7 @@ public class TodoItemAggregateSpecification(int id) : GetByIdSpecification<TodoI
 	/// </summary>
 	public override List<Expression<Func<TodoItem, object?>>> Includes =>
 	[
-		x => x.Owner
+		x => x.Owner,
+		x => x.Category
 	];
 }

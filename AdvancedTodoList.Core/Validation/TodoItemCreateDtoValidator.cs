@@ -35,5 +35,15 @@ public class TodoItemCreateDtoValidator : AbstractValidator<TodoItemCreateDto>
 		RuleFor(x => x.DeadlineDate)
 			.GreaterThan(DateTime.UtcNow)
 			.WithErrorCode(ValidationErrorCodes.PropertyOutOfRange);
+
+		// Priority must be in a specific range
+		RuleFor(x => x.Priority)
+			.GreaterThanOrEqualTo(TodoItem.MinPriority)
+			.WithErrorCode(ValidationErrorCodes.PropertyOutOfRange)
+			.WithMessage($"Priority must be within the range from {TodoItem.MinPriority} to {TodoItem.MaxPriority}");
+		RuleFor(x => x.Priority)
+			.LessThanOrEqualTo(TodoItem.MaxPriority)
+			.WithErrorCode(ValidationErrorCodes.PropertyOutOfRange)
+			.WithMessage($"Priority must be within the range from {TodoItem.MinPriority} to {TodoItem.MaxPriority}");
 	}
 }

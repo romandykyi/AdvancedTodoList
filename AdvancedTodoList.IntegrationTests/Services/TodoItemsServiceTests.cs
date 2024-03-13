@@ -1,10 +1,12 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
+using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
+using AdvancedTodoList.IntegrationTests.Utils;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 
@@ -48,7 +50,7 @@ public class TodoItemsServiceTests : BusinessLogicFixture
 		// Arrange
 		int todoItemId = 123;
 		TodoItemGetByIdDto dto = new(todoItemId, TestContext.TodoListId, "Name", "Description", null,
-			TodoItemState.Active, new("User", "Name"));
+			TodoItemState.Active, 3, new("User", "Name"), null);
 		WebApplicationFactory.PermissionsChecker
 			.IsMemberOfListAsync(TestContext)
 			.Returns(true);
@@ -77,7 +79,7 @@ public class TodoItemsServiceTests : BusinessLogicFixture
 		// Arrange
 		int todoItemId = 123;
 		TodoItemGetByIdDto dto = new(todoItemId, "WrongTodoListId", "Name", "Description", null,
-			TodoItemState.Active, new("User", "Name"));
+			TodoItemState.Active, 1, new("User", "Name"), null);
 		WebApplicationFactory.PermissionsChecker
 			.IsMemberOfListAsync(TestContext)
 			.Returns(true);
@@ -117,7 +119,7 @@ public class TodoItemsServiceTests : BusinessLogicFixture
 		// Arrange
 		int itemId = 123;
 		TodoItemGetByIdDto dto = new(itemId, TestContext.TodoListId, "Name", "Description", null,
-			TodoItemState.Active, new("User", "Name"));
+			TodoItemState.Active, 1, new("User", "Name"), null);
 		WebApplicationFactory.PermissionsChecker
 			.IsMemberOfListAsync(TestContext)
 			.Returns(false);
@@ -130,6 +132,89 @@ public class TodoItemsServiceTests : BusinessLogicFixture
 
 		// Assert
 		Assert.That(result.Status, Is.EqualTo(ServiceResponseStatus.Forbidden));
+	}
+
+	[Test]
+	public async Task CreateAsync_InvalidCategoryId_ReturnsInvalidCategoryId()
+	{
+		// Arrange
+		TodoItemCreateDto dto = new("A", "B", null, 5, 777);
+		WebApplicationFactory.TodoItemCategoriesRepository
+			.GetByIdAsync(dto.CategoryId!.Value)
+			.ReturnsNull();
+
+		// Act
+		var response = await _service.CreateAsync(TestContext, dto);
+
+		// Assert
+		Assert.That(response.Status, Is.EqualTo(TodoItemsServiceStatus.InvalidCategoryId));
+	}
+
+	[Test]
+	[TestCase(ServiceResponseStatus.Success, TodoItemsServiceStatus.Success)]
+	[TestCase(ServiceResponseStatus.Forbidden, TodoItemsServiceStatus.Forbidden)]
+	[TestCase(ServiceResponseStatus.NotFound, TodoItemsServiceStatus.NotFound)]
+	public async Task CreateAsync_ValidCategoryId_ReturnsConvertedResponse(
+		ServiceResponseStatus returnedStatus, TodoItemsServiceStatus expectedStatus)
+	{
+		// Arrange
+		TodoItemCreateDto dto = new("A", "B", null, 5, 777);
+		var category = TestModels.CreateTestTodoItemCategory(TestContext.TodoListId);
+		WebApplicationFactory.TodoItemCategoriesRepository
+			.GetByIdAsync(dto.CategoryId!.Value)
+			.Returns(category);
+		WebApplicationFactory.TodoItemsHelperService
+			.CreateAsync<TodoItemCreateDto, TodoItemGetByIdDto>(TestContext, dto,
+			Arg.Any<Func<RolePermissions, bool>>())
+			.Returns(new ServiceResponse<TodoItemGetByIdDto>(returnedStatus));
+
+		// Act
+		var response = await _service.CreateAsync(TestContext, dto);
+
+		// Assert
+		Assert.That(response.Status, Is.EqualTo(expectedStatus));
+	}
+
+	[Test]
+	public async Task EditAsync_InvalidCategoryId_ReturnsInvalidCategoryId()
+	{
+		// Arrange
+		int itemId = 123;
+		TodoItemCreateDto dto = new("A", "B", null, 5, 777);
+		WebApplicationFactory.TodoItemCategoriesRepository
+			.GetByIdAsync(dto.CategoryId!.Value)
+			.ReturnsNull();
+
+		// Act
+		var response = await _service.EditAsync(TestContext, itemId, dto);
+
+		// Assert
+		Assert.That(response, Is.EqualTo(TodoItemsServiceStatus.InvalidCategoryId));
+	}
+
+	[Test]
+	[TestCase(ServiceResponseStatus.Success, TodoItemsServiceStatus.Success)]
+	[TestCase(ServiceResponseStatus.Forbidden, TodoItemsServiceStatus.Forbidden)]
+	[TestCase(ServiceResponseStatus.NotFound, TodoItemsServiceStatus.NotFound)]
+	public async Task EditAsync_ValidCategoryId_ReturnsConvertedResponse(
+		ServiceResponseStatus returnedStatus, TodoItemsServiceStatus expectedStatus)
+	{
+		// Arrange
+		int itemId = 123;
+		TodoItemCreateDto dto = new("A", "B", null, 5, 777);
+		var category = TestModels.CreateTestTodoItemCategory(TestContext.TodoListId);
+		WebApplicationFactory.TodoItemCategoriesRepository
+			.GetByIdAsync(dto.CategoryId!.Value)
+			.Returns(category);
+		WebApplicationFactory.TodoItemsHelperService
+			.UpdateAsync(TestContext, itemId, dto, Arg.Any<Func<RolePermissions, bool>>())
+			.Returns(returnedStatus);
+
+		// Act
+		var response = await _service.EditAsync(TestContext, itemId, dto);
+
+		// Assert
+		Assert.That(response, Is.EqualTo(expectedStatus));
 	}
 
 	// Tests for other methods are useless, because they are just wrappers.

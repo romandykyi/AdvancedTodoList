@@ -1,4 +1,5 @@
 ﻿using AdvancedTodoList.Core.Dtos;
+using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using Mapster;
 
@@ -17,6 +18,10 @@ public static class MappingGlobalSettings
 		// Ignore null IDs
 		TypeAdapterConfig<TodoListMember, TodoListMemberPreviewDto>.NewConfig()
 			.IgnoreIf((src, dest) => src.RoleId == null, dest => dest.Role!);
+		TypeAdapterConfig<TodoItem, TodoItemGetByIdDto>.NewConfig()
+			.IgnoreIf((src, dest) => src.CategoryId == null, dest => dest.Category!);
+		TypeAdapterConfig<TodoItem, TodoItemPreviewDto>.NewConfig()
+			.IgnoreIf((src, dest) => src.CategoryId == null, dest => dest.Category!);
 
 		// Convert null strings into empty strings and trim strings
 		TypeAdapterConfig.GlobalSettings.Default

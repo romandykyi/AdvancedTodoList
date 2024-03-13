@@ -18,8 +18,10 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 	public IEntityExistenceChecker EntityExistenceChecker { get; private set; } = null!;
 	public IRepository<TodoList, string> TodoListsRepository { get; private set; } = null!;
 	public IRepository<TodoItem, int> TodoItemsRepository { get; private set; } = null!;
+	public IRepository<TodoItemCategory, int> TodoItemCategoriesRepository { get; private set; } = null!;
 	public IRepository<TestTodoListDependantEntity, int> TestTodoListDependantEntitiesRepository { get; private set; } = null!;
 	public ITodoListDependantEntitiesService<TodoItem, int> TodoItemsHelperService { get; set; } = null!;
+	public ITodoListDependantEntitiesService<TodoItemCategory, int> TodoItemCategoriesHelperService { get; set; } = null!;
 	public ITodoListDependantEntitiesService<TodoListRole, int> TodoRolesHelperService { get; set; } = null!;
 	public ITodoListDependantEntitiesService<TodoListMember, int> TodoMembersHelperService { get; set; } = null!;
 	public IUserRefreshTokensRepository RefreshTokensRepository { get; private set; } = null!;
@@ -34,8 +36,10 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 		EntityExistenceChecker = Substitute.For<IEntityExistenceChecker>();
 		TodoListsRepository = Substitute.For<IRepository<TodoList, string>>();
 		TodoItemsRepository = Substitute.For<IRepository<TodoItem, int>>();
+		TodoItemCategoriesRepository = Substitute.For<IRepository<TodoItemCategory, int>>();
 		TestTodoListDependantEntitiesRepository = Substitute.For<IRepository<TestTodoListDependantEntity, int>>();
 		TodoItemsHelperService = Substitute.For<ITodoListDependantEntitiesService<TodoItem, int>>();
+		TodoItemCategoriesHelperService = Substitute.For<ITodoListDependantEntitiesService<TodoItemCategory, int>>();
 		TodoRolesHelperService = Substitute.For<ITodoListDependantEntitiesService<TodoListRole, int>>();
 		TodoMembersHelperService = Substitute.For<ITodoListDependantEntitiesService<TodoListMember, int>>();
 		RefreshTokensRepository = Substitute.For<IUserRefreshTokensRepository>();
@@ -53,8 +57,10 @@ public class BusinessLogicWebApplicationFactory : WebApplicationFactory<Program>
 			services.AddScoped(_ => EntityExistenceChecker);
 			services.AddScoped(_ => TodoListsRepository);
 			services.AddScoped(_ => TodoItemsRepository);
+			services.AddScoped(_ => TodoItemCategoriesRepository);
 			services.AddScoped(_ => TestTodoListDependantEntitiesRepository);
 			services.AddScoped(_ => TodoItemsHelperService);
+			services.AddScoped(_ => TodoItemCategoriesHelperService);
 			services.AddScoped(_ => TodoRolesHelperService);
 			services.AddScoped(_ => TodoMembersHelperService);
 			services.AddScoped(_ => RefreshTokensRepository);

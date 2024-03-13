@@ -11,6 +11,7 @@
 /// <param name="RemoveMembers">A flag that determines whether user can remove members.</param>
 /// <param name="AssignRoles">A flag that determines whether user can assign a role to other member.</param>
 /// <param name="EditRoles">A flag that determines whether user can edit/delete existing roles and add new roles.</param>
+/// <param name="EditRoles">A flag that determines whether user can cedit/delete existing categories and add new categories.</param>
 public record struct RolePermissions(
 	bool SetItemsState = false,
 	bool AddItems = false,
@@ -19,11 +20,12 @@ public record struct RolePermissions(
 	bool AddMembers = false,
 	bool RemoveMembers = false,
 	bool AssignRoles = false,
-	bool EditRoles = false
+	bool EditRoles = false,
+	bool EditCategories = false
 	)
 {
 	/// <summary>
 	/// Instance of a structure with all permissions.
 	/// </summary>
-	public static readonly RolePermissions All = new(true, true, true, true, true, true, true, true);
+	public static readonly RolePermissions All = new(true, true, true, true, true, true, true, true, true);
 }

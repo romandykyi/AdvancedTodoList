@@ -78,12 +78,14 @@ public class TodoItemsController(ITodoItemsService todoItemsService) : Controlle
 		[FromRoute] string listId, [FromBody] TodoItemCreateDto dto)
 	{
 		TodoListContext context = new(listId, User.GetUserId()!);
-		var response = await _rolesService.CreateAsync(context, dto, User.GetUserId()!);
-		if (response.Status != ServiceResponseStatus.Success || response.Result == null)
-			return response.ToActionResult();
+		var response = await _rolesService.CreateAsync(context, dto);
+		if (response.Status == TodoItemsServiceStatus.Success && response.Result != null)
+		{
+			var routeValues = new { listId, itemId = response.Result!.Id };
+			return CreatedAtRoute(nameof(GetTodoItemByIdAsync), routeValues, response.Result);
+		}
 
-		var routeValues = new { listId, itemId = response.Result.Id };
-		return CreatedAtRoute(nameof(GetTodoItemByIdAsync), routeValues, response.Result);
+		return response.Status.ToActionResult();
 	}
 
 	/// <summary>

@@ -23,8 +23,8 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 		PaginationParameters parameters = new(Page: 2, PageSize: 20);
 		TodoItemPreviewDto[] items =
 		[
-			new(124013, TestContext.TodoListId, "1", null, TodoItemState.Active),
-			new(124124, TestContext.TodoListId, "2", null, TodoItemState.Completed)
+			new(124013, TestContext.TodoListId, "1", null, TodoItemState.Active, 3, null!, null),
+			new(124124, TestContext.TodoListId, "2", null, TodoItemState.Completed, 3, null!, null)
 		];
 		WebApplicationFactory.TodoItemsService
 			.GetItemsOfListAsync(TestContext, parameters)
@@ -115,7 +115,7 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 		// Arrange
 		int testItemId = 777;
 		TodoItemGetByIdDto testDto = new(testItemId, TestContext.TodoListId, "Test todo item",
-			"...", null, TodoItemState.Active, new("Id", "User"));
+			"...", null, TodoItemState.Active, 5, new("Id", "User"), null);
 
 		WebApplicationFactory.TodoItemsService
 			.GetByIdAsync(TestContext, testItemId)
@@ -184,10 +184,10 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 	public async Task PostTodoItem_ValidCall_Succeeds()
 	{
 		// Arrange
-		TodoItemCreateDto dto = new("Item", "...", DateTime.MaxValue);
+		TodoItemCreateDto dto = new("Item", "...", DateTime.MaxValue, 9, null);
 		WebApplicationFactory.TodoItemsService
-			.CreateAsync(TestContext, dto, TestUserId)
-			.Returns(new ServiceResponse<TodoItemGetByIdDto>(ServiceResponseStatus.Success));
+			.CreateAsync(TestContext, dto)
+			.Returns(new TodoItemsServiceResponse(TodoItemsServiceStatus.Success));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -198,17 +198,17 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 		// Assert that create method was called
 		await WebApplicationFactory.TodoItemsService
 			.Received()
-			.CreateAsync(TestContext, dto, TestUserId);
+			.CreateAsync(TestContext, dto);
 	}
 
 	[Test]
 	public async Task PostTodoItem_NotFoundStatus_Returns404()
 	{
 		// Arrange
-		TodoItemCreateDto dto = new("Item", "...", DateTime.MaxValue);
+		TodoItemCreateDto dto = new("Item", "...", DateTime.MaxValue, 9, null);
 		WebApplicationFactory.TodoItemsService
-			.CreateAsync(TestContext, dto, TestUserId)
-			.Returns(new ServiceResponse<TodoItemGetByIdDto>(ServiceResponseStatus.NotFound));
+			.CreateAsync(TestContext, dto)
+			.Returns(new TodoItemsServiceResponse(TodoItemsServiceStatus.NotFound));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -222,10 +222,10 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 	public async Task PostTodoItem_ForbiddenStatus_Returns403()
 	{
 		// Arrange
-		TodoItemCreateDto dto = new("Item", "...", DateTime.MaxValue);
+		TodoItemCreateDto dto = new("Item", "...", DateTime.MaxValue, 9, null);
 		WebApplicationFactory.TodoItemsService
-			.CreateAsync(TestContext, dto, TestUserId)
-			.Returns(new ServiceResponse<TodoItemGetByIdDto>(ServiceResponseStatus.Forbidden));
+			.CreateAsync(TestContext, dto)
+			.Returns(new TodoItemsServiceResponse(TodoItemsServiceStatus.Forbidden));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -236,10 +236,27 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 	}
 
 	[Test]
+	public async Task PostTodoItem_InvalidCategoryIdStatus_Returns400()
+	{
+		// Arrange
+		TodoItemCreateDto dto = new("Item", "...", DateTime.MaxValue, 9, null);
+		WebApplicationFactory.TodoItemsService
+			.CreateAsync(TestContext, dto)
+			.Returns(new TodoItemsServiceResponse(TodoItemsServiceStatus.InvalidCategoryId));
+		using HttpClient client = CreateAuthorizedHttpClient();
+
+		// Act: send the request
+		var result = await client.PostAsJsonAsync($"api/todo/{TestContext.TodoListId}/items", dto);
+
+		// Assert that response code is 403
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+	}
+
+	[Test]
 	public async Task PostTodoItem_NoAuthHeaderProvided_Returns401()
 	{
 		// Arrange
-		TodoItemCreateDto dto = new("Name", "Desc", DateTime.UtcNow.AddDays(5));
+		TodoItemCreateDto dto = new("Name", "Desc", DateTime.UtcNow.AddDays(5), 9, null);
 		using HttpClient client = WebApplicationFactory.CreateClient();
 
 		// Act: send the request
@@ -253,7 +270,7 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 	public async Task PostTodoItem_InvalidDto_Returns400()
 	{
 		// Arrange
-		TodoItemCreateDto invalidDto = new(string.Empty, string.Empty, DateTime.MinValue);
+		TodoItemCreateDto invalidDto = new(string.Empty, string.Empty, DateTime.MinValue, 9, null);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -268,10 +285,10 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		int testItemId = 891349;
-		TodoItemCreateDto dto = new("Do nothing for entire day", "...", DateTime.MaxValue);
+		TodoItemCreateDto dto = new("Do nothing for entire day", "...", DateTime.MaxValue, 9, null);
 		WebApplicationFactory.TodoItemsService
 			.EditAsync(TestContext, testItemId, dto)
-			.Returns(ServiceResponseStatus.Success);
+			.Returns(TodoItemsServiceStatus.Success);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -290,10 +307,10 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		int testItemId = 12412;
-		TodoItemCreateDto dto = new("New name", "New description", null);
+		TodoItemCreateDto dto = new("New name", "New description", null, 5, null);
 		WebApplicationFactory.TodoItemsService
 			.EditAsync(TestContext, testItemId, dto)
-			.Returns(ServiceResponseStatus.NotFound);
+			.Returns(TodoItemsServiceStatus.NotFound);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -308,10 +325,10 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		int testItemId = 12412;
-		TodoItemCreateDto dto = new("New name", "New description", null);
+		TodoItemCreateDto dto = new("New name", "New description", null, 5, null);
 		WebApplicationFactory.TodoItemsService
 			.EditAsync(TestContext, testItemId, dto)
-			.Returns(ServiceResponseStatus.Forbidden);
+			.Returns(TodoItemsServiceStatus.Forbidden);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -322,11 +339,29 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 	}
 
 	[Test]
+	public async Task PutTodoItem_InvalidCategoryIdStatus_Returns400()
+	{
+		// Arrange
+		int testItemId = 12412;
+		TodoItemCreateDto dto = new("New name", "New description", null, 5, null);
+		WebApplicationFactory.TodoItemsService
+			.EditAsync(TestContext, testItemId, dto)
+			.Returns(TodoItemsServiceStatus.InvalidCategoryId);
+		using HttpClient client = CreateAuthorizedHttpClient();
+
+		// Act: send the request
+		var result = await client.PutAsJsonAsync($"api/todo/{TestContext.TodoListId}/items/{testItemId}", dto);
+
+		// Assert that response code is 400
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+	}
+
+	[Test]
 	public async Task PutTodoItem_InvalidDto_Returns400()
 	{
 		// Arrange
 		int testItemId = 891349;
-		TodoItemCreateDto invalidDto = new(string.Empty, string.Empty, DateTime.MinValue);
+		TodoItemCreateDto invalidDto = new(string.Empty, string.Empty, DateTime.MinValue, 5, null);
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
@@ -335,12 +370,31 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 		// Assert that response code is 400
 		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
 	}
+
+	[Test]
+	public async Task PutTodoItem_InvalidCategoryId_Returns400()
+	{
+		// Arrange
+		int testItemId = 891349;
+		TodoItemCreateDto dto = new("New name", "New description", null, 5, 2);
+		WebApplicationFactory.TodoItemsService
+			.EditAsync(TestContext, testItemId, dto)
+			.Returns(TodoItemsServiceStatus.InvalidCategoryId);
+		using HttpClient client = CreateAuthorizedHttpClient();
+
+		// Act: send the request
+		var result = await client.PutAsJsonAsync($"api/todo/{TestContext.TodoListId}/items/{testItemId}", dto);
+
+		// Assert that response code is 400
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+	}
+
 	[Test]
 	public async Task PutTodoItem_NoAuthHeaderProvided_Returns401()
 	{
 		// Arrange
 		int testItemId = 891349;
-		TodoItemCreateDto dto = new("Name", "Desc", DateTime.UtcNow.AddDays(5));
+		TodoItemCreateDto dto = new("Name", "Desc", DateTime.UtcNow.AddDays(5), 5, null);
 		using HttpClient client = WebApplicationFactory.CreateClient();
 
 		// Act: send the request

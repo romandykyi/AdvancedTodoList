@@ -101,6 +101,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPermissionsChecker, PermissionsChecker>();
 builder.Services.AddScoped<ITodoListsService, TodoListsService>();
 builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
+builder.Services.AddScoped<ITodoItemCategoriesService, TodoItemCategoriesService>();
 builder.Services.AddScoped<ITodoListMembersService, TodoListMembersService>();
 builder.Services.AddScoped<ITodoListRolesService, TodoListRolesService>();
 builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
@@ -113,6 +114,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // Register application repositories
 builder.Services.AddScoped<IRepository<TodoList, string>, TodoListRepository>();
 builder.Services.AddScoped<IRepository<TodoItem, int>, TodoItemsRepository>();
+builder.Services.AddScoped<IRepository<TodoItemCategory, int>, TodoItemCategoriesRepository>();
 builder.Services.AddScoped<ITodoListMembersRepository, TodoListMembersRepository>();
 builder.Services.AddScoped<IRepository<TodoListMember, int>, TodoListMembersRepository>();
 builder.Services.AddScoped<IRepository<TodoListRole, int>, TodoListRolesRepository>();
