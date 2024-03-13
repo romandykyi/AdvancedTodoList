@@ -1,9 +1,6 @@
 ﻿using AdvancedTodoList.Core.Services;
-using Azure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace AdvancedTodoList.Extensions;
 

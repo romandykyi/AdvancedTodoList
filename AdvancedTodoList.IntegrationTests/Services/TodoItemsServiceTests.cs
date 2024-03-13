@@ -7,7 +7,6 @@ using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
-using Castle.Components.DictionaryAdapter;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 
@@ -134,7 +133,7 @@ public class TodoItemsServiceTests : BusinessLogicFixture
 		// Assert
 		Assert.That(result.Status, Is.EqualTo(ServiceResponseStatus.Forbidden));
 	}
-	
+
 	[Test]
 	public async Task CreateAsync_InvalidCategoryId_ReturnsInvalidCategoryId()
 	{
@@ -175,7 +174,7 @@ public class TodoItemsServiceTests : BusinessLogicFixture
 		// Assert
 		Assert.That(response.Status, Is.EqualTo(expectedStatus));
 	}
-	
+
 	[Test]
 	public async Task EditAsync_InvalidCategoryId_ReturnsInvalidCategoryId()
 	{

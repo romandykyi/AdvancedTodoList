@@ -12,7 +12,7 @@ public class TodoItemsServiceResponse(TodoItemsServiceStatus status, TodoItemGet
 	/// <summary>
 	/// Result of the operation.
 	/// </summary>
-	public TodoItemGetByIdDto? Result { get; set; }= result;
+	public TodoItemGetByIdDto? Result { get; set; } = result;
 }
 
 public enum TodoItemsServiceStatus

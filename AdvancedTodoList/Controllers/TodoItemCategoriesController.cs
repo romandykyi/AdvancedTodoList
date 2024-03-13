@@ -10,7 +10,7 @@ namespace AdvancedTodoList.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/todo/{listId}/categories")]
-public class TodoItemCategoriesController(ITodoItemCategoriesService categoriesService) : 
+public class TodoItemCategoriesController(ITodoItemCategoriesService categoriesService) :
 	ControllerBase
 {
 	private readonly ITodoItemCategoriesService _categoriesService = categoriesService;

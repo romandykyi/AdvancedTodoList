@@ -6,7 +6,7 @@ namespace AdvancedTodoList.Core.Dtos;
 /// DTO for creating/editing a to-do list item.
 /// </summary>
 public record TodoItemCreateDto(
-	string Name, string Description, DateTime? DeadlineDate, 
+	string Name, string Description, DateTime? DeadlineDate,
 	int Priority, int? CategoryId
 	);
 
@@ -31,7 +31,7 @@ public record TodoItemGetByIdDto(
 /// </summary>
 public record TodoItemPreviewDto(
 	int Id, string TodoListId, string Name,
-	DateTime? DeadlineDate, TodoItemState State, 
+	DateTime? DeadlineDate, TodoItemState State,
 	int Priority, ApplicationUserPreviewDto Owner,
 	TodoItemCategoryViewDto? Category
 	);
