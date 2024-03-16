@@ -1,5 +1,6 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Pagination;
+using AdvancedTodoList.Core.Specifications;
 
 namespace AdvancedTodoList.Core.Services;
 
@@ -13,10 +14,12 @@ public interface ITodoListMembersService
 	/// </summary>
 	/// <param name="context">To-do list context.</param>
 	/// <param name="paginationParameters">Pagination parameters to use.</param>
+	/// <param name="filter">Filter parameters to use.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	Task<ServiceResponse<Page<TodoListMemberPreviewDto>>> GetMembersAsync(TodoListContext context, PaginationParameters paginationParameters);
+	Task<ServiceResponse<Page<TodoListMemberPreviewDto>>> GetMembersAsync(TodoListContext context,
+		PaginationParameters paginationParameters, TodoListMembersFilter filter);
 
 	/// <summary>
 	/// Adds a member to a to-do list asynchronously.

@@ -1,6 +1,7 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Repositories;
+using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Utils;
 
@@ -82,7 +83,9 @@ public class TodoListMembersRepositoryTests : BaseRepositoryTests<TodoListMember
 #pragma warning disable NUnit2045 // Use Assert.Multiple
 		// Arrange
 		var entity = await AddTestEntityToDbAsync();
-		TodoListMembersSpecification specification = new(entity.TodoListId);
+		TodoListMembersFilter filter = new([entity.RoleId], entity.UserId, 
+			entity.User.UserName, entity.User.FirstName);
+		TodoListMembersSpecification specification = new(entity.TodoListId, new([]));
 
 		// Act
 		var page = await Repository.GetPageAsync<TodoListMemberPreviewDto>(new(1, 5), specification);

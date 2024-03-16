@@ -3,6 +3,7 @@ using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using System.Net;
 using System.Net.Http.Json;
@@ -31,13 +32,14 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		PaginationParameters parameters = new(Page: 2, PageSize: 20);
+		TodoListMembersFilter filter = new([]);
 		TodoListMemberPreviewDto[] members =
 		[
 			new(124, new ApplicationUserPreviewDto("ID", "UserName"), new TodoListRolePreviewDto(700, "Admin")),
 			new(512, new ApplicationUserPreviewDto("Rooster", "Inspector"), new TodoListRolePreviewDto(701, "Reviewer")),
 		];
 		WebApplicationFactory.TodoListMembersService
-			.GetMembersAsync(TestContext, parameters)
+			.GetMembersAsync(TestContext, parameters, filter)
 			.Returns(x => new ServiceResponse<Page<TodoListMemberPreviewDto>>(ServiceResponseStatus.Success,
 			new(members, ((PaginationParameters)x[1]).Page, ((PaginationParameters)x[1]).PageSize, 22)));
 		using HttpClient client = CreateAuthorizedHttpClient();
@@ -91,7 +93,7 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		WebApplicationFactory.TodoListMembersService
-			.GetMembersAsync(TestContext, Arg.Any<PaginationParameters>())
+			.GetMembersAsync(TestContext, Arg.Any<PaginationParameters>(), Arg.Any<TodoListMembersFilter>())
 			.Returns(new ServiceResponse<Page<TodoListMemberPreviewDto>>(ServiceResponseStatus.NotFound));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
@@ -107,7 +109,7 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		WebApplicationFactory.TodoListMembersService
-			.GetMembersAsync(TestContext, Arg.Any<PaginationParameters>())
+			.GetMembersAsync(TestContext, Arg.Any<PaginationParameters>(), Arg.Any<TodoListMembersFilter>())
 			.Returns(new ServiceResponse<Page<TodoListMemberPreviewDto>>(ServiceResponseStatus.Forbidden));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
