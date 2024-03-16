@@ -35,7 +35,7 @@ public class TodoListMembersSpecificationTests
 	{
 		// Arrange
 		string todoListId = _testMember.TodoListId;
-		TodoListMembersSpecification specification = new(todoListId, new([]));
+		TodoListMembersSpecification specification = new(todoListId, new());
 		var function = specification.Criteria.Compile();
 
 		// Act
@@ -49,7 +49,7 @@ public class TodoListMembersSpecificationTests
 	public void Criteria_TodoListIdDoesNotMatch_ReturnsFalse()
 	{
 		// Arrange
-		TodoListMembersSpecification specification = new("Wrong ID", new([]));
+		TodoListMembersSpecification specification = new("Wrong ID", new());
 		var function = specification.Criteria.Compile();
 
 		// Act
@@ -96,7 +96,7 @@ public class TodoListMembersSpecificationTests
 	{
 		// Arrange
 		string todoListId = _testMember.TodoListId;
-		TodoListMembersSpecification specification = new(todoListId, new([], UserId: _testMember.UserId));
+		TodoListMembersSpecification specification = new(todoListId, new(UserId: _testMember.UserId));
 		var function = specification.Criteria.Compile();
 
 		// Act
@@ -111,7 +111,7 @@ public class TodoListMembersSpecificationTests
 	{
 		// Arrange
 		string todoListId = _testMember.TodoListId;
-		TodoListMembersSpecification specification = new(todoListId, new([], UserId: "wrong id"));
+		TodoListMembersSpecification specification = new(todoListId, new(UserId: "wrong id"));
 		var function = specification.Criteria.Compile();
 
 		// Act
@@ -126,7 +126,7 @@ public class TodoListMembersSpecificationTests
 	{
 		// Arrange
 		string todoListId = _testMember.TodoListId;
-		TodoListMembersSpecification specification = new(todoListId, new([], 
+		TodoListMembersSpecification specification = new(todoListId, new(
 			UserName: _testMember.User.UserName![1..4]));
 		var function = specification.Criteria.Compile();
 
@@ -142,7 +142,7 @@ public class TodoListMembersSpecificationTests
 	{
 		// Arrange
 		string todoListId = _testMember.TodoListId;
-		TodoListMembersSpecification specification = new(todoListId, new([], 
+		TodoListMembersSpecification specification = new(todoListId, new(
 			UserName: "wrong-username"));
 		var function = specification.Criteria.Compile();
 
@@ -158,7 +158,7 @@ public class TodoListMembersSpecificationTests
 	{
 		// Arrange
 		string todoListId = _testMember.TodoListId;
-		TodoListMembersSpecification specification = new(todoListId, new([], 
+		TodoListMembersSpecification specification = new(todoListId, new(
 			FullName: _testMember.User.LastName![1..3]));
 		var function = specification.Criteria.Compile();
 
@@ -174,7 +174,7 @@ public class TodoListMembersSpecificationTests
 	{
 		// Arrange
 		string todoListId = _testMember.TodoListId;
-		TodoListMembersSpecification specification = new(todoListId, new([], 
+		TodoListMembersSpecification specification = new(todoListId, new(
 			FullName: "wrong-username"));
 		var function = specification.Criteria.Compile();
 

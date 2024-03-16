@@ -28,7 +28,7 @@ public class TodoListMembersSpecification(string todoListId, TodoListMembersFilt
 	public Expression<Func<TodoListMember, bool>> Criteria =>
 		x => x.TodoListId == TodoListId &&
 		// Filter by roles
-		(!Filter.RoleId.Any() || Filter.RoleId.Contains(x.RoleId)) &&
+		(Filter.RoleId == null || !Filter.RoleId.Any() || Filter.RoleId.Contains(x.RoleId)) &&
 		// Filter by user ID
 		(Filter.UserId == null || x.UserId == Filter.UserId) &&
 		// Filter by username

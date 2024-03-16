@@ -32,14 +32,13 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		PaginationParameters parameters = new(Page: 2, PageSize: 20);
-		TodoListMembersFilter filter = new([]);
 		TodoListMemberPreviewDto[] members =
 		[
 			new(124, new ApplicationUserPreviewDto("ID", "UserName"), new TodoListRolePreviewDto(700, "Admin")),
 			new(512, new ApplicationUserPreviewDto("Rooster", "Inspector"), new TodoListRolePreviewDto(701, "Reviewer")),
 		];
 		WebApplicationFactory.TodoListMembersService
-			.GetMembersAsync(TestContext, parameters, filter)
+			.GetMembersAsync(TestContext, parameters, Arg.Any<TodoListMembersFilter>())
 			.Returns(x => new ServiceResponse<Page<TodoListMemberPreviewDto>>(ServiceResponseStatus.Success,
 			new(members, ((PaginationParameters)x[1]).Page, ((PaginationParameters)x[1]).PageSize, 22)));
 		using HttpClient client = CreateAuthorizedHttpClient();
