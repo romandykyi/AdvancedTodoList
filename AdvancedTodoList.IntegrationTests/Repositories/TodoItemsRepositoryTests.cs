@@ -1,5 +1,6 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
+using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Utils;
 
@@ -41,10 +42,8 @@ public class TodoItemsRepositoryTests : BaseRepositoryTests<TodoItem, int>
 		return TestModels.CreateTestTodoItem(todoList.Id);
 	}
 
-	[Test]
-	public async Task GetAggregateAsync_TodoListAggregateSpecification_IncludesOwnerAndCategory()
+	private async Task<TodoItem> CreateItemWithOwnerAndCategoryAsync()
 	{
-		// Arrange
 		var owner = TestModels.CreateTestUser();
 		DbContext.Add(owner);
 		await DbContext.SaveChangesAsync();
@@ -57,6 +56,16 @@ public class TodoItemsRepositoryTests : BaseRepositoryTests<TodoItem, int>
 		var todoItem = TestModels.CreateTestTodoItem(todoList.Id, owner.Id, category.Id);
 		DbContext.Add(todoItem);
 		await DbContext.SaveChangesAsync();
+
+		return todoItem;
+	}
+
+	[Test]
+	public async Task GetAggregateAsync_TodoListAggregateSpecification_IncludesOwnerAndCategory()
+	{
+#pragma warning disable NUnit2045 // Use Assert.Multiple
+		// Arrange
+		var todoItem = await CreateItemWithOwnerAndCategoryAsync();
 		TodoItemAggregateSpecification specification = new(todoItem.Id);
 
 		// Act
@@ -65,8 +74,31 @@ public class TodoItemsRepositoryTests : BaseRepositoryTests<TodoItem, int>
 		// Assert
 		Assert.That(aggregate, Is.Not.Null);
 		Assert.That(aggregate.Owner, Is.Not.Null);
-		Assert.That(aggregate.Owner.Id, Is.EqualTo(owner.Id));
+		Assert.That(aggregate.Owner.Id, Is.EqualTo(todoItem.Owner!.Id));
 		Assert.That(aggregate.Category, Is.Not.Null);
-		Assert.That(aggregate.Category.Id, Is.EqualTo(category.Id));
+		Assert.That(aggregate.Category.Id, Is.EqualTo(todoItem.Category!.Id));
+#pragma warning restore NUnit2045 // Use Assert.Multiple
+	}
+
+	[Test]
+	public async Task GetPageAsync_IntegratesWithTodoItemsSpecification()
+	{
+#pragma warning disable NUnit2045 // Use Assert.Multiple
+		// Arrange
+		var todoItem = await CreateItemWithOwnerAndCategoryAsync();
+		TodoItemsFilter filter = new(todoItem.Name, todoItem.OwnerId, [todoItem.State], [todoItem.CategoryId]);
+		TodoItemsSpecification specification = new(todoItem.TodoListId, filter);
+
+		// Act
+		var page = await Repository.GetPageAsync<TodoItemPreviewDto>(new(1, 5), specification);
+
+		// Assert
+		var dto = page.Items.Where(x => x.Id == todoItem.Id).SingleOrDefault();
+		Assert.That(dto, Is.Not.Null);
+		Assert.That(dto.Category, Is.Not.Null);
+		Assert.That(dto.Category.Id, Is.EqualTo(todoItem.CategoryId));
+		Assert.That(dto.Owner, Is.Not.Null);
+		Assert.That(dto.Owner.Id, Is.EqualTo(todoItem.OwnerId));
+#pragma warning restore NUnit2045 // Use Assert.Multiple
 	}
 }
