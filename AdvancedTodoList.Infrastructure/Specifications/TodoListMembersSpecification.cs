@@ -34,7 +34,7 @@ public class TodoListMembersSpecification(string todoListId, TodoListMembersFilt
 		// Filter by username
 		(Filter.UserName == null || x.User!.UserName!.Contains(Filter.UserName)) &&
 		// Filter by full name
-		(Filter.FullName == null || $"{x.User!.FirstName} {x.User!.LastName}".Contains(Filter.FullName));
+		(Filter.FullName == null || (x.User!.FirstName + ' ' + x.User!.LastName).Contains(Filter.FullName));
 
 	/// <summary>
 	/// Gets the list of include expressions specifying related entities to be included in the query results.

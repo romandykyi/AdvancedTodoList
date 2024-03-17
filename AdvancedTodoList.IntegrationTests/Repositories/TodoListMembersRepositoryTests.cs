@@ -85,7 +85,7 @@ public class TodoListMembersRepositoryTests : BaseRepositoryTests<TodoListMember
 		var entity = await AddTestEntityToDbAsync();
 		TodoListMembersFilter filter = new([entity.RoleId], entity.UserId, 
 			entity.User.UserName, entity.User.FirstName);
-		TodoListMembersSpecification specification = new(entity.TodoListId, new([]));
+		TodoListMembersSpecification specification = new(entity.TodoListId, filter);
 
 		// Act
 		var page = await Repository.GetPageAsync<TodoListMemberPreviewDto>(new(1, 5), specification);
