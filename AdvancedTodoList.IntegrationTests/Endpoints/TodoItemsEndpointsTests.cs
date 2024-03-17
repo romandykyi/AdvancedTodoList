@@ -2,6 +2,7 @@
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using System.Net;
 using System.Net.Http.Json;
@@ -27,7 +28,7 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 			new(124124, TestContext.TodoListId, "2", null, TodoItemState.Completed, 3, null!, null)
 		];
 		WebApplicationFactory.TodoItemsService
-			.GetItemsOfListAsync(TestContext, parameters)
+			.GetItemsOfListAsync(TestContext, parameters, Arg.Any<TodoItemsFilter>())
 			.Returns(x => new ServiceResponse<Page<TodoItemPreviewDto>>(
 				ServiceResponseStatus.Success, new(items, ((PaginationParameters)x[1]).Page,
 				((PaginationParameters)x[1]).PageSize, 22)));
@@ -82,7 +83,7 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		WebApplicationFactory.TodoItemsService
-			.GetItemsOfListAsync(TestContext, Arg.Any<PaginationParameters>())
+			.GetItemsOfListAsync(TestContext, Arg.Any<PaginationParameters>(), Arg.Any<TodoItemsFilter>())
 			.Returns(new ServiceResponse<Page<TodoItemPreviewDto>>(ServiceResponseStatus.NotFound));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
@@ -98,7 +99,7 @@ public class TodoItemsEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		WebApplicationFactory.TodoItemsService
-			.GetItemsOfListAsync(TestContext, Arg.Any<PaginationParameters>())
+			.GetItemsOfListAsync(TestContext, Arg.Any<PaginationParameters>(), Arg.Any<TodoItemsFilter>())
 			.Returns(new ServiceResponse<Page<TodoItemPreviewDto>>(ServiceResponseStatus.Forbidden));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
