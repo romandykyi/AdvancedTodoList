@@ -3,7 +3,7 @@ using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
-using AdvancedTodoList.Core.Services.Auth;
+using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
 using Mapster;
 
@@ -15,26 +15,26 @@ namespace AdvancedTodoList.Infrastructure.Services;
 public class TodoListMembersService(
 	ITodoListDependantEntitiesService<TodoListMember, int> helperService,
 	ITodoListMembersRepository membersRepository,
-	IRepository<TodoListRole, int> rolesRepository,
-	IPermissionsChecker permissionsChecker) :
+	IRepository<TodoListRole, int> rolesRepository) :
 	ITodoListMembersService
 {
 	private readonly ITodoListDependantEntitiesService<TodoListMember, int> _helperService = helperService;
 	private readonly ITodoListMembersRepository _membersRepository = membersRepository;
 	private readonly IRepository<TodoListRole, int> _rolesRepository = rolesRepository;
-	private readonly IPermissionsChecker _permissionsChecker = permissionsChecker;
 
 	/// <summary>
 	/// Gets a page with members of a to-do list asynchronously.
 	/// </summary>
 	/// <param name="context">To-do list context.</param>
 	/// <param name="paginationParameters">Pagination parameters to use.</param>
+	/// <param name="filter">Filter parameters to use.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<ServiceResponse<Page<TodoListMemberPreviewDto>>> GetMembersAsync(TodoListContext context, PaginationParameters paginationParameters)
+	public Task<ServiceResponse<Page<TodoListMemberPreviewDto>>> GetMembersAsync(TodoListContext context, 
+		PaginationParameters paginationParameters, TodoListMembersFilter filter)
 	{
-		TodoListMembersSpecification specification = new(context.TodoListId);
+		TodoListMembersSpecification specification = new(context.TodoListId, filter);
 		return _helperService.GetPageAsync<TodoListMemberPreviewDto>(
 			context, specification, paginationParameters
 			);

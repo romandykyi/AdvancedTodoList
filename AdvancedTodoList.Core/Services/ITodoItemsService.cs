@@ -1,5 +1,6 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Pagination;
+using AdvancedTodoList.Core.Specifications;
 
 namespace AdvancedTodoList.Core.Services;
 
@@ -13,11 +14,12 @@ public interface ITodoItemsService
 	/// </summary>
 	/// <param name="context">To-do list context.</param>
 	/// <param name="paginationParameters">Pagination parameters to use.</param>
+	/// <param name="filter">Filter parameters to apply.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
 	public Task<ServiceResponse<Page<TodoItemPreviewDto>>> GetItemsOfListAsync(
-		TodoListContext context, PaginationParameters paginationParameters);
+		TodoListContext context, PaginationParameters paginationParameters, TodoItemsFilter filter);
 
 	/// <summary>
 	/// Retrieves a to-do list item by its ID asynchronously.

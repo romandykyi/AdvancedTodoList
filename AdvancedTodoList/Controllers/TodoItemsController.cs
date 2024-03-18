@@ -1,6 +1,7 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ public class TodoItemsController(ITodoItemsService todoItemsService) : Controlle
 	/// </summary>
 	/// <param name="listId">ID of the to-do list.</param>
 	/// <param name="paginationParameters">Paginations parameters to apply.</param>
+	/// <param name="filter">Filter parameters to apply.</param>
 	/// <response code="200">Returns items of the to-do list.</response>
 	/// <response code="401">Authentication failed.</response>
 	/// <response code="403">User has no permission to perform this action.</response>
@@ -29,10 +31,11 @@ public class TodoItemsController(ITodoItemsService todoItemsService) : Controlle
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetListItemsAsync(
-		[FromRoute] string listId, [FromQuery] PaginationParameters paginationParameters)
+		[FromRoute] string listId, [FromQuery] PaginationParameters paginationParameters,
+		[FromQuery] TodoItemsFilter filter)
 	{
 		TodoListContext context = new(listId, User.GetUserId()!);
-		var result = await _rolesService.GetItemsOfListAsync(context, paginationParameters);
+		var result = await _rolesService.GetItemsOfListAsync(context, paginationParameters, filter);
 		return result.ToActionResult();
 	}
 

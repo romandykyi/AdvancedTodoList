@@ -35,20 +35,22 @@ public class TodoListMembersServiceTests : BusinessLogicFixture
 	{
 		// Arrange
 		PaginationParameters parameters = new(2, 5);
+		TodoListMembersFilter filter = new([], "Test");
 		Page<TodoListMemberPreviewDto> testPage = new([], 1, 1, 1);
 		WebApplicationFactory.TodoMembersHelperService
 			.GetPageAsync<TodoListMemberPreviewDto>(TestContext, Arg.Any<ISpecification<TodoListMember>>(), Arg.Any<PaginationParameters>())
 			.Returns(new ServiceResponse<Page<TodoListMemberPreviewDto>>(ServiceResponseStatus.Success, testPage));
 
 		// Act
-		var result = await _service.GetMembersAsync(TestContext, parameters);
+		var result = await _service.GetMembersAsync(TestContext, parameters, filter);
 
 		// Assert
 		Assert.That(result, Is.Not.Null);
 		await WebApplicationFactory.TodoMembersHelperService
 			.Received()
 			.GetPageAsync<TodoListMemberPreviewDto>(TestContext,
-			Arg.Is<TodoListMembersSpecification>(x => x.TodoListId == TestContext.TodoListId),
+			Arg.Is<TodoListMembersSpecification>(x => 
+			x.TodoListId == TestContext.TodoListId && x.Filter.UserId == filter.UserId),
 			Arg.Any<PaginationParameters>());
 	}
 

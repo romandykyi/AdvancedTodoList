@@ -4,6 +4,7 @@ using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Services.Auth;
+using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
 
 namespace AdvancedTodoList.Infrastructure.Services;
@@ -15,14 +16,12 @@ public class TodoItemsService(
 	ITodoListDependantEntitiesService<TodoItem, int> helperService,
 	IRepository<TodoItem, int> repository,
 	ITodoItemCategoriesService categoriesService,
-	IEntityExistenceChecker existenceChecker,
 	IPermissionsChecker permissionsChecker
 	) : ITodoItemsService
 {
 	private readonly ITodoListDependantEntitiesService<TodoItem, int> _helperService = helperService;
 	private readonly IRepository<TodoItem, int> _repository = repository;
 	private readonly ITodoItemCategoriesService _categoriesService = categoriesService;
-	private readonly IEntityExistenceChecker _existenceChecker = existenceChecker;
 	private readonly IPermissionsChecker _permissionsChecker = permissionsChecker;
 
 	/// <summary>
@@ -30,16 +29,14 @@ public class TodoItemsService(
 	/// </summary>
 	/// <param name="context">To-do list context.</param>
 	/// <param name="paginationParameters">Pagination parameters to use.</param>
+	/// <param name="filter">Filter parameters to apply.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
 	public Task<ServiceResponse<Page<TodoItemPreviewDto>>> GetItemsOfListAsync(TodoListContext context,
-		PaginationParameters paginationParameters)
+		PaginationParameters paginationParameters, TodoItemsFilter filter)
 	{
-		TodoListDependantEntitiesSpecification<TodoItem> specification = new(context.TodoListId)
-		{
-			Includes = [x => x.Owner, x => x.Priority]
-		};
+		TodoItemsSpecification specification = new(context.TodoListId, filter);
 		return _helperService.GetPageAsync<TodoItemPreviewDto>(context, specification, paginationParameters);
 	}
 

@@ -13,10 +13,12 @@ public interface ITodoListRolesService
 	/// </summary>
 	/// <param name="context">To-do list context.</param>
 	/// <param name="paginationParameters">Pagination parameters to use.</param>
+	/// <param name="name">Optional name to filter categories by.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<ServiceResponse<Page<TodoListRolePreviewDto>>> GetRolesOfListAsync(TodoListContext context, PaginationParameters paginationParameters);
+	public Task<ServiceResponse<Page<TodoListRolePreviewDto>>> GetRolesOfListAsync(
+		TodoListContext context, PaginationParameters paginationParameters, string? name = null);
 
 	/// <summary>
 	/// Retrieves a to-do list role by its ID asynchronously.

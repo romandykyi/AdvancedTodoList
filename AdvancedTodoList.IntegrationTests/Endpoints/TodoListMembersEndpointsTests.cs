@@ -3,6 +3,7 @@ using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using System.Net;
 using System.Net.Http.Json;
@@ -37,7 +38,7 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 			new(512, new ApplicationUserPreviewDto("Rooster", "Inspector"), new TodoListRolePreviewDto(701, "Reviewer")),
 		];
 		WebApplicationFactory.TodoListMembersService
-			.GetMembersAsync(TestContext, parameters)
+			.GetMembersAsync(TestContext, parameters, Arg.Any<TodoListMembersFilter>())
 			.Returns(x => new ServiceResponse<Page<TodoListMemberPreviewDto>>(ServiceResponseStatus.Success,
 			new(members, ((PaginationParameters)x[1]).Page, ((PaginationParameters)x[1]).PageSize, 22)));
 		using HttpClient client = CreateAuthorizedHttpClient();
@@ -91,7 +92,7 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		WebApplicationFactory.TodoListMembersService
-			.GetMembersAsync(TestContext, Arg.Any<PaginationParameters>())
+			.GetMembersAsync(TestContext, Arg.Any<PaginationParameters>(), Arg.Any<TodoListMembersFilter>())
 			.Returns(new ServiceResponse<Page<TodoListMemberPreviewDto>>(ServiceResponseStatus.NotFound));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
@@ -107,7 +108,7 @@ public class TodoListMembersEndpointsTests : EndpointsFixture
 	{
 		// Arrange
 		WebApplicationFactory.TodoListMembersService
-			.GetMembersAsync(TestContext, Arg.Any<PaginationParameters>())
+			.GetMembersAsync(TestContext, Arg.Any<PaginationParameters>(), Arg.Any<TodoListMembersFilter>())
 			.Returns(new ServiceResponse<Page<TodoListMemberPreviewDto>>(ServiceResponseStatus.Forbidden));
 		using HttpClient client = CreateAuthorizedHttpClient();
 

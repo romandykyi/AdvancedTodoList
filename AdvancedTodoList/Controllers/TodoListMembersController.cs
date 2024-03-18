@@ -1,6 +1,7 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,7 @@ public class TodoListMembersController(
 	/// </summary>
 	/// <param name="listId">ID of the to-do list.</param>
 	/// <param name="paginationParameters">Paginations parameters to apply.</param>
+	/// <param name="filter">Filter parameters to use.</param>
 	/// <response code="200">Returns members of the to-do list.</response>
 	/// <response code="401">Authentication failed.</response>
 	/// <response code="403">User has no permission to perform this action.</response>
@@ -32,10 +34,11 @@ public class TodoListMembersController(
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetTodoListMembersAsync(
-		[FromRoute] string listId, [FromQuery] PaginationParameters paginationParameters)
+		[FromRoute] string listId, [FromQuery] PaginationParameters paginationParameters,
+		[FromQuery] TodoListMembersFilter filter)
 	{
 		TodoListContext context = new(listId, User.GetUserId()!);
-		var response = await _membersService.GetMembersAsync(context, paginationParameters);
+		var response = await _membersService.GetMembersAsync(context, paginationParameters, filter);
 		return response.ToActionResult();
 	}
 
