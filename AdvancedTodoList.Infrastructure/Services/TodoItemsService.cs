@@ -16,14 +16,12 @@ public class TodoItemsService(
 	ITodoListDependantEntitiesService<TodoItem, int> helperService,
 	IRepository<TodoItem, int> repository,
 	ITodoItemCategoriesService categoriesService,
-	IEntityExistenceChecker existenceChecker,
 	IPermissionsChecker permissionsChecker
 	) : ITodoItemsService
 {
 	private readonly ITodoListDependantEntitiesService<TodoItem, int> _helperService = helperService;
 	private readonly IRepository<TodoItem, int> _repository = repository;
 	private readonly ITodoItemCategoriesService _categoriesService = categoriesService;
-	private readonly IEntityExistenceChecker _existenceChecker = existenceChecker;
 	private readonly IPermissionsChecker _permissionsChecker = permissionsChecker;
 
 	/// <summary>
