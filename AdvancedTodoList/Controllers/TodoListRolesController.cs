@@ -19,6 +19,7 @@ public class TodoListRolesController(ITodoListRolesService rolesService) : Contr
 	/// </summary>
 	/// <param name="listId">ID of the to-do list.</param>
 	/// <param name="paginationParameters">Paginations parameters to apply.</param>
+	/// <param name="name">Optional name to filter roles by.</param>
 	/// <response code="200">Returns roles of the to-do list.</response>
 	/// <response code="401">Authentication failed.</response>
 	/// <response code="403">User has no permission to perform this action.</response>
@@ -29,10 +30,11 @@ public class TodoListRolesController(ITodoListRolesService rolesService) : Contr
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetTodoListRolesAsync(
-		[FromRoute] string listId, [FromQuery] PaginationParameters paginationParameters)
+		[FromRoute] string listId, [FromQuery] PaginationParameters paginationParameters,
+		[FromQuery] string? name)
 	{
 		TodoListContext context = new(listId, User.GetUserId()!);
-		var response = await _rolesService.GetRolesOfListAsync(context, paginationParameters);
+		var response = await _rolesService.GetRolesOfListAsync(context, paginationParameters, name);
 		return response.ToActionResult();
 	}
 

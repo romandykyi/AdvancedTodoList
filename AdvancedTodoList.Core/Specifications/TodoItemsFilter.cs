@@ -7,7 +7,7 @@ namespace AdvancedTodoList.Core.Specifications;
 /// </summary>
 /// <param name="Name">
 /// Optional name to filter by. 
-/// Entries which have this substring in the username will be returned.
+/// Entries which have this substring in the name will be returned.
 /// </param>
 /// <param name="State">Optional states to filter by.</param>
 /// <param name="OwnerId">Optional ID of the owner to filter by.</param>

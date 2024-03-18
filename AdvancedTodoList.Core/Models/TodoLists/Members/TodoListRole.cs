@@ -6,7 +6,7 @@ namespace AdvancedTodoList.Core.Models.TodoLists.Members;
 /// <summary>
 /// A model which represents a role inside the to-do list with its own permissions.
 /// </summary>
-public class TodoListRole : IEntity<int>, ITodoListDependant
+public class TodoListRole : IEntity<int>, ITodoListDependant, IHasName
 {
 	/// <summary>
 	/// A unique identifier.

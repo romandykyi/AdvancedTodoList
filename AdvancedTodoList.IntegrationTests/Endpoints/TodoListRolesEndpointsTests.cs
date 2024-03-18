@@ -22,15 +22,16 @@ public class TodoListRolesEndpointsTests : EndpointsFixture
 			new(700, "Admin"),
 			new(701, "Reviewer"),
 		];
+		string name = "n";
 		WebApplicationFactory.TodoListRolesService
-			.GetRolesOfListAsync(TestContext, parameters)
+			.GetRolesOfListAsync(TestContext, parameters, name)
 			.Returns(x => new ServiceResponse<Page<TodoListRolePreviewDto>>(
 				ServiceResponseStatus.Success, new(roles, ((PaginationParameters)x[1]).Page,
 				((PaginationParameters)x[1]).PageSize, 22)));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
-		var result = await client.GetAsync($"api/todo/{TestContext.TodoListId}/roles?page={parameters.Page}&pageSize={parameters.PageSize}");
+		var result = await client.GetAsync($"api/todo/{TestContext.TodoListId}/roles?page={parameters.Page}&pageSize={parameters.PageSize}&name={name}");
 
 		// Assert that response indicates success
 		result.EnsureSuccessStatusCode();

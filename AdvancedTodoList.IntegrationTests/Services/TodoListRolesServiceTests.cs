@@ -28,19 +28,21 @@ public class TodoListRolesServiceTests : BusinessLogicFixture
 		// Arrange
 		PaginationParameters parameters = new(2, 5);
 		Page<TodoListRolePreviewDto> page = new([], 1, 1, 1);
+		const string name = "Role #1";
 		WebApplicationFactory.TodoRolesHelperService
 			.GetPageAsync<TodoListRolePreviewDto>(TestContext, Arg.Any<ISpecification<TodoListRole>>(), Arg.Any<PaginationParameters>())
 			.Returns(new ServiceResponse<Page<TodoListRolePreviewDto>>(ServiceResponseStatus.Success, page));
 
 		// Act
-		var result = await _service.GetRolesOfListAsync(TestContext, parameters);
+		var result = await _service.GetRolesOfListAsync(TestContext, parameters, name);
 
 		// Assert
 		Assert.That(result, Is.Not.Null);
 		await WebApplicationFactory.TodoRolesHelperService
 			.Received()
 			.GetPageAsync<TodoListRolePreviewDto>(TestContext,
-			Arg.Is<TodoListDependantEntitiesSpecification<TodoListRole>>(x => x.TodoListId == TestContext.TodoListId),
+			Arg.Is<TodoListDependantEntitiesSpecification<TodoListRole>>(
+				x => x.TodoListId == TestContext.TodoListId && x.Name == name),
 			Arg.Any<PaginationParameters>());
 	}
 

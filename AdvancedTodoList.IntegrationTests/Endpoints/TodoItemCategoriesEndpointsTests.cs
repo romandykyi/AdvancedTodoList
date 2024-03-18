@@ -22,15 +22,16 @@ public class TodoItemCategoriesEndpointsTests : EndpointsFixture
 			new(1, "1"),
 			new(2, "2"),
 		];
+		string name = "n";
 		WebApplicationFactory.TodoItemCategoriesService
-			.GetCategoriesOfListAsync(TestContext, parameters)
+			.GetCategoriesOfListAsync(TestContext, parameters, name)
 			.Returns(x => new ServiceResponse<Page<TodoItemCategoryViewDto>>(
 				ServiceResponseStatus.Success, new(categories, ((PaginationParameters)x[1]).Page,
 				((PaginationParameters)x[1]).PageSize, 22)));
 		using HttpClient client = CreateAuthorizedHttpClient();
 
 		// Act: send the request
-		var result = await client.GetAsync($"api/todo/{TestContext.TodoListId}/categories?page={parameters.Page}&pageSize={parameters.PageSize}");
+		var result = await client.GetAsync($"api/todo/{TestContext.TodoListId}/categories?page={parameters.Page}&pageSize={parameters.PageSize}&name={name}");
 
 		// Assert that response indicates success
 		result.EnsureSuccessStatusCode();

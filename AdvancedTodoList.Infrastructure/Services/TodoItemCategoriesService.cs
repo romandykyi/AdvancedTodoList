@@ -44,12 +44,14 @@ public class TodoItemCategoriesService(
 	/// </summary>
 	/// <param name="context">To-do list context.</param>
 	/// <param name="paginationParameters">Pagination parameters to use.</param>
+	/// <param name="name">Optional name to filter categories by.</param>
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<ServiceResponse<Page<TodoItemCategoryViewDto>>> GetCategoriesOfListAsync(TodoListContext context, PaginationParameters paginationParameters)
+	public Task<ServiceResponse<Page<TodoItemCategoryViewDto>>> GetCategoriesOfListAsync(
+		TodoListContext context, PaginationParameters paginationParameters, string? name = null)
 	{
-		TodoListDependantEntitiesSpecification<TodoItemCategory> specification = new(context.TodoListId);
+		TodoListDependantEntitiesSpecification<TodoItemCategory> specification = new(context.TodoListId, name);
 		return _helperService.GetPageAsync<TodoItemCategoryViewDto>(context, specification, paginationParameters);
 	}
 

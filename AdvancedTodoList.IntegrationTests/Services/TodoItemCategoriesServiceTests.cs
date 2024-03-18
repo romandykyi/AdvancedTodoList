@@ -28,19 +28,21 @@ public class TodoItemCategoriesServiceTests : BusinessLogicFixture
 		// Arrange
 		PaginationParameters parameters = new(2, 5);
 		Page<TodoItemCategoryViewDto> page = new([], 1, 1, 1);
+		const string name = "n";
 		WebApplicationFactory.TodoItemCategoriesHelperService
 			.GetPageAsync<TodoItemCategoryViewDto>(TestContext, Arg.Any<ISpecification<TodoItemCategory>>(), Arg.Any<PaginationParameters>())
 			.Returns(new ServiceResponse<Page<TodoItemCategoryViewDto>>(ServiceResponseStatus.Success, page));
 
 		// Act
-		var result = await _service.GetCategoriesOfListAsync(TestContext, parameters);
+		var result = await _service.GetCategoriesOfListAsync(TestContext, parameters, name);
 
 		// Assert
 		Assert.That(result, Is.Not.Null);
 		await WebApplicationFactory.TodoItemCategoriesHelperService
 			.Received()
 			.GetPageAsync<TodoItemCategoryViewDto>(TestContext,
-			Arg.Is<TodoListDependantEntitiesSpecification<TodoItemCategory>>(x => x.TodoListId == TestContext.TodoListId),
+			Arg.Is<TodoListDependantEntitiesSpecification<TodoItemCategory>>(
+				x => x.TodoListId == TestContext.TodoListId && x.Name == name),
 			Arg.Any<PaginationParameters>());
 	}
 

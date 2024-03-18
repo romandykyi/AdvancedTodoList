@@ -6,7 +6,7 @@ namespace AdvancedTodoList.Core.Models.TodoLists;
 /// <summary>
 /// Represents a to-do list items category entity.
 /// </summary>
-public class TodoItemCategory : IEntity<int>, ITodoListDependant
+public class TodoItemCategory : IEntity<int>, ITodoListDependant, IHasName
 {
 	/// <summary>
 	/// An unique identifier for the category.
