@@ -1,5 +1,8 @@
 ﻿using AdvancedTodoList.Core.Dtos;
+using AdvancedTodoList.Core.Models.TodoLists;
+using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using System.Net;
 using System.Net.Http.Json;
@@ -10,6 +13,67 @@ namespace AdvancedTodoList.IntegrationTests.Endpoints;
 public class TodoListsEndpointsTests : EndpointsFixture
 {
 	private readonly TodoListContext TestContext = new("TestTodoListId", TestUserId);
+
+	[Test]
+	public async Task GetTodoListsOfCaller_ValidCall_SucceedsAndReturnsItems()
+	{
+		// Arrange
+		PaginationParameters parameters = new(Page: 2, PageSize: 20);
+		TodoListPreviewDto[] items =
+		[
+			new("123", "Abc"),
+			new("456", "Def"),
+		];
+		TodoListsFilter filter = new(Name: "abc");
+		WebApplicationFactory.TodoListsService
+			.GetListsOfUserAsync(TestUserId, parameters, filter)
+			.Returns(x => new(items, ((PaginationParameters)x[1]).Page,
+				((PaginationParameters)x[1]).PageSize, 22));
+		using HttpClient client = CreateAuthorizedHttpClient();
+
+		// Act: send the request
+		var result = await client.GetAsync($"api/todo?page={parameters.Page}&pageSize={parameters.PageSize}&name={filter.Name}");
+
+		// Assert that response indicates success
+		result.EnsureSuccessStatusCode();
+		// Assert that valid page was returned
+		var returnedPage = await result.Content.ReadFromJsonAsync<Page<TodoListPreviewDto>>();
+		Assert.That(returnedPage, Is.Not.Null);
+		Assert.Multiple(() =>
+		{
+			Assert.That(returnedPage.PageNumber, Is.EqualTo(parameters.Page));
+			Assert.That(returnedPage.PageSize, Is.EqualTo(parameters.PageSize));
+			Assert.That(returnedPage.Items, Is.EquivalentTo(items));
+		});
+	}
+
+	[Test]
+	public async Task GetTodoListsOfCaller_WrongPaginationParams_Returns400()
+	{
+		// Arrange
+		using HttpClient client = CreateAuthorizedHttpClient();
+		int page = -1;
+		int pageSize = 0;
+
+		// Act: send the request
+		var result = await client.GetAsync($"api/todo?page={page}&pageSize={pageSize}");
+
+		// Assert that response code is 400
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+	}
+
+	[Test]
+	public async Task GetTodoListsOfCaller_NoAuthHeaderProvided_Returns401()
+	{
+		// Arrange
+		using HttpClient client = WebApplicationFactory.CreateClient();
+
+		// Act: send the request
+		var result = await client.GetAsync($"api/todo?page=1&pageSize=20");
+
+		// Assert that response code is 401
+		Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+	}
 
 	[Test]
 	public async Task GetTodoListById_ElementExists_ReturnsElement()
