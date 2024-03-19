@@ -1,4 +1,5 @@
 ﻿using AdvancedTodoList.Core.Models.Auth;
+using AdvancedTodoList.Core.Models.TodoLists.Members;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -50,4 +51,9 @@ public class TodoList : IEntity<string>, IHasOwner
 	/// Collection of to-do items associated with this todo list.
 	/// </summary>
 	public virtual ICollection<TodoItem> TodoItems { get; set; } = null!;
+
+	/// <summary>
+	/// Collection of list's members.
+	/// </summary>
+	public virtual ICollection<TodoListMember> TodoListMembers { get; set; } = null!;
 }

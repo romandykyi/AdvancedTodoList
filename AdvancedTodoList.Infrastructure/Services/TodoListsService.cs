@@ -1,9 +1,11 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
+using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Services.Auth;
+using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
 using Mapster;
 
@@ -25,6 +27,24 @@ public class TodoListsService(
 	private readonly IRepository<TodoListRole, int> _rolesRepository = rolesRepository;
 	private readonly IRepository<TodoListMember, int> _membersRepository = membersRepository;
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;
+
+	/// <summary>
+	/// Retrieves a page of to-do lists, with the requirement that the user 
+	/// is a member of those lists.
+	/// </summary>
+	/// <param name="userId">Id of the user</param>
+	/// <param name="paginationParameters">Pagination parameters to use.</param>
+	/// <param name="filter">Filter parameters to apply.</param>
+	/// <returns>
+	/// A task representing the asynchronous operation containing the result of operation.
+	/// </returns>
+	public Task<Page<TodoListPreviewDto>> GetListsOfUserAsync(string userId,
+		PaginationParameters paginationParameters, TodoListsFilter filter)
+	{
+		TodoListsSpecification specification = new(userId, filter);
+		return _todoListsRepository.GetPageAsync<TodoListPreviewDto>(
+			paginationParameters, specification);
+	}
 
 	/// <summary>
 	/// Retrieves a to-do list by its ID asynchronously.

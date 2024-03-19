@@ -1,4 +1,6 @@
 ﻿using AdvancedTodoList.Core.Dtos;
+using AdvancedTodoList.Core.Pagination;
+using AdvancedTodoList.Core.Specifications;
 
 namespace AdvancedTodoList.Core.Services;
 
@@ -7,6 +9,19 @@ namespace AdvancedTodoList.Core.Services;
 /// </summary>
 public interface ITodoListsService
 {
+	/// <summary>
+	/// Retrieves a page of to-do lists, with the requirement that the user 
+	/// is a member of those lists.
+	/// </summary>
+	/// <param name="userId">Id of the user</param>
+	/// <param name="paginationParameters">Pagination parameters to use.</param>
+	/// <param name="filter">Filter parameters to apply.</param>
+	/// <returns>
+	/// A task representing the asynchronous operation containing the result of operation.
+	/// </returns>
+	public Task<Page<TodoListPreviewDto>> GetListsOfUserAsync(string userId,
+		PaginationParameters paginationParameters, TodoListsFilter filter);
+
 	/// <summary>
 	/// Retrieves a to-do list by its ID asynchronously.
 	/// </summary>
