@@ -1,6 +1,7 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
+using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
@@ -20,6 +21,29 @@ public class TodoListsServiceTests : BusinessLogicFixture
 	public void SetUp()
 	{
 		_service = ServiceScope.ServiceProvider.GetService<ITodoListsService>()!;
+	}
+
+	[Test]
+	public async Task GetListsOfUserAsync_AppliesTodoListsSpecification()
+	{
+		// Arrange
+		PaginationParameters parameters = new(2, 5);
+		Page<TodoListPreviewDto> page = new([], 1, 1, 1);
+		TodoListsFilter filter = new(Name: "Name");
+		const string userId = "abcd";
+		WebApplicationFactory.TodoListsRepository
+			.GetPageAsync<TodoListPreviewDto>(Arg.Any<PaginationParameters>(), Arg.Any<ISpecification<TodoList>>())
+			.Returns(page);
+
+		// Act
+		var result = await _service.GetListsOfUserAsync(userId, parameters, filter);
+
+		// Assert
+		Assert.That(result, Is.Not.Null);
+		await WebApplicationFactory.TodoListsRepository
+			.Received()
+			.GetPageAsync<TodoListPreviewDto>(parameters, Arg.Is<TodoListsSpecification>(
+				x => x.Filter == filter && x.UserId == userId));
 	}
 
 	[Test]

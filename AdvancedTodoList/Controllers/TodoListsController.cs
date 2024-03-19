@@ -1,5 +1,7 @@
 ﻿using AdvancedTodoList.Core.Dtos;
+using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +17,24 @@ public class TodoListsController(
 {
 	private readonly ITodoListsService _todoListsService = todoListsService;
 	private readonly ILogger<TodoListsController> _logger = logger;
+
+	/// <summary>
+	/// Gets a page with to-do lists of which the caller is a member.
+	/// </summary>
+	/// <param name="paginationParameters">Paginations parameters to apply.</param>
+	/// <param name="filter">Filter parameters to apply.</param>
+	/// <response code="200">Returns to-do lists of which the caller is a member.</response>
+	/// <response code="401">Authentication failed.</response>
+	[HttpGet(Name = nameof(GetTodoListsOfCallerAsync))]
+	[ProducesResponseType(typeof(Page<TodoListPreviewDto>), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	public async Task<IActionResult> GetTodoListsOfCallerAsync(
+		[FromQuery] PaginationParameters paginationParameters, [FromQuery] TodoListsFilter filter)
+	{
+		var page = await _todoListsService.GetListsOfUserAsync(User.GetUserId()!,
+			paginationParameters, filter);
+		return Ok(page);
+	}
 
 	/// <summary>
 	/// Gets a to-do list by its ID.

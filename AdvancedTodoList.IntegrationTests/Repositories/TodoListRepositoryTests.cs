@@ -1,5 +1,7 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
+using AdvancedTodoList.Core.Models.TodoLists.Members;
+using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Utils;
 
@@ -52,5 +54,32 @@ public class TodoListRepositoryTests : BaseRepositoryTests<TodoList, string>
 		Assert.That(aggregate, Is.Not.Null);
 		Assert.That(aggregate.Owner, Is.Not.Null);
 		Assert.That(aggregate.Owner.Id, Is.EqualTo(owner.Id));
+	}
+
+	[Test]
+	public async Task GetPageAsync_IntegratesWithTodoListsSpecification()
+	{
+		// Arrange
+		var todoList = await AddTestEntityToDbAsync();
+		var user = TestModels.CreateTestUser();
+		DbContext.Add(user);
+		await DbContext.SaveChangesAsync();
+		TodoListMember member = new()
+		{
+			UserId = user.Id,
+			TodoListId = todoList.Id
+		};
+		DbContext.Add(member);
+		await DbContext.SaveChangesAsync();
+		TodoListsFilter filter = new(todoList.Name);
+		TodoListsSpecification specification = new(user.Id, filter);
+
+		// Act
+		var page = await Repository.GetPageAsync<TodoListPreviewDto>(new(1, 5), specification);
+
+		// Assert
+		var dto = page.Items.SingleOrDefault();
+		Assert.That(dto, Is.Not.Null);
+		Assert.That(dto.Id, Is.EqualTo(todoList.Id));
 	}
 }
