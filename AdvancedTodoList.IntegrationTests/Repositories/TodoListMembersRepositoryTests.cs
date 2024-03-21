@@ -83,7 +83,7 @@ public class TodoListMembersRepositoryTests : BaseRepositoryTests<TodoListMember
 #pragma warning disable NUnit2045 // Use Assert.Multiple
 		// Arrange
 		var entity = await AddTestEntityToDbAsync();
-		TodoListMembersFilter filter = new([entity.RoleId], entity.UserId, 
+		TodoListMembersFilter filter = new([entity.RoleId], entity.UserId,
 			entity.User.UserName, entity.User.FirstName);
 		TodoListMembersSpecification specification = new(entity.TodoListId, filter);
 

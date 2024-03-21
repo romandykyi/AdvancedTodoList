@@ -1,7 +1,6 @@
 ﻿using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
-using System.Linq.Expressions;
 
 namespace AdvancedTodoList.UnitTests.Specifications;
 

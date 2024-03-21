@@ -31,7 +31,7 @@ public class TodoListMembersService(
 	/// <returns>
 	/// A task representing the asynchronous operation containing the result of operation.
 	/// </returns>
-	public Task<ServiceResponse<Page<TodoListMemberPreviewDto>>> GetMembersAsync(TodoListContext context, 
+	public Task<ServiceResponse<Page<TodoListMemberPreviewDto>>> GetMembersAsync(TodoListContext context,
 		PaginationParameters paginationParameters, TodoListMembersFilter filter)
 	{
 		TodoListMembersSpecification specification = new(context.TodoListId, filter);

@@ -29,7 +29,7 @@ public class TodoListDependantEntitiesSpecification<TEntity>(string todoListId, 
 	/// Gets the criteria expression that defines the filtering conditions.
 	/// Filters only by the to-do list ID and the name when not overriden.
 	/// </summary>
-	public virtual Expression<Func<TEntity, bool>> Criteria => x => 
+	public virtual Expression<Func<TEntity, bool>> Criteria => x =>
 		x.TodoListId == TodoListId && (Name == null || x.Name.Contains(Name));
 
 	/// <summary>

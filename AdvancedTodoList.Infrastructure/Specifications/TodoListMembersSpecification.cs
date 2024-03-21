@@ -1,5 +1,4 @@
-﻿using AdvancedTodoList.Core.Models;
-using AdvancedTodoList.Core.Models.TodoLists.Members;
+﻿using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Specifications;
 using System.Linq.Expressions;
 

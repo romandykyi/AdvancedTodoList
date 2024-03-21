@@ -133,9 +133,9 @@ builder.Services.AddFluentValidationAutoValidation(configuration =>
 {
 	// Disable the built-in .NET model (data annotations) validation.
 	configuration.DisableBuiltInModelValidation = true;
-	// Enable validation for parameters bound from `BindingSource.Body` binding sources.
+	// Enable validation for parameters bound from 'BindingSource.Body' binding sources.
 	configuration.EnableBodyBindingSourceAutomaticValidation = true;
-	// Enable validation for parameters bound from `BindingSource.Query` binding sources.
+	// Enable validation for parameters bound from 'BindingSource.Query' binding sources.
 	configuration.EnableQueryBindingSourceAutomaticValidation = true;
 });
 

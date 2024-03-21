@@ -1,5 +1,4 @@
-﻿using AdvancedTodoList.Core.Models;
-using AdvancedTodoList.Core.Models.Auth;
+﻿using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Infrastructure.Specifications;
 

@@ -49,7 +49,7 @@ public class TodoListMembersServiceTests : BusinessLogicFixture
 		await WebApplicationFactory.TodoMembersHelperService
 			.Received()
 			.GetPageAsync<TodoListMemberPreviewDto>(TestContext,
-			Arg.Is<TodoListMembersSpecification>(x => 
+			Arg.Is<TodoListMembersSpecification>(x =>
 			x.TodoListId == TestContext.TodoListId && x.Filter.UserId == filter.UserId),
 			Arg.Any<PaginationParameters>());
 	}
