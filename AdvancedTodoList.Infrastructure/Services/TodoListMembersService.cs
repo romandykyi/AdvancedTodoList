@@ -3,6 +3,7 @@ using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Core.Services;
+using AdvancedTodoList.Core.Services.Auth;
 using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
 using Mapster;
@@ -15,12 +16,14 @@ namespace AdvancedTodoList.Infrastructure.Services;
 public class TodoListMembersService(
 	ITodoListDependantEntitiesService<TodoListMember, int> helperService,
 	ITodoListMembersRepository membersRepository,
-	IRepository<TodoListRole, int> rolesRepository) :
+	IRepository<TodoListRole, int> rolesRepository,
+	IPermissionsChecker permissionsChecker) :
 	ITodoListMembersService
 {
 	private readonly ITodoListDependantEntitiesService<TodoListMember, int> _helperService = helperService;
 	private readonly ITodoListMembersRepository _membersRepository = membersRepository;
 	private readonly IRepository<TodoListRole, int> _rolesRepository = rolesRepository;
+	private readonly IPermissionsChecker _permissionsChecker = permissionsChecker;
 
 	/// <summary>
 	/// Gets a page with members of a to-do list asynchronously.
@@ -50,6 +53,10 @@ public class TodoListMembersService(
 	/// </returns>
 	public async Task<AddTodoListMemberServiceResult> AddMemberAsync(TodoListContext context, TodoListMemberAddDto dto)
 	{
+		// Check if user has the permission 
+		if (!await _permissionsChecker.HasPermissionAsync(context, x => x.AddMembers))
+			return new(TodoListMemberServiceResultStatus.Forbidden);
+
 		// Try to find already existing member
 		var member = await _membersRepository.FindAsync(context.TodoListId, dto.UserId);
 		// Return error if it exists
@@ -57,13 +64,12 @@ public class TodoListMembersService(
 
 		// Add member
 		var response = await _helperService
-			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalViewDto>(context, dto, x => x.AddMembers);
+			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalViewDto>(context, dto);
 
 		return response.Status switch
 		{
 			ServiceResponseStatus.Success => new(TodoListMemberServiceResultStatus.Success, response.Result),
 			ServiceResponseStatus.NotFound => new(TodoListMemberServiceResultStatus.NotFound),
-			ServiceResponseStatus.Forbidden => new(TodoListMemberServiceResultStatus.Forbidden),
 			_ => throw new InvalidOperationException("Invalid to-do lists dependant entities (members) service response.")
 		};
 	}

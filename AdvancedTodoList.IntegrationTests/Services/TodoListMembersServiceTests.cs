@@ -65,9 +65,12 @@ public class TodoListMembersServiceTests : BusinessLogicFixture
 		WebApplicationFactory.TodoListMembersRepository
 			.FindAsync(todoListId, userId)
 			.ReturnsNull();
+		WebApplicationFactory.PermissionsChecker
+			.HasPermissionAsync(TestContext, Arg.Any<Func<RolePermissions, bool>>())
+			.Returns(true);
 		WebApplicationFactory.TodoMembersHelperService
 			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalViewDto>(
-				TestContext, inputDto, Arg.Any<Func<RolePermissions, bool>>())
+				TestContext, inputDto, null)
 			.Returns(new ServiceResponse<TodoListMemberMinimalViewDto>(
 				ServiceResponseStatus.Success, outputDto));
 
@@ -86,7 +89,10 @@ public class TodoListMembersServiceTests : BusinessLogicFixture
 		await WebApplicationFactory.TodoMembersHelperService
 			.Received()
 			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalViewDto>(
-			TestContext, inputDto, Arg.Is<Func<RolePermissions, bool>>(x => x(addMembers)));
+			TestContext, inputDto, null);
+		await WebApplicationFactory.PermissionsChecker
+			.Received()
+			.HasPermissionAsync(TestContext, Arg.Is<Func<RolePermissions, bool>>(x => x(addMembers)));
 	}
 
 	[Test]
@@ -102,6 +108,9 @@ public class TodoListMembersServiceTests : BusinessLogicFixture
 				TodoListId = TestContext.TodoListId,
 				UserId = userId
 			});
+		WebApplicationFactory.PermissionsChecker
+			.HasPermissionAsync(TestContext, Arg.Any<Func<RolePermissions, bool>>())
+			.Returns(true);
 
 		// Act
 		var result = await _service.AddMemberAsync(TestContext, inputDto);
@@ -117,12 +126,14 @@ public class TodoListMembersServiceTests : BusinessLogicFixture
 		string todoListId = "Id";
 		string userId = "UserId";
 		TodoListMemberAddDto inputDto = new(userId);
+		WebApplicationFactory.PermissionsChecker
+			.HasPermissionAsync(TestContext, Arg.Any<Func<RolePermissions, bool>>())
+			.Returns(true);
 		WebApplicationFactory.TodoListMembersRepository
 			.FindAsync(todoListId, userId)
 			.ReturnsNull();
 		WebApplicationFactory.TodoMembersHelperService
-			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalViewDto>(TestContext, inputDto,
-			Arg.Any<Func<RolePermissions, bool>>())
+			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalViewDto>(TestContext, inputDto, null)
 			.Returns(new ServiceResponse<TodoListMemberMinimalViewDto>(ServiceResponseStatus.NotFound));
 
 		// Act
@@ -136,16 +147,11 @@ public class TodoListMembersServiceTests : BusinessLogicFixture
 	public async Task AddMemberAsync_UserHasNoPermission_ReturnsForbiddenStatus()
 	{
 		// Arrange
-		string todoListId = "Id";
 		string userId = "UserId";
 		TodoListMemberAddDto inputDto = new(userId);
-		WebApplicationFactory.TodoListMembersRepository
-			.FindAsync(todoListId, userId)
-			.ReturnsNull();
-		WebApplicationFactory.TodoMembersHelperService
-			.CreateAsync<TodoListMemberAddDto, TodoListMemberMinimalViewDto>(TestContext, inputDto,
-			Arg.Any<Func<RolePermissions, bool>>())
-			.Returns(new ServiceResponse<TodoListMemberMinimalViewDto>(ServiceResponseStatus.Forbidden));
+		WebApplicationFactory.PermissionsChecker
+			.HasPermissionAsync(TestContext, Arg.Any<Func<RolePermissions, bool>>())
+			.Returns(false);
 
 		// Act
 		var result = await _service.AddMemberAsync(TestContext, inputDto);
