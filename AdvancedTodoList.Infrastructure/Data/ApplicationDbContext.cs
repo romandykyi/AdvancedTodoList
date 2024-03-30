@@ -12,6 +12,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 	public DbSet<TodoList> TodoLists { get; set; }
 	public DbSet<TodoItem> TodoItems { get; set; }
 	public DbSet<TodoItemCategory> TodoItemCategories { get; set; }
+	public DbSet<InvitationLink> InvitationLinks { get; set; }
 	public DbSet<TodoListMember> TodoListsMembers { get; set; }
 	public DbSet<TodoListRole> TodoListRoles { get; set; }
 	public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
