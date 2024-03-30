@@ -87,10 +87,10 @@ public static class TestModels
 	/// <summary>
 	/// Creates and returns a valid model of an invitation link.
 	/// </summary>
-	public static InvitationLink CreateTestInvitationLink(string todoListId) => new()
+	public static InvitationLink CreateTestInvitationLink(string todoListId, DateTime? validTo = null) => new()
 	{
 		Value = Guid.NewGuid().ToString(),
 		TodoListId = todoListId,
-		ValidTo = DateTime.Now.AddDays(5)
+		ValidTo = validTo ?? DateTime.Now.AddDays(5)
 	};
 }

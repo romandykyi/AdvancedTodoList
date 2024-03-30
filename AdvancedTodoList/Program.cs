@@ -95,6 +95,8 @@ builder.Services.Configure<AccessTokenOptions>(
 	builder.Configuration.GetSection("Auth:AccessToken"));
 builder.Services.Configure<RefreshTokenOptions>(
 	builder.Configuration.GetSection("Auth:RefreshToken"));
+builder.Services.Configure<InvitationLinkOptions>(
+	builder.Configuration.GetSection("Todo:InvitationLink"));
 
 // Register application services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -104,6 +106,7 @@ builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
 builder.Services.AddScoped<ITodoItemCategoriesService, TodoItemCategoriesService>();
 builder.Services.AddScoped<ITodoListMembersService, TodoListMembersService>();
 builder.Services.AddScoped<ITodoListRolesService, TodoListRolesService>();
+builder.Services.AddScoped<IInvitationLinksService, InvitationLinksService>();
 builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
 builder.Services.AddSingleton<IAccessTokensService, AccessTokensService>();
 builder.Services.AddScoped<IRefreshTokensService, RefreshTokensService>();
