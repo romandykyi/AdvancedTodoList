@@ -12,7 +12,7 @@
 /// <param name="AssignRoles">A flag that determines whether user can assign a role to other member.</param>
 /// <param name="EditRoles">A flag that determines whether user can edit/delete existing roles and add new roles.</param>
 /// <param name="EditCategories">A flag that determines whether user can edit/delete existing categories and add new categories.</param>
-/// <param name="ManageInvitationLinks">A flag that determines whether user can delete existing invitation links.</param>
+/// <param name="ManageInvitationLinks">A flag that determines whether user can view/delete existing invitation links.</param>
 public record struct RolePermissions(
 	bool SetItemsState = false,
 	bool AddItems = false,
