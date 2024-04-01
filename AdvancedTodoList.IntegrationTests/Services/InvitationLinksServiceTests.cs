@@ -7,11 +7,6 @@ using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 
@@ -77,7 +72,7 @@ public class InvitationLinksServiceTests : BusinessLogicFixture
 		WebApplicationFactory.InvitationLinksRepository
 			.FindAsync(link.Value)
 			.Returns(link);
-		
+
 		// Act
 		var response = await _service.JoinAsync(TestCallerId, link.Value);
 
@@ -96,7 +91,7 @@ public class InvitationLinksServiceTests : BusinessLogicFixture
 		WebApplicationFactory.TodoListMembersRepository
 			.FindAsync(TestTodoListId, TestCallerId)
 			.Returns(new TodoListMember() { TodoListId = TestTodoListId, UserId = TestCallerId });
-		
+
 		// Act
 		var response = await _service.JoinAsync(TestCallerId, link.Value);
 
@@ -113,7 +108,7 @@ public class InvitationLinksServiceTests : BusinessLogicFixture
 		// Arrange
 		PaginationParameters parameters = new(2, 5);
 		RolePermissions validPermissions = new(
-			AddMembers: addMembersPermission, 
+			AddMembers: addMembersPermission,
 			ManageInvitationLinks: manageLinksPermission);
 		Page<InvitationLinkDto> page = new([], parameters.Page, parameters.PageSize, 0);
 		WebApplicationFactory.EntityExistenceChecker
@@ -128,7 +123,7 @@ public class InvitationLinksServiceTests : BusinessLogicFixture
 			.Returns(page);
 
 		// Act
-		var result = await _service.GetInvitationLinksAsync(TestContext,  parameters);
+		var result = await _service.GetInvitationLinksAsync(TestContext, parameters);
 
 		// Assert
 		Assert.That(result.Status, Is.EqualTo(ServiceResponseStatus.Success));
