@@ -1,7 +1,7 @@
 ﻿namespace AdvancedTodoList.Core.Dtos;
 
 /// <summary>
-/// DTO for a minimal view of a to-do list.
+/// DTO for a minimal view of a to-do list member.
 /// </summary>
 public record TodoListMemberMinimalViewDto(int Id, string UserId, string TodoListId, int? RoleId);
 

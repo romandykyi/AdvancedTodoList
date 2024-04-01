@@ -95,6 +95,8 @@ builder.Services.Configure<AccessTokenOptions>(
 	builder.Configuration.GetSection("Auth:AccessToken"));
 builder.Services.Configure<RefreshTokenOptions>(
 	builder.Configuration.GetSection("Auth:RefreshToken"));
+builder.Services.Configure<InvitationLinkOptions>(
+	builder.Configuration.GetSection("Todo:InvitationLink"));
 
 // Register application services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -104,6 +106,7 @@ builder.Services.AddScoped<ITodoItemsService, TodoItemsService>();
 builder.Services.AddScoped<ITodoItemCategoriesService, TodoItemCategoriesService>();
 builder.Services.AddScoped<ITodoListMembersService, TodoListMembersService>();
 builder.Services.AddScoped<ITodoListRolesService, TodoListRolesService>();
+builder.Services.AddScoped<IInvitationLinksService, InvitationLinksService>();
 builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
 builder.Services.AddSingleton<IAccessTokensService, AccessTokensService>();
 builder.Services.AddScoped<IRefreshTokensService, RefreshTokensService>();
@@ -115,6 +118,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRepository<TodoList, string>, TodoListRepository>();
 builder.Services.AddScoped<IRepository<TodoItem, int>, TodoItemsRepository>();
 builder.Services.AddScoped<IRepository<TodoItemCategory, int>, TodoItemCategoriesRepository>();
+builder.Services.AddScoped<IRepository<InvitationLink, int>, InvitationLinksRepository>();
+builder.Services.AddScoped<IInvitationLinksRepository, InvitationLinksRepository>();
 builder.Services.AddScoped<ITodoListMembersRepository, TodoListMembersRepository>();
 builder.Services.AddScoped<IRepository<TodoListMember, int>, TodoListMembersRepository>();
 builder.Services.AddScoped<IRepository<TodoListRole, int>, TodoListRolesRepository>();

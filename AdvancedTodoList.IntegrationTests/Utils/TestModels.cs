@@ -74,10 +74,23 @@ public static class TestModels
 		Token = "TestToken",
 		ValidTo = DateTime.UtcNow.AddDays(180)
 	};
+	/// <summary>
+	/// Creates and returns a valid model of a todo-list role.
+	/// </summary>
 	public static TodoListRole CreateTestRole(string todoListId) => new()
 	{
 		Name = "Role1",
 		Priority = 5,
 		TodoListId = todoListId
+	};
+
+	/// <summary>
+	/// Creates and returns a valid model of an invitation link.
+	/// </summary>
+	public static InvitationLink CreateTestInvitationLink(string todoListId, DateTime? validTo = null) => new()
+	{
+		Value = Guid.NewGuid().ToString(),
+		TodoListId = todoListId,
+		ValidTo = validTo ?? DateTime.Now.AddDays(5)
 	};
 }

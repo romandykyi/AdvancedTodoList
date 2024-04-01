@@ -17,6 +17,7 @@ public class EndpointsWebApplicationFactory : WebApplicationFactory<Program>
 	public ITodoItemCategoriesService TodoItemCategoriesService { get; private set; } = null!;
 	public ITodoListRolesService TodoListRolesService { get; private set; } = null!;
 	public ITodoListMembersService TodoListMembersService { get; private set; } = null!;
+	public IInvitationLinksService InvitationLinksService { get; private set; } = null!;
 	public IEntityExistenceChecker EntityExistenceChecker { get; private set; } = null!;
 
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -28,6 +29,7 @@ public class EndpointsWebApplicationFactory : WebApplicationFactory<Program>
 		TodoItemCategoriesService = Substitute.For<ITodoItemCategoriesService>();
 		TodoListRolesService = Substitute.For<ITodoListRolesService>();
 		TodoListMembersService = Substitute.For<ITodoListMembersService>();
+		InvitationLinksService = Substitute.For<IInvitationLinksService>();
 		EntityExistenceChecker = Substitute.For<IEntityExistenceChecker>();
 
 		builder.ConfigureTestServices(services =>
@@ -38,6 +40,7 @@ public class EndpointsWebApplicationFactory : WebApplicationFactory<Program>
 			services.AddScoped(_ => TodoItemCategoriesService);
 			services.AddScoped(_ => TodoListRolesService);
 			services.AddScoped(_ => TodoListMembersService);
+			services.AddScoped(_ => InvitationLinksService);
 			services.AddScoped(_ => EntityExistenceChecker);
 		});
 	}
