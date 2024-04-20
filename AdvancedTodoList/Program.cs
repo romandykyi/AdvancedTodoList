@@ -86,7 +86,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 	b => b.MigrationsAssembly("AdvancedTodoList.Infrastructure"))
 	);
 
-builder.Services.AddIdentityCore<ApplicationUser>()
+builder.Services.AddIdentityCore<ApplicationUser>(options =>
+	{
+		options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
+	})
 	.AddEntityFrameworkStores<ApplicationDbContext>()
 	.AddApiEndpoints();
 
