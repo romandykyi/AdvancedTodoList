@@ -23,7 +23,6 @@ public class UnitOfWork(ApplicationDbContext dbContext) : IUnitOfWork
 			throw new InvalidOperationException("Multiple transactions are not supported.");
 
 		_transaction = await _dbContext.Database.BeginTransactionAsync();
-		;
 	}
 
 	/// <summary>
