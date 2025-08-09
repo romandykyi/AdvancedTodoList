@@ -1,10 +1,10 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Services;
-using AdvancedTodoList.Extensions;
+using AdvancedTodoList.WebApp.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AdvancedTodoList.Controllers;
+namespace AdvancedTodoList.WebApp.Controllers;
 
 [Authorize]
 [ApiController]
