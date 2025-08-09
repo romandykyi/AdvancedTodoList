@@ -9,39 +9,39 @@ namespace AdvancedTodoList.Core.Models.TodoLists.Members;
 /// </summary>
 public class TodoListMember : IEntity<int>, ITodoListDependant
 {
-	/// <summary>
-	/// An unique identifier.
-	/// </summary>
-	[Key]
-	public int Id { get; set; }
+    /// <summary>
+    /// An unique identifier.
+    /// </summary>
+    [Key]
+    public int Id { get; set; }
 
-	/// <summary>
-	/// A foreign key of the user who is the member.
-	/// </summary>
-	[ForeignKey(nameof(User))]
-	public required string UserId { get; set; }
-	/// <summary>
-	/// A foreign key of the to-do list. 
-	/// </summary>
-	[ForeignKey(nameof(TodoList))]
-	public required string TodoListId { get; set; }
-	/// <summary>
-	/// A foreign key of the role, if null user has no role
-	/// and has a read-only access.
-	/// </summary>
-	[ForeignKey(nameof(Role))]
-	public int? RoleId { get; set; }
+    /// <summary>
+    /// A foreign key of the user who is the member.
+    /// </summary>
+    [ForeignKey(nameof(User))]
+    public required string UserId { get; set; }
+    /// <summary>
+    /// A foreign key of the to-do list. 
+    /// </summary>
+    [ForeignKey(nameof(TodoList))]
+    public required string TodoListId { get; set; }
+    /// <summary>
+    /// A foreign key of the role, if null user has no role
+    /// and has a read-only access.
+    /// </summary>
+    [ForeignKey(nameof(Role))]
+    public int? RoleId { get; set; }
 
-	/// <summary>
-	/// A navigation property to the user who is the member.
-	/// </summary>
-	public ApplicationUser User { get; set; } = null!;
-	/// <summary>
-	/// A navigation property to the to-do list.
-	/// </summary>
-	public TodoList TodoList { get; set; } = null!;
-	/// <summary>
-	/// A navigation property to the role.
-	/// </summary>
-	public TodoListRole? Role { get; set; }
+    /// <summary>
+    /// A navigation property to the user who is the member.
+    /// </summary>
+    public ApplicationUser User { get; set; } = null!;
+    /// <summary>
+    /// A navigation property to the to-do list.
+    /// </summary>
+    public TodoList TodoList { get; set; } = null!;
+    /// <summary>
+    /// A navigation property to the role.
+    /// </summary>
+    public TodoListRole? Role { get; set; }
 }

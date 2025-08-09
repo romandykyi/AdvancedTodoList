@@ -7,15 +7,15 @@ namespace AdvancedTodoList.Application.Services.Definitions;
 /// </summary>
 public class JoinByInvitationLinkResult(JoinByInvitationLinkStatus status, TodoListMemberMinimalViewDto? dto = null)
 {
-	/// <summary>
-	/// Status of the operation.
-	/// </summary>
-	public JoinByInvitationLinkStatus Status { get; } = status;
+    /// <summary>
+    /// Status of the operation.
+    /// </summary>
+    public JoinByInvitationLinkStatus Status { get; } = status;
 
-	/// <summary>
-	/// Gets additional DTO of the member, can be <see langword="null" />.
-	/// </summary>
-	public TodoListMemberMinimalViewDto? Dto { get; } = dto;
+    /// <summary>
+    /// Gets additional DTO of the member, can be <see langword="null" />.
+    /// </summary>
+    public TodoListMemberMinimalViewDto? Dto { get; } = dto;
 }
 
 /// <summary>
@@ -23,20 +23,20 @@ public class JoinByInvitationLinkResult(JoinByInvitationLinkStatus status, TodoL
 /// </summary>
 public enum JoinByInvitationLinkStatus
 {
-	/// <summary>
-	/// Operation was successfull.
-	/// </summary>
-	Success,
-	/// <summary>
-	/// Invitation link was not found.
-	/// </summary>
-	NotFound,
-	/// <summary>
-	/// Invitation link is expired.
-	/// </summary>
-	Expired,
-	/// <summary>
-	/// User is already a member of the to-do list.
-	/// </summary>
-	UserIsAlreadyMember
+    /// <summary>
+    /// Operation was successfull.
+    /// </summary>
+    Success,
+    /// <summary>
+    /// Invitation link was not found.
+    /// </summary>
+    NotFound,
+    /// <summary>
+    /// Invitation link is expired.
+    /// </summary>
+    Expired,
+    /// <summary>
+    /// User is already a member of the to-do list.
+    /// </summary>
+    UserIsAlreadyMember
 }

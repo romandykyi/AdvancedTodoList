@@ -1,6 +1,6 @@
-﻿using AdvancedTodoList.Application.Services.Definitions;
+﻿using AdvancedTodoList.Application.Dtos;
+using AdvancedTodoList.Application.Services.Definitions;
 using AdvancedTodoList.Application.Services.Definitions.Auth;
-using AdvancedTodoList.Application.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Repositories;

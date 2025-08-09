@@ -1,5 +1,5 @@
-﻿using AdvancedTodoList.Application.Services.Definitions.Auth;
-using AdvancedTodoList.Application.Dtos;
+﻿using AdvancedTodoList.Application.Dtos;
+using AdvancedTodoList.Application.Services.Definitions.Auth;
 using AdvancedTodoList.Core.Models.Auth;
 using Microsoft.AspNetCore.Identity;
 

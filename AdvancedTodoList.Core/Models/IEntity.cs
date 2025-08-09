@@ -6,5 +6,5 @@
 /// <typeparam name="TId">Type of the entity ID.</typeparam>
 public interface IEntity<TId> where TId : IEquatable<TId>
 {
-	TId Id { get; }
+    TId Id { get; }
 }

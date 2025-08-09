@@ -6,5 +6,5 @@
 /// </summary>
 public interface IHasName
 {
-	public string Name { get; }
+    public string Name { get; }
 }

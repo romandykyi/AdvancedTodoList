@@ -5,8 +5,8 @@
 /// </summary>
 public interface IHasOwner
 {
-	/// <summary>
-	/// Foreign key referencing the user who created this entity.
-	/// </summary>
-	public string? OwnerId { get; set; }
+    /// <summary>
+    /// Foreign key referencing the user who created this entity.
+    /// </summary>
+    public string? OwnerId { get; set; }
 }

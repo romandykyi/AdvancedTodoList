@@ -10,50 +10,50 @@ namespace AdvancedTodoList.Core.Models.TodoLists;
 /// </summary>
 public class TodoList : IEntity<string>, IHasOwner
 {
-	/// <summary>
-	/// An unique identifier for the to-do list.
-	/// </summary>
-	[Key]
-	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-	public string Id { get; set; } = null!;
+    /// <summary>
+    /// An unique identifier for the to-do list.
+    /// </summary>
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public string Id { get; set; } = null!;
 
-	/// <summary>
-	/// Name (title) of the to-do list.
-	/// </summary>
-	[MaxLength(NameMaxLength)]
-	public required string Name { get; set; } = null!;
-	/// <summary>
-	/// Description of the to-do list.
-	/// </summary>
-	[MaxLength(DescriptionMaxLength)]
-	public required string Description { get; set; } = null!;
+    /// <summary>
+    /// Name (title) of the to-do list.
+    /// </summary>
+    [MaxLength(NameMaxLength)]
+    public required string Name { get; set; } = null!;
+    /// <summary>
+    /// Description of the to-do list.
+    /// </summary>
+    [MaxLength(DescriptionMaxLength)]
+    public required string Description { get; set; } = null!;
 
-	/// <summary>
-	/// Foreign key referencing the user who created this to-do list.
-	/// </summary>
-	[ForeignKey(nameof(Owner))]
-	public required string? OwnerId { get; set; } = null!;
-	/// <summary>
-	/// Navigation property to the user who created this to-do list.
-	/// </summary>
-	public ApplicationUser? Owner { get; set; }
+    /// <summary>
+    /// Foreign key referencing the user who created this to-do list.
+    /// </summary>
+    [ForeignKey(nameof(Owner))]
+    public required string? OwnerId { get; set; } = null!;
+    /// <summary>
+    /// Navigation property to the user who created this to-do list.
+    /// </summary>
+    public ApplicationUser? Owner { get; set; }
 
-	/// <summary>
-	/// Maximum allowed length of <see cref="Name"/>.
-	/// </summary>
-	public const int NameMaxLength = 100;
-	/// <summary>
-	/// Maximum allowed length of <see cref="Description"/>.
-	/// </summary>
-	public const int DescriptionMaxLength = 25_000;
+    /// <summary>
+    /// Maximum allowed length of <see cref="Name"/>.
+    /// </summary>
+    public const int NameMaxLength = 100;
+    /// <summary>
+    /// Maximum allowed length of <see cref="Description"/>.
+    /// </summary>
+    public const int DescriptionMaxLength = 25_000;
 
-	/// <summary>
-	/// Collection of to-do items associated with this todo list.
-	/// </summary>
-	public virtual ICollection<TodoItem> TodoItems { get; set; } = null!;
+    /// <summary>
+    /// Collection of to-do items associated with this todo list.
+    /// </summary>
+    public virtual ICollection<TodoItem> TodoItems { get; set; } = null!;
 
-	/// <summary>
-	/// Collection of list's members.
-	/// </summary>
-	public virtual ICollection<TodoListMember> TodoListMembers { get; set; } = null!;
+    /// <summary>
+    /// Collection of list's members.
+    /// </summary>
+    public virtual ICollection<TodoListMember> TodoListMembers { get; set; } = null!;
 }

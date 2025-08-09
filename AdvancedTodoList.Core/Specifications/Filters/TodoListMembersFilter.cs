@@ -14,4 +14,4 @@
 /// Entries which have this substring in the '{FirstName} {LastName}' will be returned.
 /// </param>
 public record TodoListMembersFilter(IEnumerable<int?>? RoleId = null, string? UserId = null,
-	string? UserName = null, string? FullName = null);
+    string? UserName = null, string? FullName = null);
