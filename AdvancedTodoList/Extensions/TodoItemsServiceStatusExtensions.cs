@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace AdvancedTodoList.Extensions;
+namespace AdvancedTodoList.WebApp.Extensions;
 
 public static class TodoItemsServiceStatusExtensions
 {

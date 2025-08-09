@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvancedTodoList", "AdvancedTodoList\AdvancedTodoList.csproj", "{5A6E74CD-0DD8-4EDB-B01E-13F7B0A29013}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvancedTodoList.WebApp", "AdvancedTodoList\AdvancedTodoList.WebApp.csproj", "{5A6E74CD-0DD8-4EDB-B01E-13F7B0A29013}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvancedTodoList.Core", "AdvancedTodoList.Core\AdvancedTodoList.Core.csproj", "{316DE5AB-84EC-46B3-82EE-A3F159750971}"
 EndProject
