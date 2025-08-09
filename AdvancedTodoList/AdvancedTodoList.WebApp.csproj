@@ -28,6 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AdvancedTodoList.Application\AdvancedTodoList.Application.csproj" />
+    <ProjectReference Include="..\AdvancedTodoList.Core\AdvancedTodoList.Core.csproj" />
     <ProjectReference Include="..\AdvancedTodoList.Infrastructure\AdvancedTodoList.Infrastructure.csproj" />
   </ItemGroup>
 

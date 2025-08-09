@@ -1,7 +1,7 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.Auth;
-using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.UnitTests.Validation;
+using AdvancedTodoList.Application.Services.Definitions;
 
 namespace AdvancedTodoList.Core.Validation;
 

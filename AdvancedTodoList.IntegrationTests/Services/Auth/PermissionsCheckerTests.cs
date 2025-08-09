@@ -1,10 +1,10 @@
 ﻿using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
-using AdvancedTodoList.Core.Services;
-using AdvancedTodoList.Core.Services.Auth;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
+using AdvancedTodoList.Application.Services.Definitions;
+using AdvancedTodoList.Application.Services.Definitions.Auth;
 
 namespace AdvancedTodoList.IntegrationTests.Services.Auth;
 

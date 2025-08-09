@@ -1,6 +1,5 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.Auth;
-using AdvancedTodoList.Core.Services.Auth;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
 using Microsoft.AspNetCore.Identity;
@@ -9,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AdvancedTodoList.Application.Services.Definitions.Auth;
 
 namespace AdvancedTodoList.IntegrationTests.Services.Auth;
 

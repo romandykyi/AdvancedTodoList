@@ -1,6 +1,6 @@
 ﻿using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
-using AdvancedTodoList.Infrastructure.Specifications;
+using AdvancedTodoList.Core.Specifications.Todo;
 
 namespace AdvancedTodoList.UnitTests.Specifications;
 

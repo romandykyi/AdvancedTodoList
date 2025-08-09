@@ -1,5 +1,5 @@
 ﻿using AdvancedTodoList.Core.Specifications;
-using AdvancedTodoList.Infrastructure.Specifications;
+using AdvancedTodoList.Infrastructure.Extensions;
 using System.Linq.Expressions;
 
 namespace AdvancedTodoList.UnitTests.Specifications;

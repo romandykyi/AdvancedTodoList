@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvancedTodoList.UnitTests"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvancedTodoList.IntegrationTests", "AdvancedTodoList.IntegrationTests\AdvancedTodoList.IntegrationTests.csproj", "{443E81D2-5B70-4CDD-86E9-8184CA004684}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedTodoList.Application", "AdvancedTodoList.Application\AdvancedTodoList.Application.csproj", "{0D300C31-2F24-4F4F-AABD-05857D75E657}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{443E81D2-5B70-4CDD-86E9-8184CA004684}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{443E81D2-5B70-4CDD-86E9-8184CA004684}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{443E81D2-5B70-4CDD-86E9-8184CA004684}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D300C31-2F24-4F4F-AABD-05857D75E657}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D300C31-2F24-4F4F-AABD-05857D75E657}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D300C31-2F24-4F4F-AABD-05857D75E657}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D300C31-2F24-4F4F-AABD-05857D75E657}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
