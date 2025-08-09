@@ -1,6 +1,6 @@
-﻿using AdvancedTodoList.Application.Services.Definitions.Auth;
+﻿using AdvancedTodoList.Application.Options;
+using AdvancedTodoList.Application.Services.Definitions.Auth;
 using AdvancedTodoList.Core.Models.Auth;
-using AdvancedTodoList.Core.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

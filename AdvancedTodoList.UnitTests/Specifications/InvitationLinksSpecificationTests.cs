@@ -1,5 +1,5 @@
 ﻿using AdvancedTodoList.Core.Models.TodoLists;
-using AdvancedTodoList.Infrastructure.Specifications;
+using AdvancedTodoList.Core.Specifications;
 
 namespace AdvancedTodoList.UnitTests.Specifications;
 

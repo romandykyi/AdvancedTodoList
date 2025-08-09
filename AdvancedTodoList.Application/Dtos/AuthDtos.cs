@@ -1,4 +1,4 @@
-﻿namespace AdvancedTodoList.Core.Dtos;
+﻿namespace AdvancedTodoList.Application.Dtos;
 
 /// <summary>
 /// DTO for log in.

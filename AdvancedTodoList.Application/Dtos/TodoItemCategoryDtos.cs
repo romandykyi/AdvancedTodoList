@@ -1,4 +1,4 @@
-﻿namespace AdvancedTodoList.Core.Dtos;
+﻿namespace AdvancedTodoList.Application.Dtos;
 
 public record TodoItemCategoryCreateDto(string Name);
 

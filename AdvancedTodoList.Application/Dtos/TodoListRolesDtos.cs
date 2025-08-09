@@ -1,6 +1,6 @@
 ﻿using AdvancedTodoList.Core.Models.TodoLists.Members;
 
-namespace AdvancedTodoList.Core.Dtos;
+namespace AdvancedTodoList.Application.Dtos;
 
 /// <summary>
 /// Represents a partial view for a role.

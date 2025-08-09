@@ -1,15 +1,15 @@
 ﻿using AdvancedTodoList.Application.Services.Definitions;
 using AdvancedTodoList.Application.Services.Definitions.Auth;
-using AdvancedTodoList.Core.Dtos;
+using AdvancedTodoList.Application.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
-using AdvancedTodoList.Core.Options;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Repositories;
-using AdvancedTodoList.Infrastructure.Specifications;
 using Mapster;
 using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
+using AdvancedTodoList.Application.Options;
+using AdvancedTodoList.Core.Specifications;
 
 namespace AdvancedTodoList.Application.Services.Implementations;
 

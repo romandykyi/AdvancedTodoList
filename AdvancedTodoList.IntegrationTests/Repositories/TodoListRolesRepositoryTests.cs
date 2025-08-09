@@ -5,34 +5,34 @@ namespace AdvancedTodoList.IntegrationTests.Repositories;
 
 public class TodoListRolesRepositoryTests : BaseRepositoryTests<TodoListRole, int>
 {
-	protected override int NonExistingId => -1;
+    protected override int NonExistingId => -1;
 
-	private const int UpdatedPriority = 5;
-	private readonly RolePermissions UpdatedPermissions = new(AddMembers: true, SetItemsState: true);
+    private const int UpdatedPriority = 5;
+    private readonly RolePermissions UpdatedPermissions = new(AddMembers: true, SetItemsState: true);
 
-	protected override void AssertUpdated(TodoListRole updatedEntity)
-	{
-		Assert.Multiple(() =>
-		{
-			Assert.That(updatedEntity.Priority, Is.EqualTo(UpdatedPriority));
-			Assert.That(updatedEntity.Permissions, Is.EqualTo(UpdatedPermissions));
-		});
-	}
+    protected override void AssertUpdated(TodoListRole updatedEntity)
+    {
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(updatedEntity.Priority, Is.EqualTo(UpdatedPriority));
+            Assert.That(updatedEntity.Permissions, Is.EqualTo(UpdatedPermissions));
+        }
+    }
 
-	protected override async Task<TodoListRole> CreateTestEntityAsync()
-	{
-		var user = TestModels.CreateTestUser();
-		DbContext.Add(user);
-		var todoList = TestModels.CreateTestTodoList();
-		DbContext.Add(todoList);
-		await DbContext.SaveChangesAsync();
+    protected override async Task<TodoListRole> CreateTestEntityAsync()
+    {
+        var user = TestModels.CreateTestUser();
+        DbContext.Add(user);
+        var todoList = TestModels.CreateTestTodoList();
+        DbContext.Add(todoList);
+        await DbContext.SaveChangesAsync();
 
-		return TestModels.CreateTestRole(todoList.Id);
-	}
+        return TestModels.CreateTestRole(todoList.Id);
+    }
 
-	protected override void UpdateEntity(TodoListRole entity)
-	{
-		entity.Priority = UpdatedPriority;
-		entity.Permissions = UpdatedPermissions;
-	}
+    protected override void UpdateEntity(TodoListRole entity)
+    {
+        entity.Priority = UpdatedPriority;
+        entity.Permissions = UpdatedPermissions;
+    }
 }

@@ -1,14 +1,14 @@
 using AdvancedTodoList.Application.Mapping;
+using AdvancedTodoList.Application.Options;
 using AdvancedTodoList.Application.Services.Definitions;
 using AdvancedTodoList.Application.Services.Definitions.Auth;
 using AdvancedTodoList.Application.Services.Implementations;
 using AdvancedTodoList.Application.Services.Implementations.Auth;
+using AdvancedTodoList.Application.Validation;
 using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
-using AdvancedTodoList.Core.Options;
 using AdvancedTodoList.Core.Repositories;
-using AdvancedTodoList.Core.Validation;
 using AdvancedTodoList.Infrastructure.Data;
 using AdvancedTodoList.Infrastructure.Repositories;
 using FluentValidation;

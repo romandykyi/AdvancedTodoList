@@ -1,6 +1,7 @@
-﻿using AdvancedTodoList.Core.Models.TodoLists;
+﻿using AdvancedTodoList.Application.Dtos;
+using AdvancedTodoList.Core.Models.TodoLists;
 
-namespace AdvancedTodoList.Core.Dtos;
+namespace AdvancedTodoList.Application.Dtos;
 
 /// <summary>
 /// DTO for creating/editing a to-do list item.

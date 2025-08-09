@@ -1,6 +1,6 @@
 ﻿using AdvancedTodoList.Core.Models.Auth;
 
-namespace AdvancedTodoList.Core.Dtos;
+namespace AdvancedTodoList.Application.Dtos;
 
 /// <summary>
 /// Represents a minimal view DTO for <see cref="ApplicationUser" />

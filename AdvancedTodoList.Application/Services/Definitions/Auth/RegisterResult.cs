@@ -5,37 +5,37 @@
 /// </summary>
 public class RegisterResult
 {
-	/// <summary>
-	/// Flag which determines whether result reports succeess.
-	/// </summary>
-	public bool IsSuccess { get; private init; }
-	/// <summary>
-	/// Error messages.
-	/// </summary>
-	public IEnumerable<RegisterError> Errors { get; private init; }
+    /// <summary>
+    /// Flag which determines whether result reports succeess.
+    /// </summary>
+    public bool IsSuccess { get; private init; }
+    /// <summary>
+    /// Error messages.
+    /// </summary>
+    public IEnumerable<RegisterError> Errors { get; private init; }
 
-	private RegisterResult(bool isSuccess, IEnumerable<RegisterError> errors)
-	{
-		IsSuccess = isSuccess;
-		Errors = errors;
-	}
+    private RegisterResult(bool isSuccess, IEnumerable<RegisterError> errors)
+    {
+        IsSuccess = isSuccess;
+        Errors = errors;
+    }
 
-	/// <summary>
-	/// Returns a result that reports success.
-	/// </summary>
-	/// <returns>
-	/// A result that reports success.
-	/// </returns>
-	public static RegisterResult Success() => new(true, Array.Empty<RegisterError>());
+    /// <summary>
+    /// Returns a result that reports success.
+    /// </summary>
+    /// <returns>
+    /// A result that reports success.
+    /// </returns>
+    public static RegisterResult Success() => new(true, []);
 
-	/// <summary>
-	/// Returns a result that reports failure.
-	/// </summary>
-	/// <param name="errors">Error messages.</param>
-	/// <returns>
-	/// A result that reports failure.
-	/// </returns>
-	public static RegisterResult Failure(IEnumerable<RegisterError> errors) => new(false, errors);
+    /// <summary>
+    /// Returns a result that reports failure.
+    /// </summary>
+    /// <param name="errors">Error messages.</param>
+    /// <returns>
+    /// A result that reports failure.
+    /// </returns>
+    public static RegisterResult Failure(IEnumerable<RegisterError> errors) => new(false, errors);
 }
 
 /// <summary>

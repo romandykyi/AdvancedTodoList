@@ -1,5 +1,4 @@
 ﻿using AdvancedTodoList.Core.Models.TodoLists;
-using AdvancedTodoList.Infrastructure.Specifications;
 using System.Linq.Expressions;
 
 namespace AdvancedTodoList.Core.Specifications.Todo;
