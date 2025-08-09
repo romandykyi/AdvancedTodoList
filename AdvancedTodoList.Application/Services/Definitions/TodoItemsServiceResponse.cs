@@ -1,4 +1,4 @@
-﻿using AdvancedTodoList.Core.Dtos;
+﻿using AdvancedTodoList.Application.Dtos;
 
 namespace AdvancedTodoList.Application.Services.Definitions;
 

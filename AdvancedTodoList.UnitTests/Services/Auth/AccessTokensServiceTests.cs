@@ -1,6 +1,6 @@
-﻿using AdvancedTodoList.Application.Services.Implementations.Auth;
+﻿using AdvancedTodoList.Application.Options;
+using AdvancedTodoList.Application.Services.Implementations.Auth;
 using AdvancedTodoList.Core.Models.Auth;
-using AdvancedTodoList.Core.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -59,7 +59,7 @@ public class AccessTokensServiceTests
         Assert.That(validationResult.IsValid);
         // Assert that token has all needed claims
         var token = (JwtSecurityToken)validationResult.SecurityToken;
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(token.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value,
                 Is.EqualTo(user.Id));
@@ -71,7 +71,7 @@ public class AccessTokensServiceTests
                 Is.EqualTo(user.FirstName));
             Assert.That(token.Claims.First(x => x.Type == JwtRegisteredClaimNames.FamilyName).Value,
                 Is.EqualTo(user.LastName));
-        });
+        }
     }
 
     [Test]

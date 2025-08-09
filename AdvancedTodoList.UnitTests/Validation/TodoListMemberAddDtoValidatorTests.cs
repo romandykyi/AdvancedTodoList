@@ -1,68 +1,68 @@
-﻿using AdvancedTodoList.Core.Dtos;
+﻿using AdvancedTodoList.Application.Dtos;
+using AdvancedTodoList.Application.Validation;
 using AdvancedTodoList.Core.Models.Auth;
-using AdvancedTodoList.UnitTests.Validation;
-using AdvancedTodoList.Application.Services.Definitions;
+using AdvancedTodoList.Core.Repositories;
 
-namespace AdvancedTodoList.Core.Validation;
+namespace AdvancedTodoList.UnitTests.Validation;
 
 [TestFixture]
 public class TodoListMemberAddDtoValidatorTests
 {
-	private TodoListMemberAddDtoValidator _validator;
+    private TodoListMemberAddDtoValidator _validator;
 
-	public const string ValidUserId = "ValidUserId";
-	public const int ValidRoleId = 121;
+    public const string ValidUserId = "ValidUserId";
+    public const int ValidRoleId = 121;
 
-	[SetUp]
-	public void SetUp()
-	{
-		IEntityExistenceChecker existenceChecker = Substitute.For<IEntityExistenceChecker>();
-		existenceChecker.ExistsAsync<ApplicationUser, string>(Arg.Any<string>())
-			.Returns(false);
-		existenceChecker.ExistsAsync<ApplicationUser, string>(ValidUserId)
-			.Returns(true);
-		_validator = new TodoListMemberAddDtoValidator(existenceChecker);
-	}
+    [SetUp]
+    public void SetUp()
+    {
+        IEntityExistenceChecker existenceChecker = Substitute.For<IEntityExistenceChecker>();
+        existenceChecker.ExistsAsync<ApplicationUser, string>(Arg.Any<string>())
+            .Returns(false);
+        existenceChecker.ExistsAsync<ApplicationUser, string>(ValidUserId)
+            .Returns(true);
+        _validator = new TodoListMemberAddDtoValidator(existenceChecker);
+    }
 
-	[Test]
-	public async Task ValidDto_Succeeds()
-	{
-		// Arrange
-		TodoListMemberAddDto dto = new(ValidUserId);
+    [Test]
+    public async Task ValidDto_Succeeds()
+    {
+        // Arrange
+        TodoListMemberAddDto dto = new(ValidUserId);
 
-		// Act
-		var result = await _validator.TestValidateAsync(dto);
+        // Act
+        var result = await _validator.TestValidateAsync(dto);
 
-		// Assert
-		result.ShouldNotHaveAnyValidationErrors();
-	}
+        // Assert
+        result.ShouldNotHaveAnyValidationErrors();
+    }
 
-	[Test]
-	[TestCaseSource(typeof(ValidationConstants), nameof(ValidationConstants.EmptyStrings))]
-	public async Task UserId_Empty_ReturnsPropertyRequiresError(string testCase)
-	{
-		// Arrange
-		TodoListMemberAddDto dto = new(testCase);
+    [Test]
+    [TestCaseSource(typeof(ValidationConstants), nameof(ValidationConstants.EmptyStrings))]
+    public async Task UserId_Empty_ReturnsPropertyRequiresError(string testCase)
+    {
+        // Arrange
+        TodoListMemberAddDto dto = new(testCase);
 
-		// Act
-		var result = await _validator.TestValidateAsync(dto);
+        // Act
+        var result = await _validator.TestValidateAsync(dto);
 
-		// Assert
-		result.ShouldHaveValidationErrorFor(x => x.UserId)
-			.WithErrorCode(ValidationErrorCodes.PropertyRequired);
-	}
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.UserId)
+            .WithErrorCode(ValidationErrorCodes.PropertyRequired);
+    }
 
-	[Test]
-	public async Task UserId_Invalid_ReturnsInvalidForeignKeyError()
-	{
-		// Arrange
-		TodoListMemberAddDto dto = new("Invalid");
+    [Test]
+    public async Task UserId_Invalid_ReturnsInvalidForeignKeyError()
+    {
+        // Arrange
+        TodoListMemberAddDto dto = new("Invalid");
 
-		// Act
-		var result = await _validator.TestValidateAsync(dto);
+        // Act
+        var result = await _validator.TestValidateAsync(dto);
 
-		// Assert
-		result.ShouldHaveValidationErrorFor(x => x.UserId)
-			.WithErrorCode(ValidationErrorCodes.InvalidForeignKey);
-	}
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.UserId)
+            .WithErrorCode(ValidationErrorCodes.InvalidForeignKey);
+    }
 }

@@ -1,10 +1,9 @@
-﻿using AdvancedTodoList.Application.Services.Definitions;
-using AdvancedTodoList.Core.Dtos;
+﻿using AdvancedTodoList.Application.Dtos;
+using AdvancedTodoList.Application.Services.Definitions;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Specifications;
-using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
 
@@ -40,11 +39,11 @@ public class InvitationLinksServiceTests : BusinessLogicFixture
         var response = await _service.JoinAsync(TestCallerId, link.Value);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(response.Status, Is.EqualTo(JoinByInvitationLinkStatus.Success));
             Assert.That(response.Dto, Is.Not.Null);
-        });
+        }
     }
 
     [Test]

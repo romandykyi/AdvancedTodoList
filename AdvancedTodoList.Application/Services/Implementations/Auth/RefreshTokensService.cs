@@ -1,7 +1,6 @@
-﻿using AdvancedTodoList.Application.Services.Definitions;
+﻿using AdvancedTodoList.Application.Options;
 using AdvancedTodoList.Application.Services.Definitions.Auth;
 using AdvancedTodoList.Core.Models.Auth;
-using AdvancedTodoList.Core.Options;
 using AdvancedTodoList.Core.Repositories;
 using Microsoft.Extensions.Options;
 using System.Security.Cryptography;

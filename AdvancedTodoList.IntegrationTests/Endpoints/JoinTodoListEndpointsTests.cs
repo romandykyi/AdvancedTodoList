@@ -1,4 +1,4 @@
-﻿using AdvancedTodoList.Core.Dtos;
+﻿using AdvancedTodoList.Application.Dtos;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using System.Net;
 using System.Net.Http.Json;

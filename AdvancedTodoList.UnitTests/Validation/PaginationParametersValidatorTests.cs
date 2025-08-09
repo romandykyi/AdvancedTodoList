@@ -1,5 +1,5 @@
-﻿using AdvancedTodoList.Core.Pagination;
-using AdvancedTodoList.Core.Validation;
+﻿using AdvancedTodoList.Application.Validation;
+using AdvancedTodoList.Core.Pagination;
 
 namespace AdvancedTodoList.UnitTests.Validation;
 

@@ -1,5 +1,6 @@
 ﻿using AdvancedTodoList.Application.Services.Definitions;
 using AdvancedTodoList.Application.Services.Definitions.Auth;
+using AdvancedTodoList.Core.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;

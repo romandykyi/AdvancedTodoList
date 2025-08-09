@@ -1,6 +1,6 @@
-﻿using AdvancedTodoList.Core.Dtos;
+﻿using AdvancedTodoList.Application.Dtos;
+using AdvancedTodoList.Application.Validation;
 using AdvancedTodoList.Core.Models.TodoLists;
-using AdvancedTodoList.Core.Validation;
 
 namespace AdvancedTodoList.UnitTests.Validation;
 

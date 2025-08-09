@@ -1,6 +1,6 @@
 ﻿using AdvancedTodoList.Core.Models;
 
-namespace AdvancedTodoList.Application.Services.Definitions;
+namespace AdvancedTodoList.Core.Repositories;
 
 /// <summary>
 /// An interface for the service that checks whether an entity with an ID exists.

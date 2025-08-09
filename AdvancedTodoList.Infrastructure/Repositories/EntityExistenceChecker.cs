@@ -1,5 +1,5 @@
-﻿using AdvancedTodoList.Application.Services.Definitions;
-using AdvancedTodoList.Core.Models;
+﻿using AdvancedTodoList.Core.Models;
+using AdvancedTodoList.Core.Repositories;
 using AdvancedTodoList.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
