@@ -1,4 +1,4 @@
-﻿using AdvancedTodoList.Core.Mapping;
+﻿using AdvancedTodoList.Application.Mapping;
 using Mapster;
 
 namespace AdvancedTodoList.UnitTests.Mapping;
