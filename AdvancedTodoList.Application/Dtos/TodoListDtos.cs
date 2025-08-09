@@ -1,6 +1,4 @@
-﻿using AdvancedTodoList.Application.Dtos;
-
-namespace AdvancedTodoList.Application.Dtos;
+﻿namespace AdvancedTodoList.Application.Dtos;
 
 /// <summary>
 /// DTO for creating/editing a to-do list.

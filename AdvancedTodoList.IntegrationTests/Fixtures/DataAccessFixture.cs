@@ -8,39 +8,39 @@ namespace AdvancedTodoList.IntegrationTests.Fixtures;
 /// </summary>
 public abstract class DataAccessFixture
 {
-	private static bool s_migrated = false;
+    private static bool s_migrated = false;
 
-	protected static DataAccessWebApplicationFactory WebApplicationFactory { get; private set; }
-	protected IServiceScope ServiceScope { get; private set; }
-	protected ApplicationDbContext DbContext { get; private set; }
+    protected static DataAccessWebApplicationFactory WebApplicationFactory { get; private set; }
+    protected IServiceScope ServiceScope { get; private set; }
+    protected ApplicationDbContext DbContext { get; private set; }
 
-	[SetUp]
-	public async Task SetUpServices()
-	{
-		// Configure web application factory
-		var container = await TestContainersSetup.GetTestContainerAsync();
-		WebApplicationFactory = new DataAccessWebApplicationFactory(container);
-		WebApplicationFactory.Server.PreserveExecutionContext = true;
+    [SetUp]
+    public async Task SetUpServices()
+    {
+        // Configure web application factory
+        var container = await TestContainersSetup.GetTestContainerAsync();
+        WebApplicationFactory = new DataAccessWebApplicationFactory(container);
+        WebApplicationFactory.Server.PreserveExecutionContext = true;
 
-		// Get services needed for integration testing
-		var scopeFactory = WebApplicationFactory.Services.GetService<IServiceScopeFactory>()!;
-		ServiceScope = scopeFactory.CreateScope();
-		DbContext = ServiceScope.ServiceProvider.GetService<ApplicationDbContext>()!;
-		// Migrate database if it isn't migrated yet
-		if (!s_migrated)
-		{
-			await DbContext.Database.MigrateAsync();
-			s_migrated = true;
-		}
-	}
+        // Get services needed for integration testing
+        var scopeFactory = WebApplicationFactory.Services.GetService<IServiceScopeFactory>()!;
+        ServiceScope = scopeFactory.CreateScope();
+        DbContext = ServiceScope.ServiceProvider.GetService<ApplicationDbContext>()!;
+        // Migrate database if it isn't migrated yet
+        if (!s_migrated)
+        {
+            await DbContext.Database.MigrateAsync();
+            s_migrated = true;
+        }
+    }
 
-	[TearDown]
-	public async Task TearDownServicesAsync()
-	{
-		// Dispose resources
-		await DbContext.DisposeAsync();
-		ServiceScope.Dispose();
+    [TearDown]
+    public async Task TearDownServicesAsync()
+    {
+        // Dispose resources
+        await DbContext.DisposeAsync();
+        ServiceScope.Dispose();
 
-		await WebApplicationFactory.DisposeAsync();
-	}
+        await WebApplicationFactory.DisposeAsync();
+    }
 }

@@ -9,81 +9,81 @@ namespace AdvancedTodoList.Core.Models.TodoLists;
 /// </summary>
 public class TodoItem : IEntity<int>, ITodoListDependant, IHasOwner
 {
-	/// <summary>
-	/// An unique identifier for the to-do list item.
-	/// </summary>
-	[Key]
-	public int Id { get; set; }
-	/// <summary>
-	/// Name (title) of the to-do item.
-	/// </summary>
-	[MaxLength(NameMaxLength)]
-	public required string Name { get; set; }
-	/// <summary>
-	/// Description of the to-do item.
-	/// </summary>
-	[MaxLength(DescriptionMaxLength)]
-	public required string Description { get; set; }
-	/// <summary>
-	/// Current state of the to-do item.
-	/// </summary>
-	public TodoItemState State { get; set; }
-	/// <summary>
-	/// Deadline date for the todo item. Can be null.
-	/// </summary>
-	public DateTime? DeadlineDate { get; set; }
-	/// <summary>
-	/// Priority of the item. 0 means the lowest, 10 means the highest.
-	/// </summary>
-	public int Priority { get; set; } = 0;
+    /// <summary>
+    /// An unique identifier for the to-do list item.
+    /// </summary>
+    [Key]
+    public int Id { get; set; }
+    /// <summary>
+    /// Name (title) of the to-do item.
+    /// </summary>
+    [MaxLength(NameMaxLength)]
+    public required string Name { get; set; }
+    /// <summary>
+    /// Description of the to-do item.
+    /// </summary>
+    [MaxLength(DescriptionMaxLength)]
+    public required string Description { get; set; }
+    /// <summary>
+    /// Current state of the to-do item.
+    /// </summary>
+    public TodoItemState State { get; set; }
+    /// <summary>
+    /// Deadline date for the todo item. Can be null.
+    /// </summary>
+    public DateTime? DeadlineDate { get; set; }
+    /// <summary>
+    /// Priority of the item. 0 means the lowest, 10 means the highest.
+    /// </summary>
+    public int Priority { get; set; } = 0;
 
-	/// <summary>
-	/// Foreign key referencing the associated category.
-	/// </summary>
-	[ForeignKey(nameof(Category))]
-	public int? CategoryId { get; set; }
-	/// <summary>
-	/// Navigation property to the category associated with this to-do item.
-	/// </summary>
-	public TodoItemCategory? Category { get; set; }
+    /// <summary>
+    /// Foreign key referencing the associated category.
+    /// </summary>
+    [ForeignKey(nameof(Category))]
+    public int? CategoryId { get; set; }
+    /// <summary>
+    /// Navigation property to the category associated with this to-do item.
+    /// </summary>
+    public TodoItemCategory? Category { get; set; }
 
-	/// <summary>
-	/// Foreign key referencing the associated to-do list.
-	/// </summary>
-	[ForeignKey(nameof(TodoList))]
-	public required string TodoListId { get; set; }
-	/// <summary>
-	/// Navigation property to the to-do list associated with this to-do item.
-	/// </summary>
-	public TodoList TodoList { get; set; } = null!;
+    /// <summary>
+    /// Foreign key referencing the associated to-do list.
+    /// </summary>
+    [ForeignKey(nameof(TodoList))]
+    public required string TodoListId { get; set; }
+    /// <summary>
+    /// Navigation property to the to-do list associated with this to-do item.
+    /// </summary>
+    public TodoList TodoList { get; set; } = null!;
 
-	/// <summary>
-	/// Foreign key referencing the user who created this item.
-	/// </summary>
-	[ForeignKey(nameof(Owner))]
-	public required string? OwnerId { get; set; } = null!;
-	/// <summary>
-	/// Navigation property to the user who created this item.
-	/// </summary>
-	public ApplicationUser? Owner { get; set; }
+    /// <summary>
+    /// Foreign key referencing the user who created this item.
+    /// </summary>
+    [ForeignKey(nameof(Owner))]
+    public required string? OwnerId { get; set; } = null!;
+    /// <summary>
+    /// Navigation property to the user who created this item.
+    /// </summary>
+    public ApplicationUser? Owner { get; set; }
 
-	/// <summary>
-	/// Maximum allowed length of <see cref="Name"/>.
-	/// </summary>
-	public const int NameMaxLength = 100;
-	/// <summary>
-	/// Maximum allowed length of <see cref="Description"/>.
-	/// </summary>
-	public const int DescriptionMaxLength = 10_000;
+    /// <summary>
+    /// Maximum allowed length of <see cref="Name"/>.
+    /// </summary>
+    public const int NameMaxLength = 100;
+    /// <summary>
+    /// Maximum allowed length of <see cref="Description"/>.
+    /// </summary>
+    public const int DescriptionMaxLength = 10_000;
 
-	/// <summary>
-	/// Minimum allowed value of <see cref="Priority" />
-	/// </summary>
-	public const int MinPriority = 0;
-	/// <summary>
-	/// Maximum allowed value of <see cref="Priority" />
-	/// </summary>
-	public const int MaxPriority = 10;
+    /// <summary>
+    /// Minimum allowed value of <see cref="Priority" />
+    /// </summary>
+    public const int MinPriority = 0;
+    /// <summary>
+    /// Maximum allowed value of <see cref="Priority" />
+    /// </summary>
+    public const int MaxPriority = 10;
 }
 
 /// <summary>
@@ -91,16 +91,16 @@ public class TodoItem : IEntity<int>, ITodoListDependant, IHasOwner
 /// </summary>
 public enum TodoItemState : byte
 {
-	/// <summary>
-	/// The task is active (default state).
-	/// </summary>
-	Active = 0,
-	/// <summary>
-	/// The task has been completed.
-	/// </summary>
-	Completed,
-	/// <summary>
-	/// The task has been skipped.
-	/// </summary>
-	Skipped
+    /// <summary>
+    /// The task is active (default state).
+    /// </summary>
+    Active = 0,
+    /// <summary>
+    /// The task has been completed.
+    /// </summary>
+    Completed,
+    /// <summary>
+    /// The task has been skipped.
+    /// </summary>
+    Skipped
 }

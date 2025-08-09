@@ -1,5 +1,5 @@
-﻿using AdvancedTodoList.Application.Services.Definitions;
-using AdvancedTodoList.Application.Dtos;
+﻿using AdvancedTodoList.Application.Dtos;
+using AdvancedTodoList.Application.Services.Definitions;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Pagination;
 using AdvancedTodoList.Core.Repositories;

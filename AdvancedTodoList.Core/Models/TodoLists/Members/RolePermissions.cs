@@ -14,20 +14,20 @@
 /// <param name="EditCategories">A flag that determines whether user can edit/delete existing categories and add new categories.</param>
 /// <param name="ManageInvitationLinks">A flag that determines whether user can view/delete existing invitation links.</param>
 public record struct RolePermissions(
-	bool SetItemsState = false,
-	bool AddItems = false,
-	bool EditItems = false,
-	bool DeleteItems = false,
-	bool AddMembers = false,
-	bool RemoveMembers = false,
-	bool AssignRoles = false,
-	bool EditRoles = false,
-	bool EditCategories = false,
-	bool ManageInvitationLinks = false
-	)
+    bool SetItemsState = false,
+    bool AddItems = false,
+    bool EditItems = false,
+    bool DeleteItems = false,
+    bool AddMembers = false,
+    bool RemoveMembers = false,
+    bool AssignRoles = false,
+    bool EditRoles = false,
+    bool EditCategories = false,
+    bool ManageInvitationLinks = false
+    )
 {
-	/// <summary>
-	/// Instance of a structure with all permissions.
-	/// </summary>
-	public static readonly RolePermissions All = new(true, true, true, true, true, true, true, true, true, true);
+    /// <summary>
+    /// Instance of a structure with all permissions.
+    /// </summary>
+    public static readonly RolePermissions All = new(true, true, true, true, true, true, true, true, true, true);
 }

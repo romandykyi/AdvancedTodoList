@@ -11,23 +11,23 @@ namespace AdvancedTodoList.IntegrationTests.Factories;
 /// </summary>
 public class DataAccessWebApplicationFactory(MsSqlContainer testDbContainer) : WebApplicationFactory<Program>
 {
-	private readonly MsSqlContainer _testDbContainer = testDbContainer;
+    private readonly MsSqlContainer _testDbContainer = testDbContainer;
 
-	protected override void ConfigureWebHost(IWebHostBuilder builder)
-	{
-		builder.ConfigureServices(services =>
-		{
-			var dbContextOptions = services.SingleOrDefault(service => typeof(DbContextOptions<ApplicationDbContext>) == service.ServiceType);
-			if (dbContextOptions != null)
-			{
-				services.Remove(dbContextOptions);
-			}
-			var dbConnection = services.SingleOrDefault(service => typeof(DbConnection) == service.ServiceType);
-			if (dbConnection != null)
-			{
-				services.Remove(dbConnection);
-			}
-			services.AddDbContext<ApplicationDbContext>((_, option) => option.UseSqlServer(_testDbContainer.GetConnectionString()));
-		});
-	}
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.ConfigureServices(services =>
+        {
+            var dbContextOptions = services.SingleOrDefault(service => typeof(DbContextOptions<ApplicationDbContext>) == service.ServiceType);
+            if (dbContextOptions != null)
+            {
+                services.Remove(dbContextOptions);
+            }
+            var dbConnection = services.SingleOrDefault(service => typeof(DbConnection) == service.ServiceType);
+            if (dbConnection != null)
+            {
+                services.Remove(dbConnection);
+            }
+            services.AddDbContext<ApplicationDbContext>((_, option) => option.UseSqlServer(_testDbContainer.GetConnectionString()));
+        });
+    }
 }
