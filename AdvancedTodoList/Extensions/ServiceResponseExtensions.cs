@@ -1,4 +1,4 @@
-﻿using AdvancedTodoList.Core.Services;
+﻿using AdvancedTodoList.Application.Services.Definitions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdvancedTodoList.WebApp.Extensions;

@@ -1,12 +1,12 @@
 ﻿using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Pagination;
-using AdvancedTodoList.Core.Services;
 using AdvancedTodoList.Core.Specifications;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using AdvancedTodoList.IntegrationTests.Utils;
 using Mapster;
 using NUnit.Framework.Internal;
+using AdvancedTodoList.Application.Services.Definitions;
 
 namespace AdvancedTodoList.IntegrationTests.Services;
 

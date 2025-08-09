@@ -1,16 +1,16 @@
+using AdvancedTodoList.Application.Services.Definitions;
+using AdvancedTodoList.Application.Services.Definitions.Auth;
+using AdvancedTodoList.Application.Services.Implementations;
+using AdvancedTodoList.Application.Services.Implementations.Auth;
 using AdvancedTodoList.Core.Mapping;
 using AdvancedTodoList.Core.Models.Auth;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Options;
 using AdvancedTodoList.Core.Repositories;
-using AdvancedTodoList.Core.Services;
-using AdvancedTodoList.Core.Services.Auth;
 using AdvancedTodoList.Core.Validation;
 using AdvancedTodoList.Infrastructure.Data;
 using AdvancedTodoList.Infrastructure.Repositories;
-using AdvancedTodoList.Infrastructure.Services;
-using AdvancedTodoList.Infrastructure.Services.Auth;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,34 +25,34 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers()
-	.AddJsonOptions(options =>
-	{
-		options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-	});
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-	options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-	{
-		In = ParameterLocation.Header,
-		Description = "Please enter access token (JWT)",
-		Name = "Authorization",
-		Type = SecuritySchemeType.ApiKey
-	});
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter access token (JWT)",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
 
-	var scheme = new OpenApiSecurityScheme
-	{
-		Reference = new OpenApiReference
-		{
-			Type = ReferenceType.SecurityScheme,
-			Id = "Bearer"
-		}
-	};
+    var scheme = new OpenApiSecurityScheme
+    {
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        }
+    };
 
-	options.AddSecurityRequirement(new OpenApiSecurityRequirement { { scheme, Array.Empty<string>() } });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement { { scheme, Array.Empty<string>() } });
 
-	var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-	options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 // Configure antiforgery
@@ -60,46 +60,46 @@ builder.Services.AddAntiforgery(options => options.HeaderName = "X-XSRF-Token");
 
 // Configure auth
 string? jwtSecret = builder.Configuration["Auth:AccessToken:SecretKey"] ??
-	throw new InvalidOperationException("JWT secret is not configured");
+    throw new InvalidOperationException("JWT secret is not configured");
 builder.Services.AddAuthentication()
-	.AddJwtBearer(options =>
-	{
-		options.SaveToken = true;
-		options.TokenValidationParameters = new TokenValidationParameters
-		{
-			ClockSkew = TimeSpan.FromSeconds(5),
-			ValidIssuer = builder.Configuration["Auth:AccessToken:ValidIssuer"],
-			ValidAudience = builder.Configuration["Auth:AccessToken:ValidAudience"],
-			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
-		};
-	});
+    .AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ClockSkew = TimeSpan.FromSeconds(5),
+            ValidIssuer = builder.Configuration["Auth:AccessToken:ValidIssuer"],
+            ValidAudience = builder.Configuration["Auth:AccessToken:ValidAudience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
+        };
+    });
 builder.Services.AddAuthorizationBuilder();
 
 // Get connection string
 string? connectionString =
-	builder.Configuration.GetConnectionString("DefaultConnection") ??
-	throw new InvalidOperationException("Connection string is not specified in 'ConnectionStrings:DefaultConnection'");
+    builder.Configuration.GetConnectionString("DefaultConnection") ??
+    throw new InvalidOperationException("Connection string is not specified in 'ConnectionStrings:DefaultConnection'");
 
 // Configure DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(
-	o => o.UseSqlServer(connectionString,
-	b => b.MigrationsAssembly("AdvancedTodoList.Infrastructure"))
-	);
+    o => o.UseSqlServer(connectionString,
+    b => b.MigrationsAssembly("AdvancedTodoList.Infrastructure"))
+    );
 
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
-	{
-		options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
-	})
-	.AddEntityFrameworkStores<ApplicationDbContext>()
-	.AddApiEndpoints();
+    {
+        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
+    })
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddApiEndpoints();
 
 // Bind options
 builder.Services.Configure<AccessTokenOptions>(
-	builder.Configuration.GetSection("Auth:AccessToken"));
+    builder.Configuration.GetSection("Auth:AccessToken"));
 builder.Services.Configure<RefreshTokenOptions>(
-	builder.Configuration.GetSection("Auth:RefreshToken"));
+    builder.Configuration.GetSection("Auth:RefreshToken"));
 builder.Services.Configure<InvitationLinkOptions>(
-	builder.Configuration.GetSection("Todo:InvitationLink"));
+    builder.Configuration.GetSection("Todo:InvitationLink"));
 
 // Register application services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -114,7 +114,7 @@ builder.Services.AddScoped<IEntityExistenceChecker, EntityExistenceChecker>();
 builder.Services.AddSingleton<IAccessTokensService, AccessTokensService>();
 builder.Services.AddScoped<IRefreshTokensService, RefreshTokensService>();
 builder.Services.AddScoped(typeof(ITodoListDependantEntitiesService<,>),
-	typeof(TodoListDependantEntitiesService<,>));
+    typeof(TodoListDependantEntitiesService<,>));
 // Register unit of work
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // Register application repositories
@@ -139,12 +139,12 @@ builder.Services.AddValidatorsFromAssemblyContaining<TodoItemCreateDtoValidator>
 // Enable auto validation by SharpGrip
 builder.Services.AddFluentValidationAutoValidation(configuration =>
 {
-	// Disable the built-in .NET model (data annotations) validation.
-	configuration.DisableBuiltInModelValidation = true;
-	// Enable validation for parameters bound from 'BindingSource.Body' binding sources.
-	configuration.EnableBodyBindingSourceAutomaticValidation = true;
-	// Enable validation for parameters bound from 'BindingSource.Query' binding sources.
-	configuration.EnableQueryBindingSourceAutomaticValidation = true;
+    // Disable the built-in .NET model (data annotations) validation.
+    configuration.DisableBuiltInModelValidation = true;
+    // Enable validation for parameters bound from 'BindingSource.Body' binding sources.
+    configuration.EnableBodyBindingSourceAutomaticValidation = true;
+    // Enable validation for parameters bound from 'BindingSource.Query' binding sources.
+    configuration.EnableQueryBindingSourceAutomaticValidation = true;
 });
 
 
@@ -153,8 +153,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.UseSwagger();
-	app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

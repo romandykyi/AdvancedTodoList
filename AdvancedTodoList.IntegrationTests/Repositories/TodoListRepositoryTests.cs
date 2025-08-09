@@ -1,7 +1,8 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
-using AdvancedTodoList.Core.Specifications;
+using AdvancedTodoList.Core.Specifications.Filters;
+using AdvancedTodoList.Core.Specifications.Todo;
 using AdvancedTodoList.Infrastructure.Specifications;
 using AdvancedTodoList.IntegrationTests.Utils;
 

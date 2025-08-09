@@ -1,10 +1,10 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Pagination;
-using AdvancedTodoList.Core.Services;
-using AdvancedTodoList.Core.Specifications;
+using AdvancedTodoList.Core.Specifications.Filters;
 using AdvancedTodoList.IntegrationTests.Fixtures;
 using System.Net;
 using System.Net.Http.Json;
+using AdvancedTodoList.Application.Services.Definitions;
 
 namespace AdvancedTodoList.IntegrationTests.Endpoints;
 

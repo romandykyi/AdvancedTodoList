@@ -1,6 +1,6 @@
 ﻿using AdvancedTodoList.Core.Models;
 using AdvancedTodoList.Core.Models.TodoLists;
-using AdvancedTodoList.Infrastructure.Specifications;
+using AdvancedTodoList.Core.Specifications.Todo;
 
 namespace AdvancedTodoList.UnitTests.Specifications;
 

@@ -1,8 +1,8 @@
 ﻿using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Models.TodoLists.Members;
 using AdvancedTodoList.Core.Repositories;
-using AdvancedTodoList.Core.Specifications;
-using AdvancedTodoList.Infrastructure.Specifications;
+using AdvancedTodoList.Core.Specifications.Filters;
+using AdvancedTodoList.Core.Specifications.Todo;
 using AdvancedTodoList.IntegrationTests.Utils;
 
 namespace AdvancedTodoList.IntegrationTests.Repositories;

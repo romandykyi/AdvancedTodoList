@@ -1,7 +1,7 @@
-﻿using AdvancedTodoList.Core.Dtos;
+﻿using AdvancedTodoList.Application.Services.Definitions;
+using AdvancedTodoList.Core.Dtos;
 using AdvancedTodoList.Core.Pagination;
-using AdvancedTodoList.Core.Services;
-using AdvancedTodoList.Core.Specifications;
+using AdvancedTodoList.Core.Specifications.Filters;
 using AdvancedTodoList.WebApp.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
