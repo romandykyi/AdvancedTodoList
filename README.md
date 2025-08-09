@@ -1,5 +1,5 @@
 # AdvancedTodoList
-**AdvancedTodoList**, developed as my personal project, is a Web API for managing to-do lists in teams, where each member can have a role and different sets of permissions. It's based on ASP.NET Core and Entity Framework Core with SQL Server running on Docker.
+**AdvancedTodoList**, developed as my personal project, is a Web API for managing tasks in team settings, where each member can have a role and different sets of permissions. It's based on ASP.NET Core and Entity Framework Core with SQL Server running on Docker.
 
 ## Technologies and tools used
 * .NET 8.0
@@ -11,6 +11,7 @@
 * SharpGrip.FluentValidation.AutoValidation
 
 ## Features
+
 * **Collaborative to-do list management**: The API allows users to add new tasks (`TodoListItem`) to their to-do lists, update task details, mark tasks as completed/skipped, or delete them when they're no longer needed.
 * **Invitation links**: Users can create invitation links for their to-do lists to allow other users to join them.
 * **Search and Filtering**: Most endpoints allow users to specify filtering criteria and search prompts.
@@ -20,28 +21,47 @@
 * **Integration testing**: Integration tests utilize `Testcontainers` for comprehensive testing of API functionality and interactions.
 
 ## Architecture Overview
-The Advanced Todo List application follows a clean architecture. The main three layers are:
+This project follows a pragmatic, clean-architecture inspired layout that balances separation of concerns with developer productivity. The solution preserves clear layer responsibilities and interfaces while choosing to use EF Core directly where it simplifies the codebase. 
 
 ### Core Layer (`AdvancedTodoList.Core`)
-* Contains services and repositories interfaces.
+
+A layer that defines the application's domain and data access contracts. 
+
+* Contains data access services interfaces (e.g. repositories).
 * Defines the entities and value objects representing the domain model.
-* Provides services for CRUD operations, task management, user authentication, authorization, etc.
 * Defines specifications to query and filter parameters.
+
+### Application Layer (`AdvancedTodoList.Application`)
+
+The business logic layer that depends on the Core.
+
+* Provides services for business logic such as CRUD operations, task management, user authentication, authorization, etc.
 * Implements validation logic using FluentValidation for ensuring data integrity and consistency.
+* Contains data transfer objects and application options.
 
 ### Infrastructure Layer (`AdvancedTodoList.Infrastructure`)
+
+Handles the direct EF Core data access. Depends on the Core.
+
 * Handles data access and infrastructure-related concerns.
 * Implements repositories and data access logic using Entity Framework Core.
 * Manages database context and configuration.
-* Handles JWT and refresh tokens.
-* Implements services and specifications.
 
-### Application Layer (`AdvancedTodoList`)
+### Presentation Layer (`AdvancedTodoList.WebApi`)
+
+A layer that enables HTTP methods. Directly depends on the Core (filter and pagination parameters) and Application (service interfaces) layers. Indirectly depends on the Infrastructure, but only for mapping services to the interfaces for Dependency Injection.
+
 * Implements RESTful API endpoints using ASP.NET Core Web API.
-* Handles incoming HTTP requests, validates input data, and delegates to services for business logic execution.
+* Handles incoming HTTP requests, validates input data (using middleware), and delegates to services for business logic execution.
 * Uses authentication and authorization mechanisms to secure endpoints.
 * Facilitates error handling and response formatting.
 * Exposes Swagger documentation.
+
+## Design Choices Justifications
+
+* Use of EF Core in the domain layer - despite being a clean-architecture violation, this choice significantly reduces mapping boilerplate and makes many queries simpler and more expressive by leveraging EF Core/LINQ directly against the model. It is justified here because the project commits to a single, stable data provider that is unlikely to change.
+* Repository and Unit of Work implementations over `DbContext` - repository + UoW provide clear, testable contracts and centralize common data operations (pagination, specification application, common query helpers), which reduces duplication and keeps transactional boundaries explicit.
+* Creating interfaces for services that have only one implementation - primarily improves testability (easy mocking/faking) and decouples callers from concrete implementations, which helps when composing dependencies in DI.
 
 ## Testing Approach
 The `AdvancedTodoList` application uses two types of automated tests: unit tests and integration tests.
